@@ -1,0 +1,36 @@
+Method  Route                                               Description                                         Parameters
+------  -----                                               ------------                                        ----
+GET     /interests/                                         Overview of interests
+GET     /interests/:interestId/timeline/                    The interest timeline
+GET     /interests/:interestId/groups/                      Groups within interest the user is a member of
+GET     /interests/:interestId/groups/recommended/          Recommended groups within interest
+GET     /interests/:interestId/events/                      Groups within interest the user is a member of
+GET     /interests/:interestId/events/recommended/          Recommended groups within interest
+GET     /interests/:interestId/events/past/                 Past events the user attended
+POST    /events/                                            Create new event
+POST    /events/:eventId/attend/                            Attend event
+POST    /groups/                                            Create new group
+POST    /groups/:groupId/join/                              Join group
+POST    /content/                                           Create new post
+GET     /content/:contentId/                                Detailed content data
+POST    /content/:contentId/                                Edit content
+PATCH   /content/:contentId/                                Partially edit content
+DELETE  /content/:contentId/                                Delete content
+POST    /content/:contentId/upvote/                         Upvote content
+POST    /content/:contentId/downvote/                       Downvote content
+GET     /content/:contentId/comments/                       Get comments
+POST    /content/:contentId/comments/                       Comment on content
+POST    /content/:contentId/comments/:commentId/            Edit comment
+PATCH   /content/:contentId/comments/:commentId/            Partially edit comment
+DELETE  /content/:contentId/comments/:commentId/            Delete comment
+POST    /content/:contentId/comments/:commentId/upvote/     Upvote comment
+POST    /content/:contentId/comments/:commentId/downvote/   Downvote comment
+POST    /content/:contentId/report/                         Report content
+GET     /search/                                            Global search
+GET     /users/:userId/                                     Get user profile
+GET     /users/:userId/settings/                            Get user settings
+GET     /users/:userId/conversations/                       Overview of user's conversations
+GET     /users/:userId/notifications/                       Overview of user's notifications
+GET     /users/:userId/interests/                           Overview of user's interests
+POST    /users/:userId/interests/                           Add interest to user's interests
+POST    /users/:userId/favcrites/                           Add content item to user's favorites

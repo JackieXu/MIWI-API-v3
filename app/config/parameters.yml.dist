@@ -1,0 +1,17 @@
+# This file is a "template" of what your parameters.yml file should look like
+parameters:
+    database_schema:    http
+    database_host:      localhost
+    database_port:      7474
+    database_username:  neo4j
+    database_password:  M939M939!@
+
+    mailer_transport:  gmail
+    mailer_host:       null
+    mailer_user:       ~
+    mailer_password:   ~
+
+    locale:            en
+
+    # A secret key that's used to generate certain security-related tokens
+    secret:            MiwiIsLoveMiwiIsLife
