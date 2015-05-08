@@ -3,9 +3,6 @@
 
 namespace AppBundle\Service;
 
-use Neoxygen\NeoClient\ClientBuilder;
-use Symfony\Component\Config\Definition\Exception\Exception;
-
 /**
  * Class BaseManager
  *
@@ -13,40 +10,38 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  */
 class BaseManager
 {
-    protected $schema;
-    protected $host;
-    protected $port;
-    protected $username;
-    protected $password;
-
     /**
-     * @var \Neoxygen\NeoClient\Client
+     * @var string
      */
-    protected $neoclient;
+    const TRANSACTION_URL = '/db/data/transaction/commit';
 
     /**
-     * Sets NeoClient instance
-     *
+     * @var string
+     */
+    protected $baseUrl;
+
+    /**
+     * @var string
+     */
+    protected $auth;
+
+    /**
      * @param string $schema
      * @param string $host
      * @param integer $port
      * @param string $username
      * @param string $password
      */
-    public function setNeoClient($schema, $host, $port, $username, $password)
+    public function setNeo4j($schema, $host, $port, $username, $password)
     {
-        $this->schema = $schema;
-        $this->host = $host;
-        $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;
+        $this->baseUrl = sprintf('%s://%s:%d', $schema, $host, $port);
+        $this->auth = sprintf('%s:%s', $username, $password);
     }
 
     /**
      * Sends cypher query
      *
-     * Wrapper function to the original `sendCypherQuery`, but this one
-     * always returns an array and formats the values.
+     * Uses the Neo4j REST API to send a cypher query and parses its response.
      *
      * @param string $cypherQuery
      * @param array $parameters
@@ -55,9 +50,9 @@ class BaseManager
      */
     public function sendCypherQuery($cypherQuery, array $parameters)
     {
-        $curl = curl_init('localhost:7474/db/data/transaction/commit');
+        $curl = curl_init($this->baseUrl.self::TRANSACTION_URL);
 
-        curl_setopt($curl, CURLOPT_USERPWD, "neo4j:n43l068s");
+        curl_setopt($curl, CURLOPT_USERPWD, $this->auth);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/json; charset=UTF-8'));
@@ -72,6 +67,7 @@ class BaseManager
                 )
             )
         ));
+
         $response = curl_exec($curl);
         curl_close($curl);
 

@@ -1,7 +1,7 @@
 # This file is a "template" of what your parameters.yml file should look like
 parameters:
     database_schema:    http
-    database_host:      localhost
+    database_host:      127.0.0.1
     database_port:      7474
     database_username:  neo4j
     database_password:  M939M939!@

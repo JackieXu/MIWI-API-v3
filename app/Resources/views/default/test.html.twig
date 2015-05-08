@@ -1,1 +1,6 @@
 {% extends "base.html.twig" %}
+{% block body %}
+    {% for i in interests %}
+        ({{ i.interestId }}) {{ i.interestName }}<br />
+    {% endfor %}
+{% endblock %}
