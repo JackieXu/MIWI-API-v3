@@ -1,4 +1,9 @@
 security:
+    encoders:
+        AppBundle\Entity\User:
+            algorithm: bcrypt
+            cost: 15
+
     providers:
         in_memory:
             memory: ~

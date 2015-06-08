@@ -3,12 +3,14 @@
 
 namespace AppBundle\Service;
 
+use Symfony\Component\DependencyInjection\ContainerAware;
+
 /**
  * Class BaseManager
  *
  * @package AppBundle\Service
  */
-class BaseManager
+class BaseManager extends ContainerAware
 {
     /**
      * @var string
@@ -101,5 +103,79 @@ class BaseManager
         }
 
         return $result;
+    }
+
+    /**
+     * Sends multiple cypher queries
+     *
+     * The $cypherQueries parameter should be an array containing objects of the following type:
+     *
+     *  array(
+     *   'statement' => string,
+     *   'parameters' => array(
+     *    string => mixed
+     *   )
+     *  )
+     *
+     * @param array $cypherQueries
+     * @return array
+     * @throws \Exception
+     */
+    public function sendCypherQueries(array $cypherQueries)
+    {
+        $curl = curl_init($this->baseUrl.self::TRANSACTION_URL);
+
+        curl_setopt($curl, CURLOPT_USERPWD, $this->auth);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/json; charset=UTF-8'));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(
+            array(
+                'statements' => $cypherQueries
+            )
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        $data = json_decode($response, true);
+
+        if (json_last_error()) {
+            return array();
+        }
+
+        // Throw first error
+        if ($data['errors']) {
+            throw new \Exception(sprintf(
+                    '[%s] %s',
+                    $data['errors'][0]['code'],
+                    $data['errors'][0]['message']
+                )
+            );
+        }
+
+        $results = array();
+
+        foreach ($data['results'] as $result) {
+            $keys = $result['columns'];
+            $rows = $result['data'];
+
+            $keyCount = count($keys);
+            $rowCount = count($rows);
+
+            $statementResult = array();
+
+            for ($r = 0; $r < $rowCount; $r++) {
+                $statementResult[] = array();
+                for ($k = 0; $k < $keyCount; $k++) {
+                    $statementResult[$r][$keys[$k]] = $rows[$r]['row'][$k];
+                }
+            }
+
+            $results[] = $statementResult;
+        }
+
+        return $results;
     }
 }

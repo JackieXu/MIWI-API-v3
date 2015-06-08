@@ -8,8 +8,21 @@ services:
         class: AppBundle\Service\InterestManager
         parent: manager.base
 
+    manager.timeline:
+        class: AppBundle\Service\TimelineManager
+        parent: manager.base
+
+    manager.access:
+        class: AppBundle\Service\AccessManager
+        parent: manager.base
+
     listener.cors:
-            class: AppBundle\Event\Listener\CORSListener
-            tags:
-                - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
-                - {name: kernel.event_listener, event: kernel.response, method: onKernelResponse}
+        class: AppBundle\Event\Listener\CORSListener
+        tags:
+            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
+            - {name: kernel.event_listener, event: kernel.response, method: onKernelResponse}
+
+    listener.exception:
+        class: AppBundle\Event\Listener\ExceptionListener
+        tags:
+            - {name: kernel.event_listener, event: kernel.exception, method: onKernelException}
