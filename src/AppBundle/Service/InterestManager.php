@@ -52,8 +52,8 @@ class InterestManager extends BaseManager
                 MATCH   (i:INTEREST)
                 WHERE   i.name =~ {query}
                 AND     i.isDefault = true
-                RETURN  id(i) as interestId,
-                        i.name as interestName,
+                RETURN  id(i) as id,
+                        i.name as name,
                         i.image as image
                 SKIP    {offset}
                 LIMIT   {count}
