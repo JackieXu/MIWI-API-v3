@@ -32,7 +32,6 @@ class AccessManager extends BaseManager
         if ($user) {
             $user = $user[0];
             $hashedPassword = $user['password'];
-            var_dump($user);
 
             if (password_verify($password, $hashedPassword)) {
                 // create token
