@@ -217,8 +217,6 @@ class AccessController extends BaseController
             ));
         }
 
-        return $this->unauthorized(array(
-            'error' => 'E-mail already used'
-        ));
+        return $this->conflict();
     }
 }

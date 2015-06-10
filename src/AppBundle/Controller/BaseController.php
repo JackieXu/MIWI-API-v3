@@ -84,4 +84,20 @@ abstract class BaseController extends Controller
 
         return new JsonResponse($data, 403, $headers);
     }
+
+    /**
+     * Returns a 409 response
+     *
+     * @param mixed $data
+     * @param array $headers
+     * @return Response
+     */
+    public function conflict($data = null, array $headers = array())
+    {
+        if (is_null($data)) {
+            return new Response($data, 409, $headers);
+        }
+
+        return new JsonResponse($data, 409, $headers);
+    }
 }
