@@ -24,7 +24,8 @@ class AccessManager extends BaseManager
             MATCH   (u:USER)
             WHERE   u.email = {email}
             RETURN  id(u) as id,
-                    u.password as password
+                    u.password as password,
+                    u.status as status
         ', array(
             'email' => $email
         ));
@@ -37,7 +38,11 @@ class AccessManager extends BaseManager
                 // create token
                 $token = $this->generateToken($user['id']);
 
-                return $token;
+                return array(
+                    'id' => $user['id'],
+                    'accessToken' => $token,
+                    'status' => $user['status']
+                );
             }
 
             return false;
@@ -111,7 +116,9 @@ class AccessManager extends BaseManager
                     password: {password},
                     firstName: {firstName},
                     lastName: {lastName},
-                    birthdate: {birthdate}
+                    birthdate: {birthdate},
+                    status: 0,
+                    social: {social}
                 })
                 RETURN  id(u) as id
             ', array(
