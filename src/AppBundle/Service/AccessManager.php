@@ -26,12 +26,13 @@ class AccessManager extends BaseManager
             RETURN  id(u) as id,
                     u.password as password
         ', array(
-            'email' => '(?i)'.$email
+            'email' => $email
         ));
 
         if ($user) {
             $user = $user[0];
             $hashedPassword = $user['password'];
+            var_dump($user);
 
             if (password_verify($password, $hashedPassword)) {
                 // create token
