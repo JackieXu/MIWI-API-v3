@@ -74,7 +74,7 @@ class AccessController extends BaseController
 
         $accessManager = $this->get('manager.access');
         $userToken = $accessManager->login(
-            $options->getValue('username'),
+            $options->getValue('email'),
             $options->getValue('password')
         );
 
