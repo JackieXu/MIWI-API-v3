@@ -109,7 +109,7 @@ class AccessController extends BaseController
      */
     public function loginWithGoogleAction(Request $request)
     {
-        $token = $request->headers->get('access_token');
+        $token = $request->headers->get('accessToken');
 
         try {
             $options = new GoogleValidator(array(
@@ -185,18 +185,19 @@ class AccessController extends BaseController
         } catch (MissingOptionsException $e) {
             return $this->invalid();
         } catch (InvalidOptionsException $e) {
-            return $this->invalid();
+            return $this->invalid($e->getMessage());
         }
 
         $accessManager = $this->get('manager.access');
 
         try {
-            list($accessToken, $status) = $accessManager->register(
+            list($userId, $accessToken, $status) = $accessManager->register(
                 $options->getValue('email'),
                 $options->getValue('password'),
                 $options->getValue('firstName'),
                 $options->getValue('lastName'),
-                $options->getValue('birthdate')
+                $options->getValue('birthdate'),
+                null
             );
         } catch (UserExistsException $e) {
             return $this->invalid(array(
@@ -204,9 +205,16 @@ class AccessController extends BaseController
             ));
         }
 
-        return $this->success(array(
-            'accessToken' => $accessToken,
-            'status' => $status
+        if ($userId) {
+            return $this->success(array(
+                'id' => $userId,
+                'accessToken' => $accessToken,
+                'status' => $status
+            ));
+        }
+
+        return $this->unauthorized(array(
+            'error' => 'E-mail already used'
         ));
     }
 }

@@ -41,7 +41,11 @@ abstract class BaseController extends Controller
      */
     public function invalid($data = null, array $headers = array())
     {
-        return new Response($data, 400, $headers);
+        if (is_null($data)) {
+            return new Response($data, 400, $headers);
+        }
+
+        return new JsonResponse($data, 400, $headers);
     }
 
     /**
@@ -58,6 +62,26 @@ abstract class BaseController extends Controller
     {
         $headers['WWW-Authenticate'] = 'OAuth';
 
-        return new Response($data, 401, $headers);
+        if (is_null($data)) {
+            return new Response($data, 401, $headers);
+        }
+
+        return new JsonResponse($data, 401, $headers);
+    }
+
+    /**
+     * Returns a 403 response
+     *
+     * @param mixed $data
+     * @param array $headers
+     * @return Response
+     */
+    public function forbidden($data = null, array $headers = array())
+    {
+        if (is_null($data)) {
+            return new Response($data, 403, $headers);
+        }
+
+        return new JsonResponse($data, 403, $headers);
     }
 }

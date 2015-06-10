@@ -81,7 +81,7 @@ class AccessManager extends BaseManager
      * @param string $lastName
      * @param int $birthdate
      * @param int|null $social
-     * @return int
+     * @return array|null
      */
     public function register($email, $password, $firstName, $lastName, $birthdate, $social = null)
     {
@@ -90,13 +90,20 @@ class AccessManager extends BaseManager
             WHERE   u.email = {email}
             RETURN  id(u) as id
         ', array(
-            'email' => '(?i)'.$email
+            'email' => $email
         ));
+
+        if ($userId) {
+            $userId = $userId[0];
+        }
 
         // If an ID was returned, user already exists
         if (array_key_exists('id', $userId) && is_int($userId['id'])) {
             return null;
         } else {
+            $password = password_hash($password, PASSWORD_BCRYPT);
+            $birthdate = (int) $birthdate;
+
             $user = $this->sendCypherQuery('
                 CREATE  (u:USER {
                     email: {email},
@@ -115,8 +122,14 @@ class AccessManager extends BaseManager
                 'social' => $social
             ));
 
+            if ($user) {
+                $user = $user[0];
+            }
+
             if (array_key_exists('id', $user) && is_int($user['id'])) {
-                return $user['id'];
+                $token = $this->generateToken($user['id']);
+
+                return array($user['id'], $token, 0);
             }
 
             return null;
@@ -142,7 +155,7 @@ class AccessManager extends BaseManager
         ));
 
         if ($values) {
-            return $userId === $values['userId'];
+            return $userId === $values[0]['userId'];
         }
 
         return false;
@@ -162,20 +175,22 @@ class AccessManager extends BaseManager
     protected function generateToken($userId, $duration = 7200000)
     {
         $length = mt_rand(16, 20);
-        $token = bin2hex(openssl_random_pseudo_bytes($length));
+        $tokenCode = bin2hex(openssl_random_pseudo_bytes($length));
 
         $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   id(u) = {userId}
             CREATE  (u)-[ut:HAS]->(t:TOKEN {
-                endDate: timestamp() + {duration}
+                expirationDate: timestamp() + {duration},
+                token: {tokenCode}
             })
-            RETURN  t
+            RETURN  id(t)
         ', array(
             'userId' => $userId,
-            'duration' => $duration
+            'duration' => $duration,
+            'tokenCode' => $tokenCode
         ));
 
-        return $token;
+        return $tokenCode;
     }
 }

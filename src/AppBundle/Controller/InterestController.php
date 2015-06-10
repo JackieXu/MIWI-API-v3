@@ -136,24 +136,27 @@ class InterestController extends BaseController
     public function userInterestsAction(Request $request, $userId)
     {
         $userId = (int) $userId;
+        $accessToken = $request->headers->get('accessToken', '');
         $accessManager = $this->get('manager.access');
 
         try {
-            $token = new TokenValidator($request->headers->all());
+            $token = new TokenValidator(array(
+                'accessToken' => $accessToken
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid();
         } catch (InvalidOptionsException $e) {
             return $this->invalid();
         }
 
-        if ($accessManager->hasAccessToUser($token, $userId)) {
+        if ($accessManager->hasAccessToUser($token->getValue('accessToken'), $userId)) {
             $interestManager = $this->get('manager.interest');
             $interests = $interestManager->getUserInterests($userId);
 
             return $this->success($interests);
         }
 
-        return $this->unauthorized();
+        return $this->forbidden();
     }
 
     /**
@@ -192,18 +195,22 @@ class InterestController extends BaseController
      */
     public function batchAddAction(Request $request, $userId)
     {
+        $userId = (int) $userId;
+        $accessToken = $request->headers->get('accessToken', '');
+        $accessManager = $this->get('manager.access');
+
         try {
-            $token = new TokenValidator($request->headers->all());
+            $token = new TokenValidator(array(
+                'accessToken' => $accessToken
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid();
         } catch (InvalidOptionsException $e) {
             return $this->invalid();
         }
 
-        $userId = (int) $userId;
-        $accessManager = $this->get('manager.access');
 
-        if ($accessManager->hasAccessToUser($token, $userId)) {
+        if ($accessManager->hasAccessToUser($token->getValue('accessToken'), $userId)) {
             try {
                 $options = new InterestArrayValidator($request->request->all());
             } catch (InvalidOptionsException $e) {
@@ -213,9 +220,13 @@ class InterestController extends BaseController
             }
 
             $interestManager = $this->get('manager.interest');
-            $interests = $interestManager->addInterests($userId, $options->getValue('interests'));
+            $interests = $interestManager->addInterests($userId, $options->getValue('interestNames'));
 
-            return $this->success($interests);
+            if ($interests) {
+                return $this->success();
+            }
+
+            return $this->invalid();
         }
 
         return $this->unauthorized();
@@ -276,8 +287,11 @@ class InterestController extends BaseController
      */
     public function batchShareAction(Request $request, $userId)
     {
+        $accessToken = $request->headers->get('accessToken', '');
         try {
-            $token = new TokenValidator($request->headers->all());
+            $token = new TokenValidator(array(
+                'accessToken' => $accessToken
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid();
         } catch (InvalidOptionsException $e) {
@@ -287,7 +301,7 @@ class InterestController extends BaseController
         $userId = (int) $userId;
         $accessManager = $this->get('manager.access');
 
-        if ($accessManager->hasAccessToUser($token, $userId)) {
+        if ($accessManager->hasAccessToUser($token->getValue('accessToken'), $userId)) {
             try {
                 $options = new ShareObjectValidator($request->request->all());
             } catch (MissingOptionsException $e) {
@@ -297,7 +311,7 @@ class InterestController extends BaseController
             }
 
             // Manual check for types in array, as this is not supported in the OptionsResolver yet
-            $shareObject = $options->getValue('shareObject');
+            $shareObject = json_decode($options->getValue('shareObject'), true);
             $shareObjectTypeCorrected = array();
 
             foreach ($shareObject as $interestId => $emailAddresses) {
@@ -331,6 +345,6 @@ class InterestController extends BaseController
             $interestManager->shareInterests($shareObjectTypeCorrected);
         }
 
-        return $this->unauthorized();
+        return $this->forbidden();
     }
 }

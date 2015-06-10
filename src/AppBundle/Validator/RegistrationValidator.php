@@ -38,6 +38,6 @@ class RegistrationValidator extends Validator
         $resolver->setAllowedTypes('password', 'string');
         $resolver->setAllowedTypes('firstName', 'string');
         $resolver->setAllowedTypes('lastName', 'string');
-        $resolver->setAllowedTypes('birthdate', 'int');
+        $resolver->setAllowedTypes('birthdate', 'string');
     }
 }

@@ -84,22 +84,22 @@ class InterestManager extends BaseManager
      * Interests that are already in the user's list will be ignored.
      *
      * @param int $userId
-     * @param int[] $interestIds
-     * @return int[] The entire list of interests of the user
+     * @param string[] $interestNames
+     * @return array The entire list of interests of the user
      */
-    public function addInterests($userId, array $interestIds)
+    public function addInterests($userId, array $interestNames)
     {
         $interests = $this->sendCypherQuery('
             MATCH   (u:USER),
                     (i:INTEREST)
             WHERE   id(u) = {userId}
-            AND     id(i) IN {interestIds}
+            AND     i.name IN {interestNames}
             MERGE   (u)-[r:LIKES]->(i)
             RETURN  id(i) as id,
                     i.name as name
         ', array(
             'userId' => $userId,
-            'interestIds' => $interestIds
+            'interestNames' => $interestNames
         ));
 
         return array_values($interests);
@@ -176,14 +176,12 @@ class InterestManager extends BaseManager
         $cypherString = '
             MATCH   (u:USER)-[ui:LIKES]->(i:INTEREST)
             WHERE   id(u) = {userId}
-            AND     ui.status = {status}
-            RETURN  id(i) as interestId,
-                    i.name as interestName
+            RETURN  id(i) as id,
+                    i.name as name
         ';
 
         $interests = $this->sendCypherQuery($cypherString, array(
-            'userId' => $userId,
-            'status' => 1
+            'userId' => $userId
         ));
 
         return $interests;

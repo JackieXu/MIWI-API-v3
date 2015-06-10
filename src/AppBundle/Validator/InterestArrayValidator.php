@@ -15,13 +15,13 @@ class InterestArrayValidator extends Validator
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefined(
-            'interests'
+            'interestNames'
         );
 
         $resolver->setRequired(array(
-            'interests'
+            'interestNames'
         ));
 
-        $resolver->setAllowedTypes('interests', 'array');
+        $resolver->setAllowedTypes('interestNames', 'array');
     }
 }

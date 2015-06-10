@@ -18,13 +18,13 @@ class TokenValidator extends Validator
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefined(array(
-            'access_token'
+            'accessToken'
         ));
 
         $resolver->setRequired(array(
-            'access_token'
+            'accessToken'
         ));
 
-        $resolver->setAllowedTypes('access_token', 'string');
+        $resolver->setAllowedTypes('accessToken', 'string');
     }
 }
