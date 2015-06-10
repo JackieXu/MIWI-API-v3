@@ -53,7 +53,8 @@ class InterestManager extends BaseManager
                 WHERE   i.name =~ {query}
                 AND     i.isDefault = true
                 RETURN  id(i) as interestId,
-                        i.name as interestName
+                        i.name as interestName,
+                        i.image as image
                 SKIP    {offset}
                 LIMIT   {count}
             ';
@@ -61,8 +62,8 @@ class InterestManager extends BaseManager
             $cypherString = '
                 MATCH   (i:INTEREST)
                 WHERE   i.name =~ {query}
-                RETURN  id(i) as interestId,
-                        i.name as interestName
+                RETURN  id(i) as id,
+                        i.name as name
                 SKIP    {offset}
                 LIMIT   {count}
             ';
@@ -94,7 +95,8 @@ class InterestManager extends BaseManager
             WHERE   id(u) = {userId}
             AND     id(i) IN {interestIds}
             MERGE   (u)-[r:LIKES]->(i)
-            RETURN  id(i) as id
+            RETURN  id(i) as id,
+                    i.name as name
         ', array(
             'userId' => $userId,
             'interestIds' => $interestIds
@@ -118,7 +120,7 @@ class InterestManager extends BaseManager
      */
     public function shareInterests(array $data)
     {
-        $mailer = $this->container->get('mailer');
+//        $mailer = $this->container->get('mailer');
         $uniqueInterestIds = array();
         $failedMails = array();
 
@@ -151,13 +153,13 @@ class InterestManager extends BaseManager
                 $emailInterests[] = $interests[$interestId];
             }
 
-            $message = \Swift_Message::newInstance();
-            $message->setSubject('');
-            $message->setFrom('info@miwi.com', 'MIWI');
-            $message->setTo($email);
-            $message->setBody('', 'text/html', 'UTF-8');
-
-            $mailer->send($message, $failedMails);
+//            $message = \Swift_Message::newInstance();
+//            $message->setSubject('');
+//            $message->setFrom('info@miwi.com', 'MIWI');
+//            $message->setTo($email);
+//            $message->setBody('', 'text/html', 'UTF-8');
+//
+//            $mailer->send($message, $failedMails);
         }
 
         return $failedMails;

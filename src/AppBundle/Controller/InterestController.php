@@ -79,7 +79,14 @@ class InterestController extends BaseController
      */
     public function overviewAction(Request $request)
     {
-        $options = new InterestQueryValidator($request->query->all());
+        $parameters = $request->query->all();
+        if (array_key_exists('defaultOnly', $parameters) && $parameters['defaultOnly'] !== '0' && $parameters['defaultOnly'] !== 'false' && !empty($parameters['defaultOnly'])) {
+            $parameters['defaultOnly'] = true;
+        } else {
+            $parameters['defaultOnly'] = false;
+        }
+
+        $options = new InterestQueryValidator($parameters);
 
         $interestManager = $this->get('manager.interest');
 
