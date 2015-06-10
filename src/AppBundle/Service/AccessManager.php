@@ -23,7 +23,8 @@ class AccessManager extends BaseManager
         $user = $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   u.email = {email}
-            RETURN  u.password
+            RETURN  id(u) as id,
+                    u.password as password
         ', array(
             'email' => '(?i)'.$email
         ));
@@ -33,7 +34,7 @@ class AccessManager extends BaseManager
 
             if (password_verify($password, $hashedPassword)) {
                 // create token
-                $token = '';
+                $token = $this->generateToken($user['id']);
 
                 return $token;
             }
@@ -79,11 +80,47 @@ class AccessManager extends BaseManager
      * @param string $firstName
      * @param string $lastName
      * @param int $birthdate
+     * @param int|null $social
      * @return int
      */
-    public function register($email, $password, $firstName, $lastName, $birthdate)
+    public function register($email, $password, $firstName, $lastName, $birthdate, $social = null)
     {
-        return 1;
+        $userId = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   u.email = {email}
+            RETURN  id(u) as id
+        ', array(
+            'email' => '(?i)'.$email
+        ));
+
+        // If an ID was returned, user already exists
+        if (array_key_exists('id', $userId) && is_int($userId['id'])) {
+            return null;
+        } else {
+            $user = $this->sendCypherQuery('
+                CREATE  (u:USER {
+                    email: {email},
+                    password: {password},
+                    firstName: {firstName},
+                    lastName: {lastName},
+                    birthdate: {birthdate}
+                })
+                RETURN  id(u) as id
+            ', array(
+                'email' => $email,
+                'password' => $password,
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'birthdate' => $birthdate,
+                'social' => $social
+            ));
+
+            if (array_key_exists('id', $user) && is_int($user['id'])) {
+                return $user['id'];
+            }
+
+            return null;
+        }
     }
 
     /**
