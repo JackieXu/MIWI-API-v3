@@ -163,7 +163,7 @@ class AccessController extends BaseController
      *          "description"="User last name (e.g. `Xu`)"
      *      },
      *      {
-     *          "name"="birthDate",
+     *          "name"="birthdate",
      *          "dataType"="integer",
      *          "required"=true,
      *          "description"="User birth date in seconds past since Unix Epoch (e.g. `341498095`)"
