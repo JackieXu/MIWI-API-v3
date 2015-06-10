@@ -19,16 +19,16 @@ class LoginValidator extends Validator
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefined(array(
-            'username',
+            'email',
             'password'
         ));
 
         $resolver->setRequired(
-            'username',
+            'email',
             'password'
         );
 
-        $resolver->setAllowedTypes('username', 'string');
+        $resolver->setAllowedTypes('email', 'string');
         $resolver->setAllowedTypes('password', 'string');
     }
 }
