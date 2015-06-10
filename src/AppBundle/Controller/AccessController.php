@@ -78,6 +78,10 @@ class AccessController extends BaseController
             $options->getValue('password')
         );
 
+        if (!$userToken) {
+            return $this->unauthorized();
+        }
+
         return new JsonResponse(array(
             'accessToken' => $userToken
         ));

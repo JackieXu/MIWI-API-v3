@@ -30,6 +30,7 @@ class AccessManager extends BaseManager
         ));
 
         if ($user) {
+            $user = $user[0];
             $hashedPassword = $user['password'];
 
             if (password_verify($password, $hashedPassword)) {
