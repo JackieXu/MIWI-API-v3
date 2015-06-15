@@ -40,14 +40,14 @@ class InterestController extends BaseController
      *  requirements={
      *      {
      *          "name"="limit",
-     *          "dataType"="integer",
+     *          "dataType"="int",
      *          "requirement"="\d+",
      *          "description"="How many interests to return",
      *
      *      },
      *      {
      *          "name"="offset",
-     *          "dataType"="integer",
+     *          "dataType"="int",
      *          "requirement"="\d+",
      *          "description"="Number of interests to skip"
      *      },
@@ -98,10 +98,10 @@ class InterestController extends BaseController
                 $options->getValue('defaultOnly')
             );
         } catch (\Exception $e) {
-            return new JsonResponse($e->getMessage(), 400);
+            return $this->invalid();
         }
 
-        return new JsonResponse($interests, 200);
+        return $this->success($interests);
     }
 
     /**
@@ -229,7 +229,7 @@ class InterestController extends BaseController
             return $this->invalid();
         }
 
-        return $this->unauthorized();
+        return $this->forbidden();
     }
 
     /**
@@ -293,9 +293,11 @@ class InterestController extends BaseController
                 'accessToken' => $accessToken
             ));
         } catch (MissingOptionsException $e) {
-            return $this->invalid();
+            return $this->invalid(array(
+                'error' => 'Missing token'
+            ));
         } catch (InvalidOptionsException $e) {
-            return $this->invalid();
+            return $this->unauthorized();
         }
 
         $userId = (int) $userId;
@@ -305,9 +307,13 @@ class InterestController extends BaseController
             try {
                 $options = new ShareObjectValidator($request->request->all());
             } catch (MissingOptionsException $e) {
-                return $this->invalid();
+                return $this->invalid(array(
+                    'error' => 'Missing share object'
+                ));
             } catch (InvalidOptionsException $e) {
-                return $this->invalid();
+                return $this->invalid(array(
+                    'error' => 'Invalid share object'
+                ));
             }
 
             // Manual check for types in array, as this is not supported in the OptionsResolver yet
@@ -316,10 +322,14 @@ class InterestController extends BaseController
 
             foreach ($shareObject as $interestId => $emailAddresses) {
                 if (!is_numeric($interestId)) {
-                    return $this->invalid();
+                    return $this->invalid(array(
+                        'error' => 'Invalid share object'
+                    ));
                 }
                 if (!is_array($emailAddresses)) {
-                    return $this->invalid();
+                    return $this->invalid(array(
+                        'error' => 'Invalid share object'
+                    ));
                 }
 
                 $interestIdTypeCorrected = (int) $interestId;

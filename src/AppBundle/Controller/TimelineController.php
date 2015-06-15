@@ -3,10 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Validator\LimitValidator;
+use AppBundle\Validator\TimelineValidator;
+use AppBundle\Validator\TokenValidator;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 /**
  * Class TimelineController
@@ -20,29 +25,85 @@ class TimelineController extends BaseController
     /**
      * Gets interest timeline
      *
-     * @Route("/users/{userId}/interests/{interestId}/timeline/", requirements={"userId": "\d+", "interestId": "\d+"})
-     * @Method({"GET", "OPTIONS"})
+     * @Route("interests/{interestId}/timeline", requirements={"interestId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="",
+     *  tags={},
+     *  section="timelines",
+     *  parameters={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      }
+     *  },
+     *  requirements={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when succesful",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
      *
      * @param Request $request
-     * @param int $userId
      * @param int $interestId
      * @return Response
      */
-    public function interestTimelineAction(Request $request, $userId, $interestId)
+    public function interestTimelineAction(Request $request, $interestId)
     {
-        $userId = (int)$userId;
-        $interestId = (int)$interestId;
-        $options = new LimitValidator($request->query->all());
+        try {
+            $options = new TimelineValidator($request->query->all());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        }
 
-        $timelineManager = $this->get('manager.timeline');
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->unauthorized();
+        }
 
-        $results = $timelineManager->getInterestTimeline(
-            $userId,
-            $interestId,
-            $options->getValue('offset'),
-            $options->getValue('limit')
-        );
+        $userId = (int) $options->getValue('userId');
+        $interestId = (int) $interestId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
 
-        return $this->success($results);
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+
+            $timelineManager = $this->get('manager.timeline');
+            $results = $timelineManager->getInterestTimeline(
+                $userId,
+                $interestId,
+                $options->getValue('offset'),
+                $options->getValue('limit')
+            );
+
+            return $this->success($results);
+
+        }
+
+        return $this->forbidden();
     }
 }

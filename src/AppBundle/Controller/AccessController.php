@@ -168,7 +168,7 @@ class AccessController extends BaseController
      *      },
      *      {
      *          "name"="birthdate",
-     *          "dataType"="integer",
+     *          "dataType"="int",
      *          "required"=true,
      *          "description"="User birth date in seconds past since Unix Epoch (e.g. `341498095`)"
      *      }

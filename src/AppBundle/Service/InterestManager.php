@@ -99,7 +99,7 @@ class InterestManager extends BaseManager
                     i.name as name
         ', array(
             'userId' => $userId,
-            'interestNames' => $interestNames
+            'interestNames' => array_values($interestNames)
         ));
 
         return array_values($interests);
@@ -121,16 +121,8 @@ class InterestManager extends BaseManager
     public function shareInterests(array $data)
     {
 //        $mailer = $this->container->get('mailer');
-        $uniqueInterestIds = array();
+        $uniqueInterestIds = array_keys($data);
         $failedMails = array();
-
-        foreach ($data as $email => $interestIds) {
-            foreach ($interestIds as $interestId) {
-                if (!in_array($interestId, $uniqueInterestIds)) {
-                    $uniqueInterestIds[] = $interestId;
-                }
-            }
-        }
 
         $interests = $this->sendCypherQuery('
             MATCH   (i:INTEREST)
@@ -146,20 +138,20 @@ class InterestManager extends BaseManager
             $result[$interest['id']] = $interest;
         }, array());
 
-        foreach ($data as $email => $interestIds) {
-            $emailInterests = array();
+        $emailInterests = array();
 
-            foreach ($interestIds as $interestId) {
-                $emailInterests[] = $interests[$interestId];
+        foreach ($data as $interestId => $emailAddresses) {
+            $emailInterests[$interestId] = array(
+                'interest' => array(
+                    'id' => $interestId,
+                    'name' => $interests[$interestId]['name']
+                ),
+                'emailAddresses' => array()
+            );
+
+            foreach ($emailAddresses as $emailAddress) {
+                $emailInterests[$interestId]['emailAddresses'][] = $emailAddress;
             }
-
-//            $message = \Swift_Message::newInstance();
-//            $message->setSubject('');
-//            $message->setFrom('info@miwi.com', 'MIWI');
-//            $message->setTo($email);
-//            $message->setBody('', 'text/html', 'UTF-8');
-//
-//            $mailer->send($message, $failedMails);
         }
 
         return $failedMails;

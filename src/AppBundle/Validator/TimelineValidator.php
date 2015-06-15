@@ -6,25 +6,27 @@ namespace AppBundle\Validator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class ShareObjectValidator
+ * Class TimelineValidator
  *
  * @package AppBundle\Validator
  */
-class ShareObjectValidator extends Validator
+class TimelineValidator extends LimitValidator
 {
     /**
      * @param OptionsResolver $resolver
      */
     protected function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver->setDefined(array(
-            'shareObject'
+            'userId'
         ));
 
         $resolver->setRequired(array(
-            'shareObject'
+            'userId'
         ));
 
-        $resolver->setAllowedTypes('shareObject', 'string');
+        $resolver->setAllowedTypes('userId', 'numeric');
     }
 }
