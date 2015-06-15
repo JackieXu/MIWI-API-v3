@@ -32,7 +32,7 @@ class UserManager extends BaseManager
         ));
 
         if ($newStatus) {
-            return $newStatus['status'] === $status;
+            return $newStatus[0]['status'] === $status;
         }
 
         return false;

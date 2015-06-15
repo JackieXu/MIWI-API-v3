@@ -223,6 +223,8 @@ class InterestController extends BaseController
             $interests = $interestManager->addInterests($userId, $options->getValue('interestNames'));
 
             if ($interests) {
+                $userManager = $this->get('manager.user');
+                $userManager->setUserStatus($userId, 1);
                 return $this->success();
             }
 
@@ -353,6 +355,11 @@ class InterestController extends BaseController
 
             $interestManager = $this->get('manager.interest');
             $interestManager->shareInterests($shareObjectTypeCorrected);
+
+            $userManager = $this->get('manager.user');
+            $userManager->setUserStatus($userId, 2);
+
+            return $this->success();
         }
 
         return $this->forbidden();

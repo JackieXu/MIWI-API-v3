@@ -180,7 +180,7 @@ class AccessManager extends BaseManager
      * @return string
      * @throws \Exception
      */
-    protected function generateToken($userId, $duration = 7200000)
+    protected function generateToken($userId, $duration = 6048500000)
     {
         $length = mt_rand(16, 20);
         $tokenCode = bin2hex(openssl_random_pseudo_bytes($length));

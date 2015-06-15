@@ -16,6 +16,10 @@ services:
         class: AppBundle\Service\AccessManager
         parent: manager.base
 
+    manager.user:
+        class: AppBundle\Service\UserManager
+        parent: manager.base
+
     listener.cors:
         class: AppBundle\Event\Listener\CORSListener
         tags:
