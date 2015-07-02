@@ -160,7 +160,7 @@ class InterestController extends BaseController
     }
 
     /**
-     * Adds user interests
+     * Adds user interestsHm
      *
      * Interests the user already has, will not be touched. Thus, when adding interests
      * the user already has, those interests will be ignored.

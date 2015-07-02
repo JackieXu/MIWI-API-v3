@@ -7,27 +7,27 @@ namespace AppBundle\Validator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class LoginValidator
+ * Class PasswordTokenValidator
  *
  * @package AppBundle\Validator
  */
-class LoginValidator extends EmailValidator
+class PasswordTokenValidator extends Validator
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefined(array(
-            'password'
+            'password',
+            'token'
         ));
 
-        $resolver->setRequired(
-            'password'
-        );
+        $resolver->setRequired(array(
+            'password',
+            'token'
+        ));
 
         $resolver->setAllowedTypes('password', 'string');
+        $resolver->setAllowedTypes('token', 'string');
     }
 }

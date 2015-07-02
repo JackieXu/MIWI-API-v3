@@ -3,6 +3,8 @@ services:
         abstract: true
         calls:
             - [setNeo4j, [%database_schema%, %database_host%, %database_port%, %database_username%, %database_password%]]
+            - [setMailer, [@mailer]]
+            - [setTemplateEngine, [@templating]]
 
     manager.interest:
         class: AppBundle\Service\InterestManager

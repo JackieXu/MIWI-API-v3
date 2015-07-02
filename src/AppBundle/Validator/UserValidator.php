@@ -7,11 +7,11 @@ namespace AppBundle\Validator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class LoginValidator
+ * Class UserValidator
  *
  * @package AppBundle\Validator
  */
-class LoginValidator extends EmailValidator
+class UserValidator extends Validator
 {
     /**
      * @param OptionsResolver $resolver
@@ -21,13 +21,13 @@ class LoginValidator extends EmailValidator
         parent::configureOptions($resolver);
 
         $resolver->setDefined(array(
-            'password'
+            'userId'
         ));
 
-        $resolver->setRequired(
-            'password'
-        );
+        $resolver->setRequired(array(
+            'userId'
+        ));
 
-        $resolver->setAllowedTypes('password', 'string');
+        $resolver->setAllowedTypes('userId', 'numeric');
     }
 }

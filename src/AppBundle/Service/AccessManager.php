@@ -19,7 +19,6 @@ class AccessManager extends BaseManager
      */
     public function login($email, $password)
     {
-        $this->generateToken(4121);
         $user = $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   u.email = {email}
@@ -164,6 +163,97 @@ class AccessManager extends BaseManager
 
         if ($values) {
             return $userId === $values[0]['userId'];
+        }
+
+        return false;
+    }
+
+    /**
+     * Request password change token
+     *
+     * @param string $email
+     * @return bool
+     * @throws \Exception
+     */
+    public function requestPasswordToken($email)
+    {
+        $token = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   u.email = {email}
+            WITH    u
+            MERGE   (t:TOKEN {userId: id(u)})
+            SET     t.expirationDate = timestamp() + 604800000
+            SET     t.code = {code}
+            SET     t.email = u.email
+            RETURN  t.code as code,
+                    t.email as email
+        ', array(
+            'email' => $email,
+            'code' => sha1(md5($email).((string) time()))
+        ));
+
+        if (!$token) {
+            return false;
+        }
+
+        $token = $token[0];
+
+        $mail = new \Swift_Message();
+        $mail->setTo($token['email']);
+        $mail->setFrom('info@miwi.com');
+        $mail->setSubject('MIWI Password Recovery');
+        $mail->setBody($this->templateEngine->render(':mails/access:password_token.html.twig', array(
+            'code' => $token['code']
+        )));
+
+        $this->mailer->send($mail);
+
+        return true;
+    }
+
+    /**
+     * Change password
+     *
+     * @param string $tokenCode
+     * @param string $password
+     * @return bool
+     * @throws \Exception
+     */
+    public function changePassword($tokenCode, $password)
+    {
+        $token = $this->sendCypherQuery('
+            MATCH   (t:TOKEN)
+            WHERE   t.code = {token}
+            AND     t.expirationDate > timestamp()
+            RETURN  t.userId as userId
+        ', array(
+            'token' => $tokenCode
+        ));
+
+        if ($token) {
+            $token = $token[0];
+            $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+
+            $this->sendCypherQuery('
+                MATCH   (u:USER)
+                WHERE   id(u) = {userId}
+                SET     u.password = {passwordHash}
+                RETURN  id(u) as id
+            ', array(
+                'userId' => $token['userId'],
+                'passwordHash' => $passwordHash
+            ));
+
+            $this->sendCypherQuery('
+                MATCH   (t:TOKEN)
+                WHERE   t.code = {token}
+                SET     t.expirationDate = 0
+                RETURN  id(t)
+            ', array(
+                'token' => $tokenCode
+            ));
+
+            return true;
         }
 
         return false;

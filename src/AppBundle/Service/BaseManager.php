@@ -3,6 +3,8 @@
 
 namespace AppBundle\Service;
 
+use Swift_Mailer;
+use Symfony\Bundle\TwigBundle\Debug\TimedTwigEngine;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
 /**
@@ -28,6 +30,15 @@ class BaseManager extends ContainerAware
     protected $auth;
 
     /**
+     * @var Swift_Mailer
+     */
+    protected $mailer;
+
+    protected $templateEngine;
+
+    /**
+     * Sets neo4j data
+     *
      * @param string $schema
      * @param string $host
      * @param integer $port
@@ -38,6 +49,26 @@ class BaseManager extends ContainerAware
     {
         $this->baseUrl = sprintf('%s://%s:%d', $schema, $host, $port);
         $this->auth = sprintf('%s:%s', $username, $password);
+    }
+
+    /**
+     * Sets mailer
+     *
+     * @param Swift_Mailer $mailer
+     */
+    public function setMailer(Swift_Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
+    /**
+     * Sets template engine
+     *
+     * @param TimedTwigEngine $engine
+     */
+    public function setTemplateEngine(TimedTwigEngine $engine)
+    {
+        $this->templateEngine = $engine;
     }
 
     /**

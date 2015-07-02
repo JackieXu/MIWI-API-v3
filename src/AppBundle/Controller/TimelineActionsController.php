@@ -3,6 +3,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Validator\TokenValidator;
+use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -21,15 +23,65 @@ class TimelineActionsController extends BaseController
     /**
      * Upvotes an item
      *
-     * @Route("items/{itemId}/upvote")
+     * @Route("items/{itemId}/upvote", requirements={"itemId": "\d+"})
      * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"="true",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      "200"="OK"
+     *  },
+     *  authentication=true
+     * )
      *
      * @param Request $request
      * @return Response
      */
     public function upvoteAction(Request $request)
     {
+        $accessToken = $request->headers->get('accessToken', '');
+        $accessManager = $this->get('manager.access');
 
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $accessToken
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        try {
+            $userValidator = new UserValidator($request->request->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => 'Missing user id'
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => 'Invalid user id'
+            ));
+        }
+
+        if ($accessManager->hasAccessToUser($tokenValidator->getValue('accessToken'), (int) $userValidator->getValue('userId'))) {
+
+        }
+
+        return $this->forbidden();
     }
 
     /**

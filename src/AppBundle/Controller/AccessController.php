@@ -5,9 +5,12 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Security\Exception\UserExistsException;
+use AppBundle\Validator\EmailValidator;
 use AppBundle\Validator\GoogleValidator;
 use AppBundle\Validator\LoginValidator;
+use AppBundle\Validator\PasswordTokenValidator;
 use AppBundle\Validator\RegistrationValidator;
+use AppBundle\Validator\TokenValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -82,9 +85,7 @@ class AccessController extends BaseController
             return $this->unauthorized();
         }
 
-        return new JsonResponse(array(
-            'accessToken' => $userToken
-        ));
+        return $this->success($userToken);
     }
 
     /**
@@ -175,7 +176,8 @@ class AccessController extends BaseController
      *  },
      *  statusCodes={
      *      200="Returned when successful",
-     *      401="Returned when credentials are invalid"
+     *      400="Returned when parameters are missing or invalid",
+     *      409="Returned when credentials are already used"
      *  }
      * )
      *
@@ -218,5 +220,120 @@ class AccessController extends BaseController
         }
 
         return $this->conflict();
+    }
+
+    /**
+     * Request password token
+     *
+     * @Route("/auth/password-token")
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Request password recovery token",
+     *  tags={},
+     *  section="authentication",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="email",
+     *          "dataType"="string",
+     *          "required"="true",
+     *          "description"="User's e-mail address"
+     *      }
+     *  },
+     *  authentication=false,
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are missing or invalid"
+     *  }
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function requestPasswordTokenAction(Request $request)
+    {
+        try {
+            $options = new EmailValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+
+        // Replace spaces with +
+        $email = str_replace(' ', '+', $options->getValue('email'));
+        $token = $accessManager->requestPasswordToken($email);
+
+        if ($token) {
+            return $this->success();
+        }
+
+        return $this->invalid();
+    }
+
+    /**
+     * Reset password
+     *
+     * @Route("/auth/change-password")
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Change user password using token",
+     *  tags={},
+     *  section="authentication",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="token",
+     *          "dataType"="string",
+     *          "required"="true",
+     *          "description"="Password recovery token"
+     *      },
+     *      {
+     *          "name"="password",
+     *          "dataType"="string",
+     *          "required"="true",
+     *          "description"="New password"
+     *      }
+     *  },
+     *  authentication=false,
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are missing or invalid"
+     *  }
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function resetPasswordAction(Request $request)
+    {
+        try {
+            $options = new PasswordTokenValidator($request->request->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+
+        $isSuccess = $accessManager->changePassword(
+            $options->getValue('token'),
+            $options->getValue('password')
+        );
+
+        if ($isSuccess) {
+            return $this->success();
+        }
+
+        return $this->unauthorized();
     }
 }
