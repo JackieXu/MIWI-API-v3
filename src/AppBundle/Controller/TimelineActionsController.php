@@ -27,7 +27,7 @@ class TimelineActionsController extends BaseController
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="",
+     *  description="Upvote an item",
      *  tags={},
      *  section="items",
      *  requirements={
@@ -42,43 +42,39 @@ class TimelineActionsController extends BaseController
      *      }
      *  },
      *  statusCodes={
-     *      "200"="OK"
+     *      200="Returned when successful",
+     *      400="Returned when parameters are missing or invalid"
      *  },
      *  authentication=true
      * )
      *
      * @param Request $request
+     * @param string $itemId
      * @return Response
      */
-    public function upvoteAction(Request $request)
+    public function upvoteAction(Request $request, $itemId)
     {
-        $accessToken = $request->headers->get('accessToken', '');
-        $accessManager = $this->get('manager.access');
-
         try {
             $tokenValidator = new TokenValidator(array(
-                'accessToken' => $accessToken
+                'accessToken' => $request->headers->get('accessToken')
             ));
-        } catch (MissingOptionsException $e) {
-            return $this->invalid();
-        } catch (InvalidOptionsException $e) {
-            return $this->invalid();
-        }
-
-        try {
             $userValidator = new UserValidator($request->request->all());
         } catch (MissingOptionsException $e) {
-            return $this->invalid(array(
-                'error' => 'Missing user id'
-            ));
+            return $this->invalid();
         } catch (InvalidOptionsException $e) {
-            return $this->invalid(array(
-                'error' => 'Invalid user id'
-            ));
+            return $this->invalid();
         }
 
-        if ($accessManager->hasAccessToUser($tokenValidator->getValue('accessToken'), (int) $userValidator->getValue('userId'))) {
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userValidator->getValue('userId');
+        $itemId = (int) $itemId;
 
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $timelineManager = $this->get('manager.timeline');
+            $votes = $timelineManager->upvoteItem($userId, $itemId);
+
+            return $this->success($votes);
         }
 
         return $this->forbidden();
@@ -90,12 +86,65 @@ class TimelineActionsController extends BaseController
      * @Route("items/{itemId}/downvote")
      * @Method({"POST"})
      *
+     * @ApiDoc(
+     *  description="Downvote an item",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"="true",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are missing or invalid"
+     *  },
+     *  authentication=true
+     * )
+     *
      * @param Request $request
+     * @param string $itemId
      * @return Response
      */
-    public function downvoteAction(Request $request)
+    public function downvoteAction(Request $request, $itemId)
     {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
 
+        try {
+            $userValidator = new UserValidator($request->request->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userValidator->getValue('userId');
+        $itemId = (int) $itemId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $timelineManager = $this->get('manager.timeline');
+            $votes = $timelineManager->downvoteItem($userId, $itemId);
+
+            return $this->success($votes);
+        }
+
+        return $this->forbidden();
     }
 
     /**

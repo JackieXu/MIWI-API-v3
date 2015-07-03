@@ -3,7 +3,6 @@
 
 namespace AppBundle\Service;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 /**
@@ -19,12 +18,6 @@ class ContentManager extends BaseManager
      * In case of an item already being upvoted by the user,
      * the action will be undone. Thus every repeated action will undo
      * the previous one.
-     *
-     * @ApiDoc(
-     *  description="Upvotes an item",
-     *  tags={},
-     *  section="items"
-     * )
      *
      * @param string|int $userId
      * @param string|int $itemId
