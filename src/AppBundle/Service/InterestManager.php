@@ -90,10 +90,12 @@ class InterestManager extends BaseManager
     public function addInterests($userId, array $interestNames)
     {
         $interests = $this->sendCypherQuery('
-            MATCH   (u:USER),
-                    (i:INTEREST)
+            MATCH   (u:USER)
             WHERE   id(u) = {userId}
-            AND     i.name IN {interestNames}
+            FOREACH (interestName IN {interestNames} | MERGE (:INTEREST {name: interestName}))
+            WITH    u
+            MATCH   (i:INTEREST)
+            WHERE   i.name IN {interestNames}
             MERGE   (u)-[r:LIKES]->(i)
             RETURN  id(i) as id,
                     i.name as name
