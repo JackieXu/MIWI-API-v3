@@ -104,7 +104,7 @@ class InterestManager extends BaseManager
             'interestNames' => array_values($interestNames)
         ));
 
-        return array_values($interests);
+        return $interests;
     }
 
     /**

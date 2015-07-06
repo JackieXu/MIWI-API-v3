@@ -4,7 +4,7 @@
 namespace AppBundle\Service;
 
 use Swift_Mailer;
-use Symfony\Bundle\TwigBundle\Debug\TimedTwigEngine;
+use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
 /**
@@ -64,9 +64,9 @@ class BaseManager extends ContainerAware
     /**
      * Sets template engine
      *
-     * @param TimedTwigEngine $engine
+     * @param TwigEngine $engine
      */
-    public function setTemplateEngine(TimedTwigEngine $engine)
+    public function setTemplateEngine(TwigEngine $engine)
     {
         $this->templateEngine = $engine;
     }

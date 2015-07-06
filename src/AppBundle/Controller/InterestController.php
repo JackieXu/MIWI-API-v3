@@ -364,4 +364,16 @@ class InterestController extends BaseController
 
         return $this->forbidden();
     }
+
+
+    public function interestGroupsAction(Request $request)
+    {
+        return $this->success();
+    }
+
+
+    public function interestEventsAction(Request $request)
+    {
+        return $this->success();
+    }
 }
