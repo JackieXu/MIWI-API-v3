@@ -8,6 +8,7 @@ use AppBundle\Validator\InterestArrayValidator;
 use AppBundle\Validator\InterestQueryValidator;
 use AppBundle\Validator\ShareObjectValidator;
 use AppBundle\Validator\TokenValidator;
+use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -115,7 +116,6 @@ class InterestController extends BaseController
      *  tags={},
      *  section="users",
      *  requirements={
-     *
      *  },
      *  parameters={
      *
@@ -160,7 +160,63 @@ class InterestController extends BaseController
     }
 
     /**
-     * Adds user interestsHm
+     * Gets user's top interests
+     *
+     * @Route("users/{userId}/top-interests", requirements={"userId": "\d+"})
+     * @Method("GET")
+     *
+     * @ApiDoc(
+     *  description="Gets user's top interests",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function userTopInterestsAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+        $userId = (int) $userId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $interestManager = $this->get('manager.interest');
+            $interests = $interestManager->getUserTopInterests($userId);
+
+            if ($interests) {
+                return $this->success($interests);
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->forbidden();
+    }
+
+    /**
+     * Adds user interests
      *
      * Interests the user already has, will not be touched. Thus, when adding interests
      * the user already has, those interests will be ignored.
@@ -365,15 +421,119 @@ class InterestController extends BaseController
         return $this->forbidden();
     }
 
-
-    public function interestGroupsAction(Request $request)
+    /**
+     * Gets groups associated with interest
+     *
+     * @Route("interests/{interestId}/groups", requirements={"interestId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Gets groups associated with interest",
+     *  tags={},
+     *  section="groups",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $interestId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function interestGroupsAction(Request $request, $interestId)
     {
-        return $this->success();
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+            $userValidator = new UserValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+        $userId = (int) $userValidator->getValue('userId');
+        $interestId = (int) $interestId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $groupManager = $this->get('manager.group');
+            $groups = $groupManager->getInterestGroups($interestId);
+
+            if ($groups) {
+                return $this->success($groups);
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->forbidden();
     }
 
-
-    public function interestEventsAction(Request $request)
+    /**
+     * Gets events associated with interest
+     *
+     * @Route("interests/{interestId}/events", requirements={"interestId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Gets events associated with interest",
+     *  tags={},
+     *  section="events",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $interestId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function interestEventsAction(Request $request, $interestId)
     {
-        return $this->success();
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+            $userValidator = new UserValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+        $userId = (int) $userValidator->getValue('userId');
+        $interestId = (int) $interestId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $eventManager = $this->get('manager.event');
+            $events = $eventManager->getInterestEvents($interestId);
+
+            if ($events) {
+                return $this->success($events);
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->forbidden();
     }
 }

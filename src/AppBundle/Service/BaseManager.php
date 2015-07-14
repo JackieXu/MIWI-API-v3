@@ -34,6 +34,9 @@ class BaseManager extends ContainerAware
      */
     protected $mailer;
 
+    /**
+     * @var TwigEngine
+     */
     protected $templateEngine;
 
     /**

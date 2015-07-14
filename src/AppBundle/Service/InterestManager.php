@@ -180,4 +180,31 @@ class InterestManager extends BaseManager
 
         return $interests;
     }
+
+    /**
+     * Gets user top interests
+     *
+     * @param int $userId
+     * @return array|bool
+     */
+    public function getUserTopInterests($userId)
+    {
+        $interests = $this->sendCypherQuery('
+            MATCH       (u:USER)-[r:LIKES]->(i:INTEREST)
+            WHERE       id(u) = {userId}
+            RETURN      id(i) as id,
+                        i.name as name,
+                        r.measure as measure,
+                        r.order as order
+            ORDER BY    r.order
+        ', array(
+            'userId' => $userId
+        ));
+
+        if ($interests) {
+            return $interests[0];
+        }
+
+        return false;
+    }
 }

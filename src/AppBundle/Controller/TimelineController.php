@@ -29,7 +29,7 @@ class TimelineController extends BaseController
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="",
+     *  description="Gets an interest timeline",
      *  tags={},
      *  section="timelines",
      *  parameters={

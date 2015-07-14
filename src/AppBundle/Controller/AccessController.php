@@ -85,6 +85,9 @@ class AccessController extends BaseController
             return $this->unauthorized();
         }
 
+        // Add zero alerts
+        $userToken['alerts'] = 0;
+
         return $this->success($userToken);
     }
 

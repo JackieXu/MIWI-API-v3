@@ -22,6 +22,14 @@ services:
         class: AppBundle\Service\UserManager
         parent: manager.base
 
+    manager.group:
+        class: AppBundle\Service\GroupManager
+        parent: manager.base
+
+    manager.event:
+        class: AppBundle\Service\EventManager
+        parent: manager.base
+
     listener.cors:
         class: AppBundle\Event\Listener\CORSListener
         tags:

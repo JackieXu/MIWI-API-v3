@@ -14,11 +14,11 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 /**
- * Class TimelineActionsController
+ * Class TimelineActionController
  *
  * @package AppBundle\Controller
  */
-class TimelineActionsController extends BaseController
+class TimelineActionController extends BaseController
 {
     /**
      * Upvotes an item
@@ -150,10 +150,169 @@ class TimelineActionsController extends BaseController
     /**
      * Comments on an item
      *
+     * @Route("items/{itemId}/comment", requirements={"itemId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Comment on an item",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
      * @param Request $request
+     * @return Response
      */
     public function commentAction(Request $request)
     {
+        return $this->invalid();
+    }
 
+    /**
+     * Share item
+     *
+     * @Route("items/{itemId}/share", requirements={"itemId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Share item",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function shareAction(Request $request)
+    {
+        return $this->invalid();
+    }
+
+    /**
+     * Favorite an item
+     *
+     * @Route("users/{userId}/favorites", requirements={"userId": "\d+"})
+     * @Method({"PUT"})
+     *
+     * @ApiDoc(
+     *  description="Favorite an item",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *      {
+     *          "name"="itemId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="Item identifier"
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function favoriteAction(Request $request)
+    {
+        return $this->invalid();
+    }
+
+    /**
+     * Get list of favorites
+     *
+     * @Route("users/{userId}/favorites", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get list of favorited items",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function favoritesAction(Request $request)
+    {
+        return $this->invalid();
+    }
+
+    /**
+     * Delete favorited item
+     *
+     * @Route("users/{userId}/favorites", requirements={"userId": "\d+"})
+     * @Method({"DELETE"})
+     *
+     * @ApiDoc(
+     *  description="Remove favorited item",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *      {
+     *          "name"="itemId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="Item identifier"
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteFavoriteAction(Request $request)
+    {
+        return $this->invalid();
     }
 }
