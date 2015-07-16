@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 class ProfileController extends BaseController
 {
     /**
-     * Gets user profile
+     * Get user profile
      *
      * The `extended` attribute can be set to a value of `1` to get a more extensive profile, which includes:
      *
@@ -34,7 +34,7 @@ class ProfileController extends BaseController
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="Gets user profile",
+     *  description="Get user profile",
      *  tags={},
      *  section="users",
      *  requirements={
@@ -96,17 +96,18 @@ class ProfileController extends BaseController
     }
 
     /**
-     * Gets user snapshot
+     * Get user snapshot
      *
      * A user snapshot call is a combination of asking for a user's interests, alerts, simple profile data and
      * the global timeline.
      *
-     * This can be used to simplify API usage, by calling a single
+     * This can be used to simplify API usage, by calling a single endpoint.
+     *
      * @Route("/users/{userId}/snapshot", requirements={"userId": "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="Gets user snapshot",
+     *  description="Get user snapshot",
      *  tags={},
      *  section="users",
      *  requirements={
@@ -139,5 +140,19 @@ class ProfileController extends BaseController
 
 
         return $this->success();
+    }
+
+    /**
+     * Get user posts
+     *
+     * @Route("users/{userId}/posts", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function postsAction(Request $request)
+    {
+        return $this->invalid();
     }
 }

@@ -27,7 +27,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 class InterestController extends BaseController
 {
     /**
-     * Gets interest overview
+     * Get interest overview
      *
      * This is an open API endpoint, no authentication header is required to access it.
      *
@@ -35,7 +35,7 @@ class InterestController extends BaseController
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="Gets interest overview",
+     *  description="Get interest overview",
      *  tags={},
      *  section="interests",
      *  requirements={
@@ -106,13 +106,13 @@ class InterestController extends BaseController
     }
 
     /**
-     * Gets user interests
+     * Get user interests
      *
      * @Route("users/{userId}/interests", requirements={"userId" = "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="Gets user interests",
+     *  description="Get user interests",
      *  tags={},
      *  section="users",
      *  requirements={
@@ -160,13 +160,13 @@ class InterestController extends BaseController
     }
 
     /**
-     * Gets user's top interests
+     * Get user's top interests
      *
      * @Route("users/{userId}/top-interests", requirements={"userId": "\d+"})
      * @Method("GET")
      *
      * @ApiDoc(
-     *  description="Gets user's top interests",
+     *  description="Get user's top interests",
      *  tags={},
      *  section="users",
      *  requirements={
@@ -216,7 +216,7 @@ class InterestController extends BaseController
     }
 
     /**
-     * Adds user interests
+     * Add user interests
      *
      * Interests the user already has, will not be touched. Thus, when adding interests
      * the user already has, those interests will be ignored.
@@ -225,7 +225,7 @@ class InterestController extends BaseController
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="Adds user interests",
+     *  description="Add user interests",
      *  tags={},
      *  section="users",
      *  parameters={
@@ -291,7 +291,7 @@ class InterestController extends BaseController
     }
 
     /**
-     * Shares interest with e-mail addresses
+     * Share interests with e-mail addresses
      *
      * Requires an object containing interests and e-mail addresses the interest
      * should be shared with.
@@ -316,7 +316,7 @@ class InterestController extends BaseController
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="Shares interest with given e-mail addresses",
+     *  description="Share interests with e-mail addresses",
      *  tags={},
      *  section="users",
      *  parameters={
@@ -422,13 +422,13 @@ class InterestController extends BaseController
     }
 
     /**
-     * Gets groups associated with interest
+     * Get groups associated with interest
      *
      * @Route("interests/{interestId}/groups", requirements={"interestId": "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="Gets groups associated with interest",
+     *  description="Get groups associated with interest",
      *  tags={},
      *  section="groups",
      *  requirements={
@@ -480,13 +480,13 @@ class InterestController extends BaseController
     }
 
     /**
-     * Gets events associated with interest
+     * Get events associated with interest
      *
      * @Route("interests/{interestId}/events", requirements={"interestId": "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="Gets events associated with interest",
+     *  description="Get events associated with interest",
      *  tags={},
      *  section="events",
      *  requirements={

@@ -27,6 +27,20 @@ class CORSListener
             $response = new JsonResponse();
             $event->setResponse($response);
         }
+
+        if ($method === 'POST' && $request->headers->get('content-type') === 'application/json') {
+            $data = json_decode($request->getContent(), true);
+            if ($data) {
+                $request->initialize(
+                    $request->query->all(),
+                    $data,
+                    $request->attributes->all(),
+                    $request->cookies->all(),
+                    $request->files->all(),
+                    $request->server->all()
+                );
+            }
+        }
     }
 
     public function onKernelResponse(FilterResponseEvent $event)

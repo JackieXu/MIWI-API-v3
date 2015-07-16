@@ -30,7 +30,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 class AccessController extends BaseController
 {
     /**
-     * Logs in user
+     * Log in user
      *
      * Handles the authentication process for users registered via the standard MIWI channels.
      *
@@ -38,7 +38,7 @@ class AccessController extends BaseController
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="Logs in user",
+     *  description="Log in user",
      *  tags={},
      *  section="authentication",
      *  parameters={
@@ -92,7 +92,7 @@ class AccessController extends BaseController
     }
 
     /**
-     * Logs in user using Google token
+     * Log in user using Google token
      *
      * A Google OAuth access token should be supplied via a header (i.e. `access_token`) to authenticate.
      * The system will attempt to login with the credentials acquired via the Google access token. If no
@@ -102,7 +102,7 @@ class AccessController extends BaseController
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="Logs in user using Google token.",
+     *  description="Log in user using Google token.",
      *  tags={},
      *  section="authentication",
      *  statusCodes={
@@ -136,13 +136,13 @@ class AccessController extends BaseController
     }
 
     /**
-     * Registers new user
+     * Register new user
      *
      * @Route("/users")
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="Registers new user",
+     *  description="Register new user",
      *  tags={},
      *  section="users",
      *  parameters={
