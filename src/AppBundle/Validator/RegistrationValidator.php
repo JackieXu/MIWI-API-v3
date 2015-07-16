@@ -33,11 +33,5 @@ class RegistrationValidator extends Validator
             'lastName',
             'birthdate'
         ));
-
-        $resolver->setAllowedTypes('email', 'string');
-        $resolver->setAllowedTypes('password', 'string');
-        $resolver->setAllowedTypes('firstName', 'string');
-        $resolver->setAllowedTypes('lastName', 'string');
-        $resolver->setAllowedTypes('birthdate', 'string');
     }
 }
