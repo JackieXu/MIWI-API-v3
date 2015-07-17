@@ -9,22 +9,22 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class PostController
+ * Class ItemController
  *
  * @package AppBundle\Controller
  */
-class PostController extends BaseController
+class ItemController extends BaseController
 {
     /**
-     * Get posts
+     * Get items
      *
-     * @Route("posts")
+     * @Route("items")
      * @Method({"GET"})
      *
      * @ApiDoc(
-     *  description="Get posts",
+     *  description="Get items",
      *  tags={},
-     *  section="posts",
+     *  section="items",
      *  requirements={
      *
      *  },
@@ -46,15 +46,15 @@ class PostController extends BaseController
     }
 
     /**
-     * Create new post
+     * Create new item
      *
-     * @Route("posts")
+     * @Route("items")
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="Create new post",
+     *  description="Create new item",
      *  tags={},
-     *  section="posts",
+     *  section="items",
      *  requirements={
      *
      *  },
@@ -76,15 +76,15 @@ class PostController extends BaseController
     }
 
     /**
-     * Edit post
+     * Edit item
      *
-     * @Route("posts/{postId}", requirements={"postId": "\d+"})
+     * @Route("items/{itemId}", requirements={"itemId": "\d+"})
      * @Method({"PATCH"})
      *
      * @ApiDoc(
-     *  description="Edit post",
+     *  description="Edit item",
      *  tags={},
-     *  section="posts",
+     *  section="items",
      *  requirements={
      *
      *  },
@@ -106,15 +106,15 @@ class PostController extends BaseController
     }
 
     /**
-     * Delete post
+     * Delete item
      *
-     * @Route("posts/{postId}", requirements={"postId": "\d+"})
+     * @Route("items/{itemId}", requirements={"itemId": "\d+"})
      * @Method({"DELETE"})
      *
      * @ApiDoc(
-     *  description="Delete post",
+     *  description="Delete item",
      *  tags={},
-     *  section="posts",
+     *  section="items",
      *  requirements={
      *
      *  },
