@@ -21,7 +21,5 @@ class InterestArrayValidator extends Validator
         $resolver->setRequired(array(
             'interestNames'
         ));
-
-        $resolver->setAllowedTypes('interestNames', 'array');
     }
 }

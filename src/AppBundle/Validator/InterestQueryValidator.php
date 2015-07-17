@@ -24,8 +24,6 @@ class InterestQueryValidator extends QueryValidator
             'defaultOnly'
         ));
 
-        $resolver->setAllowedTypes('defaultOnly', 'bool');
-
         $resolver->setDefault('defaultOnly', false);
     }
 }
