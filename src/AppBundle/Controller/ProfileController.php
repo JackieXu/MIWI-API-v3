@@ -55,7 +55,7 @@ class ProfileController extends BaseController
      *      403="Returned when not authorized",
      *      500="Returned when error occured"
      *  },
-     *  authentication=true
+     *  authentication=false
      * )
      *
      * @param Request $request
