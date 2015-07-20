@@ -197,6 +197,7 @@ class InterestManager extends BaseManager
                         r.measure as measure,
                         r.order as order
             ORDER BY    r.order
+            LIMIT       5
         ', array(
             'userId' => $userId
         ));
