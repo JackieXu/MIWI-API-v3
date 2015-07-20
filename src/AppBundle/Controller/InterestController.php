@@ -173,27 +173,10 @@ class InterestController extends BaseController
     public function userInterestsAction(Request $request, $userId)
     {
         $userId = (int) $userId;
-        $accessToken = $request->headers->get('accessToken', '');
-        $accessManager = $this->get('manager.access');
+        $interestManager = $this->get('manager.interest');
+        $interests = $interestManager->getUserInterests($userId);
 
-        try {
-            $token = new TokenValidator(array(
-                'accessToken' => $accessToken
-            ));
-        } catch (MissingOptionsException $e) {
-            return $this->invalid();
-        } catch (InvalidOptionsException $e) {
-            return $this->invalid();
-        }
-
-        if ($accessManager->hasAccessToUser($token->getValue('accessToken'), $userId)) {
-            $interestManager = $this->get('manager.interest');
-            $interests = $interestManager->getUserInterests($userId);
-
-            return $this->success($interests);
-        }
-
-        return $this->forbidden();
+        return $this->success($interests);
     }
 
     /**
