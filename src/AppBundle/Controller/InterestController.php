@@ -215,7 +215,7 @@ class InterestController extends BaseController
      *  statusCodes={
      *
      *  },
-     *  authentication=true
+     *  authentication=false
      * )
      *
      * @param Request $request
@@ -224,32 +224,15 @@ class InterestController extends BaseController
      */
     public function userTopInterestsAction(Request $request, $userId)
     {
-        try {
-            $tokenValidator = new TokenValidator(array(
-                'accessToken' => $request->headers->get('accessToken')
-            ));
-        } catch (MissingOptionsException $e) {
-            return $this->invalid();
-        } catch (InvalidOptionsException $e) {
-            return $this->invalid();
-        }
-
-        $accessManager = $this->get('manager.access');
         $userId = (int) $userId;
-        $accessToken = $tokenValidator->getValue('accessToken');
+        $interestManager = $this->get('manager.interest');
+        $interests = $interestManager->getUserTopInterests($userId);
 
-        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
-            $interestManager = $this->get('manager.interest');
-            $interests = $interestManager->getUserTopInterests($userId);
-
-            if ($interests) {
-                return $this->success($interests);
-            }
-
-            return $this->invalid();
+        if ($interests) {
+            return $this->success($interests);
         }
 
-        return $this->forbidden();
+        return $this->invalid();
     }
 
     /**
