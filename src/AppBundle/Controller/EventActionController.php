@@ -29,37 +29,4 @@ class EventActionController extends BaseController
     {
         return $this->success();
     }
-
-    /**
-     * Invite users to event
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function inviteAction(Request $request)
-    {
-        return $this->success();
-    }
-
-    /**
-     * Accept event invitation
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function acceptInviteAction(Request $request)
-    {
-        return $this->success();
-    }
-
-    /**
-     * Decline event invitation
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function declineInviteAction(Request $request)
-    {
-        return $this->success();
-    }
 }

@@ -430,7 +430,7 @@ class InterestController extends BaseController
      * @ApiDoc(
      *  description="Get groups associated with interest",
      *  tags={},
-     *  section="groups",
+     *  section="interests",
      *  requirements={
      *
      *  },
@@ -488,7 +488,7 @@ class InterestController extends BaseController
      * @ApiDoc(
      *  description="Get events associated with interest",
      *  tags={},
-     *  section="events",
+     *  section="interests",
      *  requirements={
      *
      *  },

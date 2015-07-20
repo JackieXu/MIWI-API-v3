@@ -202,7 +202,19 @@ class InterestManager extends BaseManager
         ));
 
         if ($interests) {
-            return $interests[0];
+            $results = array();
+            $interestCount = count($interests);
+
+            for ($i = 0; $i < count($interests); $i++) {
+                $results[] = array(
+                    'id' => $interests[$i]['id'],
+                    'name' => $interests[$i]['name'],
+                    'measure' => 100 / $interestCount,
+                    'order' => $i + 1
+                );
+            }
+
+            return $results;
         }
 
         return false;

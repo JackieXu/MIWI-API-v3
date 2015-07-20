@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,10 +12,29 @@ use Symfony\Component\HttpFoundation\Request;
 class EventController extends BaseController
 {
     /**
-     * Get event overview for interest
+     * Get event overview
      *
      * @Route("events")
      * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get event overview",
+     *  tags={},
+     *  section="events",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
@@ -30,6 +50,25 @@ class EventController extends BaseController
      * @Route("events/{eventId}", requirements={"eventId": "\d+"})
      * @Method("GET")
      *
+     * @ApiDoc(
+     *  description="Get detailed event data",
+     *  tags={},
+     *  section="events",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -43,6 +82,25 @@ class EventController extends BaseController
      *
      * @Route("events")
      * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Create new event",
+     *  tags={},
+     *  section="events",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
@@ -58,6 +116,25 @@ class EventController extends BaseController
      * @Route("events/{eventId}", requirements={"eventId": "\d+"})
      * @Method({"PATCH"})
      *
+     * @ApiDoc(
+     *  description="Edit event",
+     *  tags={},
+     *  section="events",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -67,10 +144,29 @@ class EventController extends BaseController
     }
 
     /**
-     * Deletes event
+     * Delete event
      *
      * @Route("events/{eventId}", requirements={"eventId": "\d+"})
      * @Method({"DELETE"})
+     *
+     * @ApiDoc(
+     *  description="Delete event",
+     *  tags={},
+     *  section="events",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response

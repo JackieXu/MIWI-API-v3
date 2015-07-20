@@ -55,7 +55,6 @@ class UserManager extends BaseManager
                 WHERE   id(u) = {userId}
                 RETURN  u.firstName as firstName,
                         u.lastName as lastName,
-                        u.firstName + " " + u.lastName as name,
                         u.image as image,
                         u.location as location,
                         u.followerCount as followerCount,
@@ -67,7 +66,6 @@ class UserManager extends BaseManager
                 WHERE   id(u) = {userId}
                 RETURN  u.firstName as firstName,
                         u.lastName as lastName,
-                        u.firstName + " " + u.lastName as name,
                         u.image as image
             ';
         }
@@ -81,5 +79,60 @@ class UserManager extends BaseManager
         }
 
         return false;
+    }
+
+    /**
+     * Get user's favorited posts
+     *
+     * @param int $userId
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     * @throws \Exception
+     */
+    public function getUserFavoritedPosts($userId, $limit, $offset)
+    {
+        $posts = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:HAS_FAVORITED]->(p:POST)
+            WHERE   id(u) = {userId}
+            RETURN  id(p) as id,
+                    p.image as image,
+                    p.title as title,
+                    p.upvotes as upvotes,
+                    p.downvotes as downvotes,
+                    p.comments as comments,
+                    SUBSTRING(p.body, 0, 200) as body
+            SKIP    {offset}
+            LIMIT   {limit}
+        ', array(
+            'userId' => $userId,
+            'limit' => $limit,
+            'offset' => $offset
+        ));
+
+        return $posts;
+    }
+
+    public function getUserPosts($userId, $limit, $offset)
+    {
+        $posts = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:HAS_POSTED]->(p:POST)
+            WHERE   id(u) = {userId}
+            RETURN  id(p) as id,
+                    p.image as image,
+                    p.title as title,
+                    p.upvotes as upvotes,
+                    p.downvotes as downvotes,
+                    p.comments as comments,
+                    SUBSTRING(p.body, 0, 200) as body
+            SKIP    {offset}
+            LIMIT   {limit}
+        ', array(
+            'userId' => $userId,
+            'limit' => $limit,
+            'offset' => $offset
+        ));
+
+        return $posts;
     }
 }

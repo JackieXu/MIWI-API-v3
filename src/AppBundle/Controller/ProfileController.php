@@ -141,18 +141,4 @@ class ProfileController extends BaseController
 
         return $this->success();
     }
-
-    /**
-     * Get user posts
-     *
-     * @Route("users/{userId}/posts", requirements={"userId": "\d+"})
-     * @Method({"GET"})
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function postsAction(Request $request)
-    {
-        return $this->invalid();
-    }
 }

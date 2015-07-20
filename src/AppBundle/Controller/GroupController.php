@@ -12,10 +12,29 @@ use Symfony\Component\HttpFoundation\Request;
 class GroupController extends BaseController
 {
     /**
-     * Get group overview within an interest
+     * Get group overview
      *
      * @Route("groups")
      * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get group overview",
+     *  tags={},
+     *  section="groups",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response

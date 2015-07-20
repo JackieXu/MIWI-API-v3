@@ -136,6 +136,50 @@ class AccessController extends BaseController
     }
 
     /**
+     * Log in user using Facebook token
+     *
+     * A Facebook OAuth access token should be supplied via a header (i.e. `access_token`) to authenticate.
+     * The system will attempt to login with the credentials acquired via the Facebook access token. If no
+     * user is found in the system, a new user will be created.
+     *
+     * @Route("auth/facebook")
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Log in user using Facebook token.",
+     *  tags={},
+     *  section="authentication",
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when credentials are invalid"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function loginWithFacebookAction(Request $request)
+    {
+        $token = $request->headers->get('accessToken');
+
+        try {
+            $options = new GoogleValidator(array(
+                'googleAccessToken' => $token
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->unauthorized();
+        }
+
+        $accessManager = $this->get('manager.access');
+        $userToken = $accessManager->loginWithGoogle($options->getValue('googleAccessToken'));
+
+        return new JsonResponse(array(
+            'accessToken' => $userToken
+        ));
+    }
+
+    /**
      * Register new user
      *
      * @Route("/users")

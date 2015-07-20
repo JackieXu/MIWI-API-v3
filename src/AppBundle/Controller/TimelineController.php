@@ -31,7 +31,7 @@ class TimelineController extends BaseController
      * @ApiDoc(
      *  description="Gets an interest timeline",
      *  tags={},
-     *  section="timelines",
+     *  section="interests",
      *  parameters={
      *      {
      *          "name"="limit",
