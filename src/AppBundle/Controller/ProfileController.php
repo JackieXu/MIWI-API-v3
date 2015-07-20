@@ -65,9 +65,6 @@ class ProfileController extends BaseController
     public function profileAction(Request $request, $userId)
     {
         try {
-            $tokenValidator = new TokenValidator(array(
-                'accessToken' => $request->headers->get('accessToken')
-            ));
             $profileValidator = new ProfileValidator($request->query->all());
         } catch (MissingOptionsException $e) {
             return $this->invalid();
@@ -75,24 +72,17 @@ class ProfileController extends BaseController
             return $this->invalid();
         }
 
-        $accessManager = $this->get('manager.access');
         $userId = (int) $userId;
-        $accessToken = $tokenValidator->getValue('accessToken');
         $wantsExtendedProfile = $profileValidator->getValue('extended') === '1';
 
-        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+        $userManager = $this->get('manager.user');
+        $profile = $userManager->getProfile($userId, $wantsExtendedProfile);
 
-            $userManager = $this->get('manager.user');
-            $profile = $userManager->getProfile($userId, $wantsExtendedProfile);
-
-            if ($profile) {
-                return $this->success($profile);
-            }
-
-            return $this->invalid();
+        if ($profile) {
+            return $this->success($profile);
         }
 
-        return $this->unauthorized();
+        return $this->invalid();
     }
 
     /**
