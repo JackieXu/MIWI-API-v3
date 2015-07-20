@@ -54,7 +54,7 @@ class TimelineManager extends BaseManager
                         c.visibility as visibility,
                         c.likes as upvotes,
                         c.likes as downvotes,
-                        split(c.images, ",") as images,
+                        c.images as images,
                         c.shares as shares,
                         c.comments as comments,
                         c.date as date

@@ -106,6 +106,43 @@ class InterestController extends BaseController
     }
 
     /**
+     * Create new interest
+     *
+     * @Route("interests")
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Create new interest",
+     *  tags={},
+     *  section="interests",
+     *  requirements={
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="name",
+     *          "dataType"="string",
+     *          "description"="Interest name",
+     *          "required"="true"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      409="Returned when a conflict occurs",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function createAction(Request $request)
+    {
+        return $this->invalid();
+    }
+
+    /**
      * Get user interests
      *
      * @Route("users/{userId}/interests", requirements={"userId" = "\d+"})
