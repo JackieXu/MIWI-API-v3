@@ -86,7 +86,7 @@ class FavoriteController extends BaseController
      *      403="Returned when not authorized",
      *      500="Returned when an error occured"
      *  },
-     *  authentication=true
+     *  authentication=false
      * )
      *
      * @param Request $request
@@ -96,9 +96,6 @@ class FavoriteController extends BaseController
     public function favoritesAction(Request $request, $userId)
     {
         try {
-            $tokenValidator = new TokenValidator(array(
-                'accessToken' => $request->headers->get('accessToken')
-            ));
             $limitValidator = new LimitValidator($request->query->all());
         } catch (MissingOptionsException $e) {
             return $this->invalid();
@@ -106,20 +103,14 @@ class FavoriteController extends BaseController
             return $this->invalid();
         }
 
-        $accessManager = $this->get('manager.access');
-        $accessToken = $tokenValidator->getValue('accessToken');
         $limit = (int) $limitValidator->getValue('limit');
         $offset = (int) $limitValidator->getValue('offset');
         $userId = (int) $userId;
 
-        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
-            $userManager = $this->get('manager.user');
-            $favorites = $userManager->getUserFavoritedPosts($userId, $limit, $offset);
+        $userManager = $this->get('manager.user');
+        $favorites = $userManager->getUserFavoritedPosts($userId, $limit, $offset);
 
-            return $this->success($favorites);
-        }
-
-        return $this->forbidden();
+        return $this->success($favorites);
     }
 
     /**
