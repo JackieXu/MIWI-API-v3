@@ -249,24 +249,25 @@ class InterestManager extends BaseManager
      * Add interest to user
      *
      * @param int $userId
-     * @param int $interestId
+     * @param string $interestName
      * @param string $visibility
      * @return bool
      * @throws \Exception
      */
-    public function addInterest($userId, $interestId, $visibility)
+    public function addInterest($userId, $interestName, $visibility)
     {
         $interest = $this->sendCypherQuery('
-            MATCH   (i:INTEREST), (u:USER)
-            WHERE   id(i) = {interestId}
-            AND     id(u) = {userId}
+            MERGE   (i:INTEREST {name: {name}})
+            WITH    i
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
             MERGE   (u)-[r:LIKES]->(i)
             SET     r.visibility = {visibility}
             RETURN  id(i) as id,
                     i.name as name
         ', array(
             'userId' => $userId,
-            'interestId' => $interestId,
+            'name' => $interestName,
             'visibility' => $visibility
         ));
 

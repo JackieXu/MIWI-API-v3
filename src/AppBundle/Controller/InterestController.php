@@ -323,15 +323,15 @@ class InterestController extends BaseController
      *  },
      *  parameters={
      *      {
-     *          "name"="interestId",
-     *          "dataType"="int",
+     *          "name"="name",
+     *          "dataType"="string",
      *          "required"="true",
-     *          "description"="Interest identifier"
+     *          "description"="Interest name"
      *      },
      *      {
      *          "name"="visibility",
      *          "dataType"="string",
-     *          "required"="false",
+     *          "required"="0",
      *          "description"="Interest visibility"
      *      }
      *  },
@@ -362,14 +362,14 @@ class InterestController extends BaseController
         }
 
         $userId = (int) $userId;
-        $interestId = (int) $interestValidator->getValue('interestId');
+        $interestName = strtolower($interestValidator->getValue('name'));
         $visibility = $interestValidator->getValue('visibility');
         $accessManager = $this->get('manager.access');
         $accessToken = $tokenValidator->getValue('accessToken');
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $interestManager = $this->get('manager.interest');
-            $interest = $interestManager->addInterest($userId, $interestId, $visibility);
+            $interest = $interestManager->addInterest($userId, $interestName, $visibility);
 
             if ($interest) {
                 return $this->success();

@@ -20,11 +20,11 @@ class InterestAdditionValidator extends Validator
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefined(array(
-            'interestId',
+            'name',
             'visibility'
         ));
         $resolver->setRequired(array(
-            'interestId'
+            'name'
         ));
         $resolver->setAllowedValues('visibility', array(
             'public',
