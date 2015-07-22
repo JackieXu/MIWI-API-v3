@@ -4,8 +4,10 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\InterestAdditionValidator;
 use AppBundle\Validator\InterestArrayValidator;
 use AppBundle\Validator\InterestQueryValidator;
+use AppBundle\Validator\InterestValidator;
 use AppBundle\Validator\ShareObjectValidator;
 use AppBundle\Validator\TokenValidator;
 use AppBundle\Validator\UserValidator;
@@ -116,6 +118,7 @@ class InterestController extends BaseController
      *  tags={},
      *  section="interests",
      *  requirements={
+     *
      *  },
      *  parameters={
      *      {
@@ -131,7 +134,7 @@ class InterestController extends BaseController
      *      409="Returned when a conflict occurs",
      *      500="Returned when an error occured"
      *  },
-     *  authentication=true
+     *  authentication=false
      * )
      *
      * @param Request $request
@@ -139,7 +142,19 @@ class InterestController extends BaseController
      */
     public function createAction(Request $request)
     {
-        return $this->invalid();
+        try {
+            $interestValidator = new InterestValidator($request->request->all());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $name = $interestValidator->getValue('name');
+        $interestManager = $this->get('manager.interest');
+        $interest = $interestManager->createInterest($name);
+
+        return $this->success($interest);
     }
 
     /**
@@ -284,6 +299,79 @@ class InterestController extends BaseController
             if ($interests) {
                 $userManager = $this->get('manager.user');
                 $userManager->setUserStatus($userId, 1);
+                return $this->success();
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->forbidden();
+    }
+
+    /**
+     * Add interest to user
+     *
+     * @Route("users/{userId}/interests", requirements={"userId": "\d+"})
+     * @Method({"PUT"})
+     *
+     * @ApiDoc(
+     *  description="Add interest to user",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="interestId",
+     *          "dataType"="int",
+     *          "required"="true",
+     *          "description"="Interest identifier"
+     *      },
+     *      {
+     *          "name"="visibility",
+     *          "dataType"="string",
+     *          "required"="false",
+     *          "description"="Interest visibility"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function addAction(Request $request, $userId)
+    {
+        try {
+            $interestValidator = new InterestAdditionValidator($request->request->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        }
+
+        $userId = (int) $userId;
+        $interestId = (int) $interestValidator->getValue('interestId');
+        $visibility = $interestValidator->getValue('visibility');
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $interestManager = $this->get('manager.interest');
+            $interest = $interestManager->addInterest($userId, $interestId, $visibility);
+
+            if ($interest) {
                 return $this->success();
             }
 

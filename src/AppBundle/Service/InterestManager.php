@@ -220,4 +220,60 @@ class InterestManager extends BaseManager
 
         return false;
     }
+
+    /**
+     * Create interest
+     *
+     * @param $name
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function createInterest($name)
+    {
+        $interest = $this->sendCypherQuery('
+            MERGE   (i:INTEREST {name: {name}})
+            RETURN  id(i) as id,
+                    i.name as name
+        ', array(
+            'name' => $name
+        ));
+
+        if ($interest) {
+            return $interest[0];
+        }
+
+        return false;
+    }
+
+    /**
+     * Add interest to user
+     *
+     * @param int $userId
+     * @param int $interestId
+     * @param string $visibility
+     * @return bool
+     * @throws \Exception
+     */
+    public function addInterest($userId, $interestId, $visibility)
+    {
+        $interest = $this->sendCypherQuery('
+            MATCH   (i:INTEREST), (u:USER)
+            WHERE   id(i) = {interestId}
+            AND     id(u) = {userId}
+            MERGE   (u)-[r:LIKES]->(i)
+            SET     r.visibility = {visibility}
+            RETURN  id(i) as id,
+                    i.name as name
+        ', array(
+            'userId' => $userId,
+            'interestId' => $interestId,
+            'visibility' => $visibility
+        ));
+
+        if ($interest) {
+            return $interest[0];
+        }
+
+        return false;
+    }
 }
