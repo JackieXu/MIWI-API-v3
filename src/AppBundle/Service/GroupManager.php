@@ -26,4 +26,31 @@ class GroupManager extends BaseManager
 
         return $groups;
     }
+
+    /**
+     * Get group info
+     *
+     * @param int $groupId
+     * @param int $userId
+     * @return array|bool
+     */
+    public function getGroup($groupId, $userId)
+    {
+        $group = $this->sendCypherQuery('
+            MATCH   (g:GROUP)
+            WHERE   id(g) = {groupId}
+            RETURN  id(g) as id,
+                    g.title as title,
+                    g.image as image,
+                    g.body as description
+        ', array(
+            'groupId' => $groupId
+        ));
+
+        if ($group) {
+            return $group[0];
+        }
+
+        return false;
+    }
 }

@@ -4,10 +4,13 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class GroupController extends BaseController
 {
@@ -67,11 +70,30 @@ class GroupController extends BaseController
      * )
      *
      * @param Request $request
+     * @param string $groupId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function viewGroupAction(Request $request)
+    public function viewGroupAction(Request $request, $groupId)
     {
-        return $this->success();
+        try {
+            $userValidator = new UserValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $userId = (int) $userValidator->getValue('userId');
+        $groupId = (int) $groupId;
+        $groupManager = $this->get('manager.group');
+
+        $group = $groupManager->getGroup($groupId, $userId);
+
+        if ($group) {
+            return $this->success($group);
+        }
+
+        return $this->createNotFoundException();
     }
 
     /**

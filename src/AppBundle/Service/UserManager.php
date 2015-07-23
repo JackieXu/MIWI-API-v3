@@ -113,6 +113,15 @@ class UserManager extends BaseManager
         return $posts;
     }
 
+    /**
+     * Get user's posts
+     *
+     * @param int $userId
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     * @throws \Exception
+     */
     public function getUserPosts($userId, $limit, $offset)
     {
         $posts = $this->sendCypherQuery('
@@ -124,7 +133,8 @@ class UserManager extends BaseManager
                     p.upvotes as upvotes,
                     p.downvotes as downvotes,
                     p.comments as comments,
-                    SUBSTRING(p.body, 0, 200) as body
+                    SUBSTRING(p.body, 0, 200) as body,
+                    "post" as type
             SKIP    {offset}
             LIMIT   {limit}
         ', array(
