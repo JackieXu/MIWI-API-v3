@@ -49,6 +49,7 @@ class TimelineManager extends BaseManager
             AND         id(u) = {userId}
             AND NOT     (u)-[:HAS_HIDDEN]->(c)
             RETURN      id(c) as id,
+                        c.user as author,
                         c.title as title,
                         c.body as body,
                         c.visibility as visibility,
