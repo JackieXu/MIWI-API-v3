@@ -101,7 +101,8 @@ class UserManager extends BaseManager
                     p.upvotes as upvotes,
                     p.downvotes as downvotes,
                     p.comments as comments,
-                    SUBSTRING(p.body, 0, 200) as body
+                    SUBSTRING(p.body, 0, 200) as body,
+                    labels(p) as labels
             SKIP    {offset}
             LIMIT   {limit}
         ', array(
@@ -110,7 +111,26 @@ class UserManager extends BaseManager
             'offset' => $offset
         ));
 
-        return $posts;
+        $postData = array();
+
+        foreach ($posts as $post) {
+            if (in_array('POST', $post['labels'])) {
+                $label = 'post';
+            } else {
+                $label = 'article';
+            }
+            $postData[] = array(
+                'id' => $post['id'],
+                'title' => $post['title'],
+                'upvotes' => (int) $post['upvotes'],
+                'downvotes' => (int) $post['downvotes'],
+                'comments' => (int)$post ['comments'],
+                'body' => $post['body'],
+                "type" => $label
+            );
+        }
+
+        return $postData;
     }
 
     /**

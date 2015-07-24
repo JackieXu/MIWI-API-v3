@@ -53,4 +53,57 @@ class GroupManager extends BaseManager
 
         return false;
     }
+
+    /**
+     * Join group
+     *
+     * @param int $groupId
+     * @param int $userId
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function joinGroup($groupId, $userId)
+    {
+        $group = $this->sendCypherQuery('
+            MATCH   (u:USER), (g:GROUP)
+            WHERE   id(u) = {userId}
+            AND     id(g) = {groupId}
+            MERGE   (u)-[r:MEMBER_OF]->(g)
+            ON CREATE SET r.joinDate = timestamp()
+            RETURN  r.joinDate
+        ', array(
+            'userId' => $userId,
+            'groupId' => $groupId
+        ));
+
+        if ($group) {
+            return $group[0];
+        }
+
+        return false;
+    }
+
+    /**
+     * @param int $groupId
+     * @param int $userId
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function leaveGroup($groupId, $userId)
+    {
+        $group = $this->sendCypherQuery('
+            MATCH   (u:USER), (g:GROUP)
+            WHERE   id(u) = {userId}
+            AND     id(g) = {groupId}
+        ', array(
+            'userId' => $userId,
+            'groupId' => $groupId
+        ));
+
+        if ($group) {
+            return $group[0];
+        }
+
+        return false;
+    }
 }
