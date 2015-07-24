@@ -121,6 +121,7 @@ class UserManager extends BaseManager
             }
             $postData[] = array(
                 'id' => $post['id'],
+                'author' => null,
                 'title' => $post['title'],
                 'upvotes' => (int) $post['upvotes'],
                 'downvotes' => (int) $post['downvotes'],
