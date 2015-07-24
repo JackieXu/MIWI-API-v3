@@ -24,6 +24,11 @@ class TimelineManager extends BaseManager
      */
     public function getInterestTimeline($userId, $interestId, $offset, $limit)
     {
+        $userId = (int) $userId;
+        $interestId = (int) $interestId;
+        $offset = (int) $offset;
+        $limit = (int) $limit;
+
         if (!is_int($interestId)) {
             throw new InvalidInterestException();
         }
@@ -52,13 +57,14 @@ class TimelineManager extends BaseManager
                         c.user as author,
                         c.title as title,
                         c.body as body,
+                        c.date as date,
                         c.visibility as visibility,
                         c.likes as upvotes,
                         c.likes as downvotes,
                         c.images as images,
                         c.shares as shares,
                         c.comments as comments,
-                        c.date as date
+                        c.date as date,
             ORDER BY    c.date DESC
             SKIP        {offset}
             LIMIT       {limit}
