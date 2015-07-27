@@ -523,7 +523,12 @@ class InterestController extends BaseController
      *  tags={},
      *  section="interests",
      *  requirements={
-     *
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
      *  },
      *  parameters={
      *
@@ -581,7 +586,12 @@ class InterestController extends BaseController
      *  tags={},
      *  section="interests",
      *  requirements={
-     *
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
      *  },
      *  parameters={
      *
