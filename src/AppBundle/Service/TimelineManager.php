@@ -64,7 +64,7 @@ class TimelineManager extends BaseManager
                         c.images as images,
                         c.shares as shares,
                         c.comments as comments,
-                        c.date as date,
+                        c.date as date
             ORDER BY    c.date DESC
             SKIP        {offset}
             LIMIT       {limit}
