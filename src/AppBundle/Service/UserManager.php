@@ -90,26 +90,53 @@ class UserManager extends BaseManager
      * @return array
      * @throws \Exception
      */
-    public function getUserFavoritedPosts($userId, $limit, $offset)
+    public function getUserFavoritedPosts($userId, $limit, $offset, $interestId, $query)
     {
-        $posts = $this->sendCypherQuery('
-            MATCH   (u:USER)-[:HAS_FAVORITED]->(p:POST)
-            WHERE   id(u) = {userId}
-            RETURN  id(p) as id,
-                    p.image as image,
-                    p.title as title,
-                    p.upvotes as upvotes,
-                    p.downvotes as downvotes,
-                    p.comments as comments,
-                    SUBSTRING(p.body, 0, 200) as body,
-                    labels(p) as labels
-            SKIP    {offset}
-            LIMIT   {limit}
-        ', array(
-            'userId' => $userId,
-            'limit' => $limit,
-            'offset' => $offset
-        ));
+        if ($interestId === 0) {
+            $posts = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)
+                WHERE   id(u) = {userId}
+                AND     p.title =~ {query}
+                RETURN  id(p) as id,
+                        p.image as image,
+                        p.title as title,
+                        p.upvotes as upvotes,
+                        p.downvotes as downvotes,
+                        p.comments as comments,
+                        SUBSTRING(p.body, 0, 200) as body,
+                        p.user as author
+                SKIP    {offset}
+                LIMIT   {limit}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query
+            ));
+        } else {
+            $posts = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {interestId}
+                AND     p.title =~ {query}
+                RETURN  id(p) as id,
+                        p.image as image,
+                        p.title as title,
+                        p.upvotes as upvotes,
+                        p.downvotes as downvotes,
+                        p.comments as comments,
+                        SUBSTRING(p.body, 0, 200) as body,
+                        p.user as author
+                SKIP    {offset}
+                LIMIT   {limit}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query,
+                'interestId' => $interestId
+            ));
+        }
 
         $postData = array();
 
@@ -140,29 +167,58 @@ class UserManager extends BaseManager
      * @param int $userId
      * @param int $limit
      * @param int $offset
+     * @param int $interestId
+     * @param int $query
      * @return array
      * @throws \Exception
      */
-    public function getUserPosts($userId, $limit, $offset)
+    public function getUserPosts($userId, $limit, $offset, $interestId, $query)
     {
-        $posts = $this->sendCypherQuery('
-            MATCH   (u:USER)-[:HAS_POSTED]->(p:POST)
-            WHERE   id(u) = {userId}
-            RETURN  id(p) as id,
-                    p.image as image,
-                    p.title as title,
-                    p.upvotes as upvotes,
-                    p.downvotes as downvotes,
-                    p.comments as comments,
-                    SUBSTRING(p.body, 0, 200) as body,
-                    "post" as type
-            SKIP    {offset}
-            LIMIT   {limit}
-        ', array(
-            'userId' => $userId,
-            'limit' => $limit,
-            'offset' => $offset
-        ));
+        if ($interestId === 0) {
+            $posts = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:HAS_POSTED]->(p:POST)
+                WHERE   id(u) = {userId}
+                AND     p.title =~ {query}
+                RETURN  id(p) as id,
+                        p.image as image,
+                        p.title as title,
+                        p.upvotes as upvotes,
+                        p.downvotes as downvotes,
+                        p.comments as comments,
+                        SUBSTRING(p.body, 0, 200) as body,
+                        "post" as type
+                SKIP    {offset}
+                LIMIT   {limit}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query
+            ));
+        } else {
+            $posts = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:HAS_POSTED]->(p:POST)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {interestId}
+                AND     p.title =~ {query}
+                RETURN  id(p) as id,
+                        p.image as image,
+                        p.title as title,
+                        p.upvotes as upvotes,
+                        p.downvotes as downvotes,
+                        p.comments as comments,
+                        SUBSTRING(p.body, 0, 200) as body,
+                        "post" as type
+                SKIP    {offset}
+                LIMIT   {limit}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query,
+                'interestId' => $interestId
+            ));
+        }
 
         return $posts;
     }

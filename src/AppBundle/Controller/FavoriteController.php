@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\FilterValidator;
 use AppBundle\Validator\LimitValidator;
 use AppBundle\Validator\TokenValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -74,6 +75,18 @@ class FavoriteController extends BaseController
      *          "dataType"="int",
      *          "required"=false,
      *          "description"="Number of items to skip"
+     *      },
+     *      {
+     *          "name"="interestId",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Interest identifier to filter on"
+     *      },
+     *      {
+     *          "name"="query",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Search query"
      *      }
      *  },
      *  parameters={
@@ -96,19 +109,21 @@ class FavoriteController extends BaseController
     public function favoritesAction(Request $request, $userId)
     {
         try {
-            $limitValidator = new LimitValidator($request->query->all());
+            $filterValidator = new FilterValidator($request->query->all());
         } catch (MissingOptionsException $e) {
             return $this->invalid();
         } catch (InvalidOptionsException $e) {
             return $this->invalid();
         }
 
-        $limit = (int) $limitValidator->getValue('limit');
-        $offset = (int) $limitValidator->getValue('offset');
+        $limit = (int) $filterValidator->getValue('limit');
+        $offset = (int) $filterValidator->getValue('offset');
+        $interestId = (int) $filterValidator->getValue('interestId');
+        $query = $filterValidator->getValue('query');
         $userId = (int) $userId;
 
         $userManager = $this->get('manager.user');
-        $favorites = $userManager->getUserFavoritedPosts($userId, $limit, $offset);
+        $favorites = $userManager->getUserFavoritedPosts($userId, $limit, $offset, $interestId, $query);
 
         return $this->success($favorites);
     }
