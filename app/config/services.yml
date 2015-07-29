@@ -30,6 +30,10 @@ services:
         class: AppBundle\Service\EventManager
         parent: manager.base
 
+    formatter:
+        class: AppBundle\Service\Formatter
+        parent: manager.base
+
     listener.cors:
         class: AppBundle\Event\Listener\CORSListener
         tags:

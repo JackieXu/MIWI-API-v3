@@ -39,16 +39,13 @@ class GroupManager extends BaseManager
         $group = $this->sendCypherQuery('
             MATCH   (g:GROUP)
             WHERE   id(g) = {groupId}
-            RETURN  id(g) as id,
-                    g.title as title,
-                    g.image as image,
-                    g.body as description
+            RETURN  id(g) as id
         ', array(
             'groupId' => $groupId
         ));
 
         if ($group) {
-            return $group[0];
+            return $this->container->get('formatter')->formatGroup($groupId, $userId);
         }
 
         return false;

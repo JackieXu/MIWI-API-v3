@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\TokenValidator;
 use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -58,7 +59,12 @@ class GroupController extends BaseController
      *  tags={},
      *  section="groups",
      *  requirements={
-     *
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
      *  },
      *  parameters={
      *
@@ -77,6 +83,9 @@ class GroupController extends BaseController
     {
         try {
             $userValidator = new UserValidator($request->query->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid();
         } catch (InvalidOptionsException $e) {
@@ -85,15 +94,24 @@ class GroupController extends BaseController
 
         $userId = (int) $userValidator->getValue('userId');
         $groupId = (int) $groupId;
+        $accessToken = $tokenValidator->getValue('accessToken');
         $groupManager = $this->get('manager.group');
+        $accessManager = $this->get('manager.access');
 
-        $group = $groupManager->getGroup($groupId, $userId);
 
-        if ($group) {
-            return $this->success($group);
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+
+            $group = $groupManager->getGroup($groupId, $userId);
+
+            if ($group) {
+                return $this->success($group);
+            }
+
+            return $this->createNotFoundException();
+
         }
 
-        return $this->createNotFoundException();
+        return $this->forbidden();
     }
 
     /**

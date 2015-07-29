@@ -141,21 +141,7 @@ class UserManager extends BaseManager
         $postData = array();
 
         foreach ($posts as $post) {
-            if (in_array('POST', $post['labels'])) {
-                $label = 'post';
-            } else {
-                $label = 'article';
-            }
-            $postData[] = array(
-                'id' => $post['id'],
-                'author' => null,
-                'title' => $post['title'],
-                'upvotes' => (int) $post['upvotes'],
-                'downvotes' => (int) $post['downvotes'],
-                'comments' => (int)$post ['comments'],
-                'body' => $post['body'],
-                "type" => $label
-            );
+            $postData[] = $this->container->get('formatter')->formatContent($post, $userId);
         }
 
         return $postData;
@@ -220,6 +206,12 @@ class UserManager extends BaseManager
             ));
         }
 
-        return $posts;
+        $postData = array();
+
+        foreach ($posts as $post) {
+            $postData[] = $this->container->get('formatter')->formatContent($post, $userId);
+        }
+
+        return $postData;
     }
 }
