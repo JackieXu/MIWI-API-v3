@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\GroupValidator;
 use AppBundle\Validator\TokenValidator;
 use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -51,7 +52,8 @@ class GroupController extends BaseController
     /**
      * Get detailed group data
      *
-     * @Route("groups/{groupId}", requirements={"groupId": "\d+"})
+     * @Route("groups/{groupId}", requirements={"g
+roupId": "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
@@ -125,7 +127,42 @@ class GroupController extends BaseController
      *  tags={},
      *  section="groups",
      *  requirements={
-     *
+     *      {
+     *          "name"="title",
+     *          "dataType"="string",
+     *          "required"=true,
+     *          "description"="Group name"
+     *      },
+     *      {
+     *          "name"="description",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Group description"
+     *      },
+     *      {
+     *          "name"="visibility",
+     *          "dataType"="string",
+     *          "required"=true,
+     *          "description"="Group visibility setting (either `private` or `public`)"
+     *      },
+     *      {
+     *          "name"="interestId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "description"="Interest the group should be linked to"
+     *      },
+     *      {
+     *          "name"="website",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Group website"
+     *      },
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "description"="User identifier"
+     *      }
      *  },
      *  parameters={
      *
@@ -141,7 +178,40 @@ class GroupController extends BaseController
      */
     public function createGroupAction(Request $request)
     {
-        return $this->success();
+        try {
+            $groupValidator = new GroupValidator($request->request->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $groupValidator->getValue('userId');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+
+            $interestId = (int) $groupValidator->getValue('interestId');
+            $title = $groupValidator->getValue('title');
+            $description = $groupValidator->getValue('description');
+            $visibility = $groupValidator->getValue('visibility');
+            $website = $groupValidator->getValue('website');
+            $groupManager = $this->get('manager.group');
+
+            $group = $groupManager->createGroup($title, $description, $website, $visibility, $interestId, $userId);
+
+            if ($group) {
+                return $this->success($group);
+            }
+
+            return $this->conflict();
+        }
+
+        return $this->forbidden();
     }
 
     /**

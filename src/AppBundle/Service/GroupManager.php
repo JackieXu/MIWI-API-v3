@@ -103,4 +103,50 @@ class GroupManager extends BaseManager
 
         return false;
     }
+
+    public function createGroup($title, $description, $website, $visibility, $interestId, $userId)
+    {
+        $group = $this->sendCypherQuery('
+            MATCH   (g:GROUP)-[:ASSOCIATED_WITH]->(i:INTEREST)
+            WHERE   g.title = {title}
+            AND     id(i) = {interestId}
+            RETURN  id(g)
+        ', array(
+            'title' => $title,
+            'interestId' => $interestId
+        ));
+
+        if ($group) {
+            return false;
+        }
+
+        $group = $this->sendCypherQuery('
+            MATCH   (u:USER), (i:INTEREST)
+            WHERE   id(u) = {userId}
+            AND     id(i) = {interestId}
+            WITH    u, i
+            CREATE  (u)-[:ADMIN_OF {date: {date}}]->(g:GROUP {
+                title: {title},
+                description: {description},
+                website: {website},
+                members: 1,
+                interestId: {interestId},
+                visibility: {visibility}
+            })-[:ASSOCIATED_WITH]->(i)
+            RETURN  id(g) as id
+        ', array(
+            'title' => $title,
+            'description' => $description,
+            'website' => $website,
+            'visibility' => $visibility,
+            'userId' => $userId,
+            'interestId' => $interestId
+        ));
+
+        if ($group) {
+            return $group[0];
+        }
+
+        return false;
+    }
 }
