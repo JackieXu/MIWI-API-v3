@@ -13,10 +13,10 @@ class TimelineManager extends BaseManager
     /**
      * Get interest timeline
      *
-     * @param integer $userId
-     * @param integer $interestId
-     * @param integer $offset
-     * @param integer $limit
+     * @param int $userId
+     * @param int $interestId
+     * @param int $offset
+     * @param int $limit
      * @return array
      * @throws InvalidInterestException
      * @throws InvalidLimitException
@@ -24,23 +24,6 @@ class TimelineManager extends BaseManager
      */
     public function getInterestTimeline($userId, $interestId, $offset, $limit)
     {
-        $userId = (int) $userId;
-        $interestId = (int) $interestId;
-        $offset = (int) $offset;
-        $limit = (int) $limit;
-
-        if (!is_int($interestId)) {
-            throw new InvalidInterestException();
-        }
-
-        if (!is_int($offset) || $offset < 0) {
-            throw new InvalidOffsetException();
-        }
-
-        if (!is_int($limit) || $limit < 1 || $limit > 100) {
-            throw new InvalidLimitException();
-        }
-
         $parameters = array(
             'userId' => $userId,
             'interestId' => $interestId,

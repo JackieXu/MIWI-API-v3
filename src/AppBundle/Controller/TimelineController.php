@@ -87,6 +87,8 @@ class TimelineController extends BaseController
 
         $userId = (int) $options->getValue('userId');
         $interestId = (int) $interestId;
+        $offset = (int) $options->getValue('offset');
+        $limit = (int) $options->getValue('limit');
         $accessToken = $tokenValidator->getValue('accessToken');
         $accessManager = $this->get('manager.access');
 
@@ -96,8 +98,8 @@ class TimelineController extends BaseController
             $results = $timelineManager->getInterestTimeline(
                 $userId,
                 $interestId,
-                $options->getValue('offset'),
-                $options->getValue('limit')
+                $offset,
+                $limit
             );
 
             return $this->success($results);
