@@ -47,12 +47,16 @@ class Formatter extends BaseManager
         }
 
 
+        $images = array_filter($images);
+
         return array(
             'id' => $content['id'],
             'date' => $content['date'],
             'type' => in_array('ARTICLE', $content['labels']) ? 'article' : 'post',
             'body' => $content['body'],
             'interestId' => $content['interestId'],
+            'upvotes' => $content['upvotes'],
+            'downvotes' => $content['downvotes'],
             'images' => $images,
             "link" => $content['link'],
             'title' => $content['title'],
