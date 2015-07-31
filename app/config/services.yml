@@ -5,6 +5,7 @@ services:
             - [setNeo4j, [%database_schema%, %database_host%, %database_port%, %database_username%, %database_password%]]
             - [setMailer, [@mailer]]
             - [setTemplateEngine, [@templating]]
+            - [setContainer, [@service_container]]
 
     manager.interest:
         class: AppBundle\Service\InterestManager
