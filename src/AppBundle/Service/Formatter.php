@@ -68,7 +68,7 @@ class Formatter extends BaseManager
         );
     }
 
-    private function formatUser($user)
+    public function formatUser($user)
     {
         $data = $this->sendCypherQuery('
             MATCH   (u:USER)

@@ -79,6 +79,7 @@ class TimelineManager extends BaseManager
             AND         id(u) = {userId}
             RETURN      id(e) as id,
                         e.title as title,
+                        e.user as admin,
                         e.body as body,
                         e.website as website,
                         e.location as location,
@@ -132,10 +133,14 @@ class TimelineManager extends BaseManager
 
         foreach ($timelineItems as $item) {
             if (array_key_exists('type', $item) && $item['type'] === 'content') {
-                $items[] = $this->container->get('formatter')->formatContent($item, $userId);
+                $data = $this->container->get('formatter')->formatContent($item, $userId);
+            } elseif (array_key_exists('admin', $item)) {
+                $data = $item;
+                $data['admin'] = $this->container->get('formatter')->formatUser($data['admin']);
             } else {
-                $items[] = $item;
+                $data = $item;
             }
+            $items[] = $data;
         }
 
         return $items;
