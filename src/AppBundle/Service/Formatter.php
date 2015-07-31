@@ -21,7 +21,7 @@ class Formatter extends BaseManager
      */
     public function formatContent($content, $userId)
     {
-        $formattedAuthor = $this->formatUser($content['user']);
+        $formattedAuthor = $this->formatUser($content['author']);
         $hasCommented = false;
         $isAdmin = $content['user'] === $userId;
 
