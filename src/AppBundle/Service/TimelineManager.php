@@ -48,7 +48,8 @@ class TimelineManager extends BaseManager
                         c.shares as shares,
                         c.comments as comments,
                         "content" as type,
-                        labels(c) as labels
+                        labels(c) as labels,
+                        c.interestId as interestId
             ORDER BY    c.date DESC
             SKIP        {offset}
             LIMIT       {limit}
