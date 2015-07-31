@@ -214,4 +214,67 @@ class UserManager extends BaseManager
 
         return $postData;
     }
+
+    /**
+     * Get user's followers
+     *
+     * @param int $userId
+     * @param int $offset
+     * @param int $limit
+     * @param string $query
+     * @return array
+     */
+    public function getUserFollowers($userId, $offset, $limit, $query)
+    {
+        $people = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:IS_FOLLOWING]->(f:USER)
+            WHERE   id(u) = {userId}
+            AND     f.name =~ {query}
+            RETURN  id(f) as id,
+                    f.firstName as firstName,
+                    f.lastName as lastName,
+                    f.image as image
+            LIMIT   {limit}
+            SKIP    {offset}
+        ', array(
+            'userId' => $userId,
+            'query' => $query,
+            'limit' => $limit,
+            'offset' => $offset
+        ));
+
+        return $people;
+    }
+
+    /**
+     * Get people following the user
+     *
+     * @param int $userId
+     * @param int $offset
+     * @param int $limit
+     * @param string $query
+     * @return array
+     * @throws \Exception
+     */
+    public function getUserFollowing($userId, $offset, $limit, $query)
+    {
+        $people = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:IS_FOLLOWING]->(f:USER)
+            WHERE   id(f) = {userId}
+            AND     u.name =~ {query}
+            RETURN  id(u) as id,
+                    u.firstName as firstName,
+                    u.lastName as lastName,
+                    u.image as image
+            LIMIT   {limit}
+            SKIP    {offset}
+        ', array(
+            'userId' => $userId,
+            'query' => $query,
+            'limit' => $limit,
+            'offset' => $offset
+        ));
+
+        return $people;
+    }
 }

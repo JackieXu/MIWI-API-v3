@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Validator\FilterValidator;
+use AppBundle\Validator\QueryValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -109,7 +110,6 @@ class UserController extends BaseController
      *          "dataType"="int",
      *          "required"=false,
      *          "description"="How many items to return",
-     *
      *      },
      *      {
      *          "name"="offset",
@@ -134,14 +134,33 @@ class UserController extends BaseController
      *      403="Returned when not authorized",
      *      500="Returned when an error occured"
      *  },
-     *  authentication=true
+     *  authentication=false
      * )
      *
+     * @param Request $request
+     * @param string $userId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function followersAction()
+    public function followersAction(Request $request, $userId)
     {
-        return $this->invalid();
+        try {
+            $queryValidator = new QueryValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        }
+
+        $userId = (int) $userId;
+        $offset = (int) $queryValidator->getValue('offset');
+        $limit = (int) $queryValidator->getValue('limit');
+        $query = $queryValidator->getValue('query');
+
+        $userManager = $this->get('manager.user');
+
+        $people = $userManager->getUserFollowers($userId, $offset, $limit, $query);
+
+        return $this->success($people);
     }
 
     /**
@@ -185,13 +204,32 @@ class UserController extends BaseController
      *      403="Returned when not authorized",
      *      500="Returned when an error occured"
      *  },
-     *  authentication=true
+     *  authentication=false
      * )
      *
+     * @param Request $request
+     * @param string $userId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function followingAction()
+    public function followingAction(Request $request, $userId)
     {
-        return $this->invalid();
+        try {
+            $queryValidator = new QueryValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        }
+
+        $userId = (int) $userId;
+        $offset = (int) $queryValidator->getValue('offset');
+        $limit = (int) $queryValidator->getValue('limit');
+        $query = $queryValidator->getValue('query');
+
+        $userManager = $this->get('manager.user');
+
+        $people = $userManager->getUserFollowing($userId, $offset, $limit, $query);
+
+        return $this->success($people);
     }
 }
