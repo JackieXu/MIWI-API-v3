@@ -67,7 +67,8 @@ class TimelineManager extends BaseManager
                         g.website as website,
                         g.createdOn as creationDate,
                         g.updatedOn as updateDate,
-                        g.members as members
+                        g.members as members,
+                        "group" as type
             ORDER BY    g.creation_date
             SKIP        {offset}
             LIMIT       1
@@ -85,7 +86,8 @@ class TimelineManager extends BaseManager
                         e.location as location,
                         e.startDate as startDate,
                         e.endDate as endDate,
-                        e.members as members
+                        e.members as members,
+                        "event" as type
             ORDER BY    e.creation_date
             SKIP        {offset}
             LIMIT       1
@@ -106,7 +108,8 @@ class TimelineManager extends BaseManager
                             f.username as name,
                             f.image as image,
                             collect(id(j)) as otherInterests,
-                            commonInterests
+                            commonInterests as commonInterests,
+                            "person" as type
         ';
 
         $timelineItems = $this->sendCypherQueries(array(
