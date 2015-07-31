@@ -92,4 +92,106 @@ class UserController extends BaseController
 
         return $this->success($posts);
     }
+
+    /**
+     * Get user's followers
+     *
+     * @Route("users/{userId}/followers", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get user's followers",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      },
+     *      {
+     *          "name"="query",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Search query"
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are invalid or missing",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function followersAction()
+    {
+        return $this->invalid();
+    }
+
+    /**
+     * Get people the user is following
+     *
+     * @Route("users/{userId}/following", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get people the user is following",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      },
+     *      {
+     *          "name"="query",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Search query"
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are invalid or missing",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function followingAction()
+    {
+        return $this->invalid();
+    }
 }
