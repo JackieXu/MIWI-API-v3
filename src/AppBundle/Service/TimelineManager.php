@@ -46,7 +46,8 @@ class TimelineManager extends BaseManager
                         c.likes as downvotes,
                         c.images as images,
                         c.shares as shares,
-                        c.comments as comments
+                        c.comments as comments,
+                        "content" as type
             ORDER BY    c.date DESC
             SKIP        {offset}
             LIMIT       {limit}
@@ -124,8 +125,17 @@ class TimelineManager extends BaseManager
         ));
 
         $timelineItems = call_user_func_array('array_merge', $timelineItems);
+        $items = array();
 
-        return $timelineItems;
+        foreach ($timelineItems as $item) {
+            if (array_key_exists('type', $item) && $item['type'] === 'content') {
+                $items[] = $this->container->get('formatter')->formatContent($item, $userId);
+            } else {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
     }
 
     /**

@@ -66,7 +66,18 @@ class Formatter extends BaseManager
 
     private function formatUser($user)
     {
-        return array();
+        $data = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+            RETURN  id(u) as id,
+                    u.firstName as firstName,
+                    u.lastName as lastName,
+                    u.image as image
+        ', array(
+            'userId' => $user
+        ));
+
+        return $data[0];
     }
 
     public function formatGroup($groupId, $userId)
