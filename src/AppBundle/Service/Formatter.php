@@ -23,7 +23,7 @@ class Formatter extends BaseManager
     {
         $formattedAuthor = $this->formatUser($content['author']);
         $hasCommented = false;
-        $isAdmin = $content['user'] === $userId;
+        $isAdmin = $content['author'] === $userId;
 
         $isFavorited = count($this->sendCypherQuery('
             MATCH   (u:USER)-[r:HAS_FAVORITED]->(c:CONTENT)
