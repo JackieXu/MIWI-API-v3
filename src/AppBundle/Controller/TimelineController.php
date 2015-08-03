@@ -108,4 +108,91 @@ class TimelineController extends BaseController
 
         return $this->forbidden();
     }
+
+    /**
+     * Gets group timeline
+     *
+     * @Route("groups/{groupId}/timeline", requirements={"groupId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Gets a group timeline",
+     *  tags={},
+     *  section="groups",
+     *  parameters={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      }
+     *  },
+     *  requirements={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when succesful",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param int $groupId
+     * @return Response
+     */
+    public function groupTimelineAction(Request $request, $groupId)
+    {
+        try {
+            $options = new TimelineValidator($request->query->all());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        }
+
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->unauthorized();
+        }
+
+        $userId = (int) $options->getValue('userId');
+        $groupId = (int) $groupId;
+        $offset = (int) $options->getValue('offset');
+        $limit = (int) $options->getValue('limit');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+
+            $timelineManager = $this->get('manager.timeline');
+            $results = $timelineManager->getGroupTimeline(
+                $userId,
+                $groupId,
+                $offset,
+                $limit
+            );
+
+            return $this->success($results);
+
+        }
+
+        return $this->forbidden();
+    }
 }

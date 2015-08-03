@@ -149,6 +149,55 @@ class TimelineManager extends BaseManager
         return $items;
     }
 
+    public function getGroupTimeline($userId, $groupId, $offset, $limit)
+    {
+        $timelineItems = $this->sendCypherQuery('
+            MATCH       (c:CONTENT)-[ci:ASSOCIATED_WITH]->(i:INTEREST)<-[:ASSOCIATED_WITH]-(g:GROUP), (u:USER)
+            WHERE       id(g) = {groupId}
+            AND         id(u) = {userId}
+            AND NOT     (u)-[:HAS_HIDDEN]->(c)
+            RETURN      id(c) as id,
+                        c.user as author,
+                        c.title as title,
+                        c.body as body,
+                        c.date as date,
+                        c.visibility as visibility,
+                        c.likes as upvotes,
+                        c.likes as downvotes,
+                        c.images as images,
+                        c.shares as shares,
+                        c.comments as comments,
+                        "content" as type,
+                        labels(c) as labels,
+                        c.interestId as interestId,
+                        c.link as link
+            ORDER BY    c.date DESC
+            SKIP        {offset}
+            LIMIT       {limit}
+        ', array(
+            'userId' => $userId,
+            'groupId' => $groupId,
+            'offset' => $offset,
+            'limit' => $limit
+        ));
+
+        $items = array();
+
+        foreach ($timelineItems as $item) {
+            if (array_key_exists('type', $item) && $item['type'] === 'content') {
+                $data = $this->container->get('formatter')->formatContent($item, $userId);
+            } elseif (array_key_exists('admin', $item)) {
+                $data = $item;
+                $data['admin'] = $this->container->get('formatter')->formatUser($data['admin']);
+            } else {
+                $data = $item;
+            }
+            $items[] = $data;
+        }
+
+        return $items;
+    }
+
     /**
      * Upvotes an item for a user
      *
@@ -328,4 +377,6 @@ class TimelineManager extends BaseManager
 
         return $status[0]['status'];
     }
+
+
 }
