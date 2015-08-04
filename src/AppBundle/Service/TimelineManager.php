@@ -218,7 +218,7 @@ class TimelineManager extends BaseManager
         switch ($status) {
             case 0:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 1
@@ -228,7 +228,7 @@ class TimelineManager extends BaseManager
                 break;
             case 1:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
@@ -238,7 +238,7 @@ class TimelineManager extends BaseManager
                 break;
             case 2:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 1
@@ -250,7 +250,7 @@ class TimelineManager extends BaseManager
                 break;
             case 3:
                 $query = '
-                    MATCH   (u:USER), (i:ITEM)
+                    MATCH   (u:USER), (i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: 1}]->(i)
@@ -290,7 +290,7 @@ class TimelineManager extends BaseManager
         switch ($status) {
             case 0:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = -1
@@ -300,7 +300,7 @@ class TimelineManager extends BaseManager
                 break;
             case 1:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = -1
@@ -312,7 +312,7 @@ class TimelineManager extends BaseManager
                 break;
             case 2:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
@@ -322,7 +322,7 @@ class TimelineManager extends BaseManager
                 break;
             case 3:
                 $query = '
-                    MATCH   (u:USER), (i:ITEM)
+                    MATCH   (u:USER), (i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: -1}]->(i)
@@ -358,7 +358,7 @@ class TimelineManager extends BaseManager
     protected function getUserToItemStatus($userId, $itemId)
     {
         $status = $this->sendCypherQuery('
-            OPTIONAL MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+            OPTIONAL MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
             WHERE   id(u) = {userId}
             AND     id(i) = {itemId}
             RETURN  CASE
