@@ -35,6 +35,28 @@ class Formatter extends BaseManager
                 'contentId' => $content['id']
             ))) > 0;
 
+        $hasUpvoted = count($this->sendCypherQuery('
+            MATCH   (u:USER)-[r:HAS_VOTED]->(c:CONTENT)
+            WHERE   id(u) = {userId}
+            AND     id(c) = {contentId}
+            AND     r.score = 1
+            RETURN  u
+        ', array(
+            'userId' => $userId,
+            'contentId' => $content['id']
+        ))) > 0;
+
+        $hasDownvoted = count($this->sendCypherQuery('
+            MATCH   (u:USER)-[r:HAS_VOTED]->(c:CONTENT)
+            WHERE   id(u) = {userId}
+            AND     id(c) = {contentId}
+            AND     r.score = -1
+            RETURN  u
+        ', array(
+            'userId' => $userId,
+            'contentId' => $content['id']
+        ))) > 0;
+
         $images = array();
         if (is_array($content['images'])) {
             $images = $content['images'];
@@ -63,6 +85,8 @@ class Formatter extends BaseManager
             'commentCount' => $content['comments'],
             'hasCommented' => $hasCommented,
             'hasFavorited' => $isFavorited,
+            'hasUpvoted' => $hasUpvoted,
+            'hasDownvoted' => $hasDownvoted,
             'postedBy' => $formattedAuthor,
             'isAdmin' => $isAdmin
         );
