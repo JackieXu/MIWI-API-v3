@@ -277,4 +277,98 @@ class UserManager extends BaseManager
 
         return $people;
     }
+
+    public function getUserGroups($userId, $limit, $offset, $interestId, $query)
+    {
+        if ($interestId === 0) {
+            $groups = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:MEMBER_OF]->(g:GROUP)
+                WHERE   id(u) = {userId}
+                AND     g.title =~ {query}
+                RETURN  id(g) as id,
+                        g.title as title,
+                        g.members as memberCount,
+                        g.image as image,
+                        SUBSTRING(g.body, 0, 200) as body,
+                        "group" as type
+                LIMIT   {limit}
+                SKIP    {offset}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query
+            ));
+        } else {
+            $groups = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:MEMBER_OF]->(g:GROUP)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {interestId}
+                AND     g.title =~ {query}
+                RETURN  id(g) as id,
+                        g.title as title,
+                        g.members as memberCount,
+                        g.image as image,
+                        SUBSTRING(g.body, 0, 200) as body,
+                        "group" as type
+                LIMIT   {limit}
+                SKIP    {offset}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query,
+                'interestId' => $interestId
+            ));
+        }
+
+        return $groups;
+    }
+
+    public function getUserEvents($userId, $limit, $offset, $interestId, $query)
+    {
+        if ($interestId === 0) {
+            $events = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:IS_ATTENDING]->(e:EVENT)
+                WHERE   id(u) = {userId}
+                AND     e.title =~ {query}
+                RETURN  id(e) as id,
+                        e.title as title,
+                        e.members as memberCount,
+                        e.image as image,
+                        SUBSTRING(e.body, 0, 200) as body,
+                        "event" as type
+                LIMIT   {limit}
+                SKIP    {offset}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query
+            ));
+        } else {
+            $events = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:IS_ATTENDING]->(e:EVENT)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {interestId}
+                AND     e.title =~ {query}
+                RETURN  id(e) as id,
+                        e.title as title,
+                        e.members as memberCount,
+                        e.image as image,
+                        SUBSTRING(e.body, 0, 200) as body,
+                        "event" as type
+                LIMIT   {limit}
+                SKIP    {offset}
+            ', array(
+                'userId' => $userId,
+                'limit' => $limit,
+                'offset' => $offset,
+                'query' => $query,
+                'interestId' => $interestId
+            ));
+        }
+
+        return $events;
+    }
 }

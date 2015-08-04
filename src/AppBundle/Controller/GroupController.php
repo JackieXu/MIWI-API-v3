@@ -52,8 +52,7 @@ class GroupController extends BaseController
     /**
      * Get detailed group data
      *
-     * @Route("groups/{groupId}", requirements={"g
-roupId": "\d+"})
+     * @Route("groups/{groupId}", requirements={"groupId": "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
