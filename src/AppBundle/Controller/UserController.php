@@ -169,7 +169,59 @@ class UserController extends BaseController
         return $this->success($groups);
     }
 
-
+    /**
+     * Get user's events
+     *
+     * @Route("users/{userId}/events", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get user's events",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      },
+     *      {
+     *          "name"="interestId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "description"="Interest identifier to filter on"
+     *      },
+     *      {
+     *          "name"="query",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Search query"
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=false
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function eventsAction(Request $request, $userId)
     {
         try {
