@@ -171,8 +171,8 @@ class GroupManager extends BaseManager
                     u.firstName as firstName,
                     u.lastName as lastName,
                     u.image as image
-            LIMIT   {limit}
             SKIP    {offset}
+            LIMIT   {limit}
         ', array(
             'groupId' => $groupId,
             'limit' => $limit,
