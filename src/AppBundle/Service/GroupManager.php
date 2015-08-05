@@ -156,10 +156,12 @@ class GroupManager extends BaseManager
 
     /**
      * @param int $groupId
+     * @param $userId
      * @param int $limit
      * @param int $offset
      * @param string $query
      * @return array
+     * @throws \Exception
      */
     public function getMembers($groupId, $userId, $limit, $offset, $query)
     {

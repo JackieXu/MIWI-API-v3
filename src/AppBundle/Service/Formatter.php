@@ -170,16 +170,17 @@ class Formatter extends BaseManager
 
         $isFollowing = false;
 
-        if ($userId)
-        $isFollowing = count($this->sendCypherQuery('
-            MATCH   (u:USER)-[:IS_FOLLOWING]->(f:USER)
-            WHERE   id(u) = {userId}
-            AND     id(f) = {followingId}
-            RETURN  u
-        ', array(
-            'userId' => $userId,
-            'followingId' => $user['id']
-        ))) > 0;
+        if ($userId) {
+            $isFollowing = count($this->sendCypherQuery('
+                MATCH   (u:USER)-[:IS_FOLLOWING]->(f:USER)
+                WHERE   id(u) = {userId}
+                AND     id(f) = {followingId}
+                RETURN  u
+            ', array(
+                'userId' => $userId,
+                'followingId' => $user['id']
+            ))) > 0;
+        }
 
         return array(
             'id' => $user['id'],
