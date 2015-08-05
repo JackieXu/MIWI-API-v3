@@ -192,13 +192,37 @@ class GroupManager extends BaseManager
     }
 
     /**
-     * @param $groupId
-     * @param $limit
-     * @param $offset
-     * @param $query
+     * Get events
+     *
+     * @param int $groupId
+     * @param int $userId
+     * @param int $limit
+     * @param int $offset
+     * @param string $query
+     * @return array
      */
-    public function getEvents($groupId, $limit, $offset, $query)
+    public function getEvents($groupId, $userId, $limit, $offset, $query)
     {
+        $events = $this->sendCypherQuery('
+            MATCH   (e:EVENT)-[:ASSOCIATED_WITH]->(g:GROUP)
+            WHERE   id(g) = {groupId}
+            AND     e.title =~ {query}
+            RETURN  id(e) as id,
+                    e.title as title,
+                    e.image as image,
+                    SUBSTRING(e.description, 0, 200) as description,
+                    e.members as memberCount,
+                    e.startDate as startDate,
+                    e.endDate as endDate
+            SKIP    {offset}
+            LIMIT   {limit}
+        ', array(
+            'groupId' => $groupId,
+            'offset' => $offset,
+            'limit' => $limit,
+            'query' => '(?i)'.$query.'.*'
+        ));
 
+        return $events;
     }
 }

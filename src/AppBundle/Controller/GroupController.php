@@ -362,4 +362,87 @@ class GroupController extends BaseController
 
         return $this->success($members);
     }
+
+    /**
+     * Get events associated with group
+     *
+     * @Route("groups/{groupId}/events", requirements={"groupId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="",
+     *  tags={},
+     *  section="",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      },
+     *      {
+     *          "name"="query",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Search query"
+     *      },
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are invalid or missing",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $groupId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function eventsAction(Request $request, $groupId)
+    {
+        try {
+            $queryValidator = new QueryValidator(array(
+                'query' => $request->query->get('query', ''),
+                'limit' => $request->query->get('limit', 30),
+                'offset' => $request->query->get('offset', 0)
+            ));
+            $userValidator = new UserValidator(array(
+                'userId' => $request->query->get('userId')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        }
+
+        $groupId = (int) $groupId;
+        $userId = (int) $userValidator->getValue('userId');
+        $offset = (int) $queryValidator->getValue('offset');
+        $limit = (int) $queryValidator->getValue('limit');
+        $query = $queryValidator->getValue('query');
+
+        $groupManager = $this->get('manager.group');
+        $members = $groupManager->getEvents($groupId, $userId, $limit, $offset, $query);
+
+        return $this->success($members);
+    }
 }
