@@ -87,6 +87,8 @@ class UserManager extends BaseManager
      * @param int $userId
      * @param int $limit
      * @param int $offset
+     * @param $interestId
+     * @param $query
      * @return array
      * @throws \Exception
      */
@@ -278,6 +280,15 @@ class UserManager extends BaseManager
         return $people;
     }
 
+    /**
+     * @param $userId
+     * @param $limit
+     * @param $offset
+     * @param $interestId
+     * @param $query
+     * @return array
+     * @throws \Exception
+     */
     public function getUserGroups($userId, $limit, $offset, $interestId, $query)
     {
         if ($interestId === 0) {
@@ -291,8 +302,8 @@ class UserManager extends BaseManager
                         g.image as image,
                         SUBSTRING(g.body, 0, 200) as body,
                         "group" as type
-                LIMIT   {limit}
                 SKIP    {offset}
+                LIMIT   {limit}
             ', array(
                 'userId' => $userId,
                 'limit' => $limit,
@@ -311,8 +322,8 @@ class UserManager extends BaseManager
                         g.image as image,
                         SUBSTRING(g.body, 0, 200) as body,
                         "group" as type
-                LIMIT   {limit}
                 SKIP    {offset}
+                LIMIT   {limit}
             ', array(
                 'userId' => $userId,
                 'limit' => $limit,
@@ -338,8 +349,8 @@ class UserManager extends BaseManager
                         e.image as image,
                         SUBSTRING(e.body, 0, 200) as body,
                         "event" as type
-                LIMIT   {limit}
                 SKIP    {offset}
+                LIMIT   {limit}
             ', array(
                 'userId' => $userId,
                 'limit' => $limit,
@@ -358,8 +369,8 @@ class UserManager extends BaseManager
                         e.image as image,
                         SUBSTRING(e.body, 0, 200) as body,
                         "event" as type
-                LIMIT   {limit}
                 SKIP    {offset}
+                LIMIT   {limit}
             ', array(
                 'userId' => $userId,
                 'limit' => $limit,
