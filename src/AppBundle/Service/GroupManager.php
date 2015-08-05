@@ -3,7 +3,11 @@
 
 namespace AppBundle\Service;
 
-
+/**
+ * Class GroupManager
+ *
+ * @package AppBundle\Service
+ */
 class GroupManager extends BaseManager
 {
     /**
@@ -148,5 +152,15 @@ class GroupManager extends BaseManager
         }
 
         return false;
+    }
+
+    /**
+     * @param int $groupId
+     * @param int $limit
+     * @param int $offset
+     * @param string $query
+     */
+    public function getMembers($groupId, $limit, $offset, $query)
+    {
     }
 }

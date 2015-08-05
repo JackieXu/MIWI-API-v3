@@ -4,7 +4,9 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\FilterValidator;
 use AppBundle\Validator\GroupValidator;
+use AppBundle\Validator\QueryValidator;
 use AppBundle\Validator\TokenValidator;
 use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -276,5 +278,74 @@ class GroupController extends BaseController
     public function deleteGroupAction(Request $request)
     {
         return $this->success();
+    }
+
+    /**
+     * Get group members
+     *
+     * @Route("groups/{groupId}/members")
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="",
+     *  tags={},
+     *  section="",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      },
+     *      {
+     *          "name"="query",
+     *          "dataType"="string",
+     *          "required"=falsem
+     *          "description"="Search query"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are invalid or missing",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $groupId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function membersAction(Request $request, $groupId)
+    {
+        try {
+            $queryValidator = new QueryValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid($e->getMessage());
+        }
+
+        $groupId = (int) $groupId;
+        $offset = (int) $queryValidator->getValue('offset');
+        $limit = (int) $queryValidator->getValue('limit');
+        $query = $queryValidator->getValue('query');
+
+        $groupManager = $this->get('manager.group');
+        $members = $groupManager->getMembers($groupId, $limit, $offset, $query);
+
+        return $this->success($members);
     }
 }
