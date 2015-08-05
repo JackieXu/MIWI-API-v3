@@ -164,7 +164,7 @@ class GroupManager extends BaseManager
     public function getMembers($groupId, $limit, $offset, $query)
     {
         $users = $this->sendCypherQuery('
-            MATCH   (u:USER)-[:MEMBER_of]->(g:GROUP)
+            MATCH   (u:USER)-[:MEMBER_OF]->(g:GROUP)
             WHERE   id(g) = {groupId}
             AND     u.name =~ {query}
             RETURN  id(u) as id,
