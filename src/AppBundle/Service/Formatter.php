@@ -163,7 +163,7 @@ class Formatter extends BaseManager
             MATCH   (u:USER)-[:LIKES]->(i:INTEREST)
             WHERE   id(u) = {userId}
             RETURN  id(i) as id,
-                    i.title as name
+                    i.name as name
         ', array(
             'userId' => $user['id']
         ));
