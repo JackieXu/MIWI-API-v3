@@ -120,7 +120,7 @@ class Formatter extends BaseManager
                     g.website as website,
                     g.members as memberCount
         ', array(
-
+            'groupId' => $groupId
         ));
 
         $group = $group[0];
