@@ -157,7 +157,7 @@ class Formatter extends BaseManager
         );
     }
 
-    public function formatUserWithInterests($user)
+    public function formatUserWithInterests($user, $userId = null)
     {
         $interests = $this->sendCypherQuery('
             MATCH   (u:USER)-[:LIKES]->(i:INTEREST)
@@ -168,11 +168,25 @@ class Formatter extends BaseManager
             'userId' => $user['id']
         ));
 
+        $isFollowing = false;
+
+        if ($userId)
+        $isFollowing = count($this->sendCypherQuery('
+            MATCH   (u:USER)-[:IS_FOLLOWING]->(f:USER)
+            WHERE   id(u) = {userId}
+            AND     id(f) = {followingId}
+            RETURN  u
+        ', array(
+            'userId' => $userId,
+            'followingId' => $user['id']
+        ))) > 0;
+
         return array(
             'id' => $user['id'],
             'firstName' => $user['firstName'],
             'lastName' => $user['lastName'],
             'image' => $user['image'],
+            'isFollowing' => $isFollowing,
             'interests' => $interests
         );
     }

@@ -161,7 +161,7 @@ class GroupManager extends BaseManager
      * @param string $query
      * @return array
      */
-    public function getMembers($groupId, $limit, $offset, $query)
+    public function getMembers($groupId, $userId, $limit, $offset, $query)
     {
         $users = $this->sendCypherQuery('
             MATCH   (u:USER)-[:MEMBER_OF]->(g:GROUP)
@@ -183,7 +183,7 @@ class GroupManager extends BaseManager
         $userData = array();
 
         foreach ($users as $user) {
-            $userData[] = $this->container->get('formatter')->formatUserWithInterests($user);
+            $userData[] = $this->container->get('formatter')->formatUserWithInterests($user, $userId);
         }
 
         return $userData;

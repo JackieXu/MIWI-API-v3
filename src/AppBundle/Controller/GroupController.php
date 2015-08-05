@@ -291,28 +291,34 @@ class GroupController extends BaseController
      *  tags={},
      *  section="",
      *  requirements={
-     *
-     *  },
-     *  parameters={
      *      {
      *          "name"="limit",
      *          "dataType"="int",
-     *          "required"=false,
+     *          "requirement"="\d+",
      *          "description"="How many items to return",
      *
      *      },
      *      {
      *          "name"="offset",
      *          "dataType"="int",
-     *          "required"=false,
+     *          "requirement"="\d+",
      *          "description"="Number of items to skip"
      *      },
      *      {
      *          "name"="query",
      *          "dataType"="string",
-     *          "required"=false,
+     *          "requirement"="\w+",
      *          "description"="Search query"
+     *      },
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
      *      }
+     *  },
+     *  parameters={
+     *
      *  },
      *  statusCodes={
      *      200="Returned when successful",
@@ -331,7 +337,14 @@ class GroupController extends BaseController
     public function membersAction(Request $request, $groupId)
     {
         try {
-            $queryValidator = new QueryValidator($request->query->all());
+            $queryValidator = new QueryValidator(array(
+                'query' => $request->query->get('query'),
+                'limit' => $request->query->get('limit'),
+                'offset' => $request->query->get('offset')
+            ));
+            $userValidator = new UserValidator(array(
+                'userId' => $request->query->get('userId')
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid($e->getMessage());
         } catch (InvalidOptionsException $e) {
@@ -339,12 +352,13 @@ class GroupController extends BaseController
         }
 
         $groupId = (int) $groupId;
+        $userId = (int) $userValidator->getValue('userId');
         $offset = (int) $queryValidator->getValue('offset');
         $limit = (int) $queryValidator->getValue('limit');
         $query = $queryValidator->getValue('query');
 
         $groupManager = $this->get('manager.group');
-        $members = $groupManager->getMembers($groupId, $limit, $offset, $query);
+        $members = $groupManager->getMembers($groupId, $userId, $limit, $offset, $query);
 
         return $this->success($members);
     }
