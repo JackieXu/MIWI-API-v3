@@ -49,7 +49,7 @@ class GroupManager extends BaseManager
         ));
 
         if ($group) {
-            return $this->container->get('formatter')->formatGroup($groupId[0]['id'], $userId);
+            return $this->container->get('formatter')->formatGroup($groupId, $userId);
         }
 
         return false;
