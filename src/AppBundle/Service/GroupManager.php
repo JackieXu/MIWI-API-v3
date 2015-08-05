@@ -49,7 +49,7 @@ class GroupManager extends BaseManager
         ));
 
         if ($group) {
-            return $this->container->get('formatter')->formatGroup($groupId, $userId);
+            return $this->container->get('formatter')->formatGroup($groupId[0]['id'], $userId);
         }
 
         return false;
@@ -159,8 +159,42 @@ class GroupManager extends BaseManager
      * @param int $limit
      * @param int $offset
      * @param string $query
+     * @return array
      */
     public function getMembers($groupId, $limit, $offset, $query)
     {
+        $users = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:MEMBER_of]->(g:GROUP)
+            WHERE   id(g) = {groupId}
+            AND     u.name =~ {query}
+            RETURN  id(u) as id,
+                    u.firstName as firstName,
+                    u.lastName as lastName,
+                    u.image as image
+        ', array(
+            'groupId' => $groupId,
+            'limit' => $limit,
+            'offset' => $offset,
+            'query' => $query
+        ));
+
+        $userData = array();
+
+        foreach ($users as $user) {
+            $userData[] = $this->container->get('formatter')->formatUserWithInterests($user);
+        }
+
+        return $userData;
+    }
+
+    /**
+     * @param $groupId
+     * @param $limit
+     * @param $offset
+     * @param $query
+     */
+    public function getEvents($groupId, $limit, $offset, $query)
+    {
+
     }
 }

@@ -156,4 +156,24 @@ class Formatter extends BaseManager
             'isAdmin' => $isAdmin
         );
     }
+
+    public function formatUserWithInterests($user)
+    {
+        $interests = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:LIKES]->(i:INTEREST)
+            WHERE   id(u) = {userId}
+            RETURN  id(i) as id,
+                    i.title as name
+        ', array(
+            'userId' => $user['id']
+        ));
+
+        return array(
+            'id' => $user['id'],
+            'firstName' => $user['firstName'],
+            'lastName' => $user['lastName'],
+            'image' => $user['image'],
+            'interests' => $interests
+        );
+    }
 }
