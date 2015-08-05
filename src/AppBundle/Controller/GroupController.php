@@ -339,7 +339,7 @@ class GroupController extends BaseController
         try {
             $queryValidator = new QueryValidator(array(
                 'query' => $request->query->get('query', ''),
-                'limit' => $request->query->get('limit', 0),
+                'limit' => $request->query->get('limit', 30),
                 'offset' => $request->query->get('offset', 0)
             ));
             $userValidator = new UserValidator(array(
