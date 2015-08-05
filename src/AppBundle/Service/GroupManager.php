@@ -156,7 +156,7 @@ class GroupManager extends BaseManager
 
     /**
      * @param int $groupId
-     * @param $userId
+     * @param int $userId
      * @param int $limit
      * @param int $offset
      * @param string $query
