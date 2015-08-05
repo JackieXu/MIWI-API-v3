@@ -338,9 +338,9 @@ class GroupController extends BaseController
     {
         try {
             $queryValidator = new QueryValidator(array(
-                'query' => $request->query->get('query'),
-                'limit' => $request->query->get('limit'),
-                'offset' => $request->query->get('offset')
+                'query' => $request->query->get('query', ''),
+                'limit' => $request->query->get('limit', 0),
+                'offset' => $request->query->get('offset', 0)
             ));
             $userValidator = new UserValidator(array(
                 'userId' => $request->query->get('userId')
