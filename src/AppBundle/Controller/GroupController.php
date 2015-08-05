@@ -310,7 +310,7 @@ class GroupController extends BaseController
      *      {
      *          "name"="query",
      *          "dataType"="string",
-     *          "required"=falsem
+     *          "required"=false,
      *          "description"="Search query"
      *      }
      *  },
