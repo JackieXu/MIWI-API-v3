@@ -111,7 +111,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query
+                'query' => '(?i)'.$query.'.*',
             ));
         } else {
             $posts = $this->sendCypherQuery('
@@ -133,7 +133,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query,
+                'query' => '(?i)'.$query.'.*',
                 'interestId' => $interestId
             ));
         }
@@ -179,7 +179,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query
+                'query' => '(?i)'.$query.'.*'
             ));
         } else {
             $posts = $this->sendCypherQuery('
@@ -201,7 +201,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query,
+                'query' => '(?i)'.$query.'.*',
                 'interestId' => $interestId
             ));
         }
@@ -238,7 +238,7 @@ class UserManager extends BaseManager
             SKIP    {offset}
         ', array(
             'userId' => $userId,
-            'query' => $query,
+            'query' => '(?i)'.$query.'.*',
             'limit' => $limit,
             'offset' => $offset
         ));
@@ -270,7 +270,7 @@ class UserManager extends BaseManager
             SKIP    {offset}
         ', array(
             'userId' => $userId,
-            'query' => $query,
+            'query' => '(?i)'.$query.'.*',
             'limit' => $limit,
             'offset' => $offset
         ));
@@ -297,7 +297,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query
+                'query' => '(?i)'.$query.'.*',
             ));
         } else {
             $groups = $this->sendCypherQuery('
@@ -317,7 +317,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query,
+                'query' => '(?i)'.$query.'.*',
                 'interestId' => $interestId
             ));
         }
@@ -344,7 +344,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query
+                'query' => '(?i)'.$query.'.*'
             ));
         } else {
             $events = $this->sendCypherQuery('
@@ -364,7 +364,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => $query,
+                'query' => '(?i)'.$query.'.*',
                 'interestId' => $interestId
             ));
         }

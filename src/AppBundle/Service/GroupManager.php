@@ -177,7 +177,7 @@ class GroupManager extends BaseManager
             'groupId' => $groupId,
             'limit' => $limit,
             'offset' => $offset,
-            'query' => $query
+            'query' => '(?i)'.$query.'.*',
         ));
 
         $userData = array();
