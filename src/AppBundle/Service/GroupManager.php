@@ -137,6 +137,8 @@ class GroupManager extends BaseManager
                 interestId: {interestId},
                 visibility: {visibility}
             })-[:ASSOCIATED_WITH]->(i)
+            WITH    u, g
+            CREATE  (u)-[:MEMBER_OF {date: {date}}]->(g)
             RETURN  id(g) as id
         ', array(
             'title' => $title,

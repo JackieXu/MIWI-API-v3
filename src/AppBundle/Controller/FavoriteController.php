@@ -45,10 +45,19 @@ class FavoriteController extends BaseController
      * )
      *
      * @param Request $request
+     * @param string $userId
      * @return Response
      */
-    public function favoriteAction(Request $request)
+    public function favoriteAction(Request $request, $userId)
     {
+        try {
+            $itemValidator = new ItemValidator($request->query->all());
+        } catch (MissingOptionsException $e) {
+
+        } catch (InvalidOptionsException $e) {
+
+        }
+
         return $this->invalid();
     }
 

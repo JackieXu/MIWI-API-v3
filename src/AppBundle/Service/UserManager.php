@@ -236,8 +236,8 @@ class UserManager extends BaseManager
                     f.firstName as firstName,
                     f.lastName as lastName,
                     f.image as image
-            LIMIT   {limit}
             SKIP    {offset}
+            LIMIT   {limit}
         ', array(
             'userId' => $userId,
             'query' => '(?i)'.$query.'.*',
@@ -268,8 +268,8 @@ class UserManager extends BaseManager
                     u.firstName as firstName,
                     u.lastName as lastName,
                     u.image as image
-            LIMIT   {limit}
             SKIP    {offset}
+            LIMIT   {limit}
         ', array(
             'userId' => $userId,
             'query' => '(?i)'.$query.'.*',

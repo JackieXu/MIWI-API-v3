@@ -289,7 +289,7 @@ class GroupController extends BaseController
      * @ApiDoc(
      *  description="",
      *  tags={},
-     *  section="",
+     *  section="groups",
      *  requirements={
      *      {
      *          "name"="limit",
@@ -372,7 +372,7 @@ class GroupController extends BaseController
      * @ApiDoc(
      *  description="",
      *  tags={},
-     *  section="",
+     *  section="groups",
      *  requirements={
      *
      *  },
