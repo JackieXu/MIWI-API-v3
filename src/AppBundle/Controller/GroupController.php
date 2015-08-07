@@ -153,16 +153,22 @@ class GroupController extends BaseController
      *          "description"="Interest the group should be linked to"
      *      },
      *      {
-     *          "name"="website",
-     *          "dataType"="string",
-     *          "required"=false,
-     *          "description"="Group website"
-     *      },
-     *      {
      *          "name"="userId",
      *          "dataType"="int",
      *          "required"=true,
      *          "description"="User identifier"
+     *      },
+     *      {
+     *          "name"="additionalAdmins",
+     *          "dataType"="int[]",
+     *          "required"=false,
+     *          "description"="Additional administrations, must be user identifiers"git pushj
+     *      },
+     *      {
+     *          "name"="image",
+     *          "dataType"="string",
+     *          "required"=false,
+     *          "description"="Base64 representation of group image"
      *      }
      *  },
      *  parameters={
@@ -199,11 +205,11 @@ class GroupController extends BaseController
             $interestId = (int) $groupValidator->getValue('interestId');
             $title = $groupValidator->getValue('title');
             $description = $groupValidator->getValue('description');
+            $image = $groupValidator->getValue('image');
             $visibility = $groupValidator->getValue('visibility');
-            $website = $groupValidator->getValue('website');
             $groupManager = $this->get('manager.group');
 
-            $group = $groupManager->createGroup($title, $description, $website, $visibility, $interestId, $userId);
+            $group = $groupManager->createGroup($title, $description, $image, $visibility, $interestId, $userId);
 
             if ($group) {
                 return $this->success($group);

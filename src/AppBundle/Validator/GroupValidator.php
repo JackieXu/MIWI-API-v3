@@ -13,7 +13,7 @@ class GroupValidator extends UserValidator
         $resolver->setDefined(array(
             'title',
             'description',
-            'website',
+            'image',
             'interestId',
             'visibility'
         ));
@@ -27,7 +27,7 @@ class GroupValidator extends UserValidator
         $resolver->setAllowedValues('visibility', array('public', 'private'));
 
         $resolver->setDefault('description', '');
-        $resolver->setDefault('website', '');
+        $resolver->setDefault('image', '');
         $resolver->setDefault('visibility', 'public');
 
         $resolver->setAllowedTypes('interestId', 'numeric');
