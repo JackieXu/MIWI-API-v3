@@ -64,6 +64,7 @@ class AccessManager extends BaseManager
     {
         // Verify with Google, return error if not valid
         $client = new \Google_Client();
+        $client->setApplicationName('MIWI');
         $client->setDeveloperKey('AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg');
 
         $ticket = $client->verifyIdToken($token);
