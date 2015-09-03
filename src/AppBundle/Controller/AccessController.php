@@ -117,7 +117,7 @@ class AccessController extends BaseController
      */
     public function loginWithGoogleAction(Request $request)
     {
-        $token = $request->headers->get('googleAccessToken');
+        $token = $request->request->get('googleAccessToken');
 
         try {
             $options = new GoogleValidator(array(
