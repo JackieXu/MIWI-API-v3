@@ -14,11 +14,19 @@ class GroupManager extends BaseManager
      * Gets groups associated with interest
      *
      * @param int $interestId
+     * @param int $userId
      * @return array
      */
-    public function getInterestGroups($interestId)
+    public function getInterestGroups($interestId, $userId)
     {
         $groups = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:MEMBER_OF]->(g:GROUP)
+
+        ', array(
+
+        ));
+
+        $suggestedGroups = $this->sendCypherQuery('
             MATCH   (g:GROUP)-[:ASSOCIATED_WITH]->(i:INTEREST)
             WHERE   id(i) = {interestId}
             RETURN  id(g) as id,
@@ -28,7 +36,12 @@ class GroupManager extends BaseManager
             'interestId' => $interestId
         ));
 
-        return $groups;
+        $groupData = array(
+            'groups' => $groups,
+            'suggested' => $suggestedGroups
+        );
+
+        return $groupData;
     }
 
     /**

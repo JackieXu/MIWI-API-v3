@@ -117,21 +117,29 @@ class AccessController extends BaseController
      */
     public function loginWithGoogleAction(Request $request)
     {
-        $token = $request->headers->get('accessToken');
+        $token = $request->headers->get('googleAccessToken');
 
         try {
             $options = new GoogleValidator(array(
                 'googleAccessToken' => $token
             ));
         } catch (InvalidOptionsException $e) {
-            return $this->unauthorized();
+            return $this->unauthorized(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->unauthorized(array(
+                'error' => $e->getMessage()
+            ));
         }
 
         $accessManager = $this->get('manager.access');
         $userToken = $accessManager->loginWithGoogle($options->getValue('googleAccessToken'));
 
         return new JsonResponse(array(
-            'accessToken' => $userToken
+            'id' => null,
+            'accessToken' => $userToken,
+            'status' => 0
         ));
     }
 

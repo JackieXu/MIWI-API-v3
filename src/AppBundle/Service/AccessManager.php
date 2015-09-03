@@ -64,7 +64,7 @@ class AccessManager extends BaseManager
     {
         // Verify with Google, return error if not valid
         $client = new \Google_Client();
-        $client->setDeveloperKey('AIzaSyCQwE_4Zd2hciHSUATeII4yRMN5zWIjGNk');
+        $client->setDeveloperKey('AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg');
 
         $ticket = $client->verifyIdToken($token);
 

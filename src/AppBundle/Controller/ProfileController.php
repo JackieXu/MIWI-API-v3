@@ -128,7 +128,113 @@ class ProfileController extends BaseController
             return $this->invalid();
         }
 
-
         return $this->success();
+    }
+
+    /**
+     * Get user settings
+     *
+     * @Route("users/{userId}/settings", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function settingsAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $settings = $userManager->getSettings($userId);
+
+            return $this->success($settings);
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
+     * Update user settings
+     *
+     * @Route("users/{userId}/settings", requirements={"userId": "\d+"})
+     * @Method({"PATCH"})
+     *
+     * @ApiDoc(
+     *  description="Update user settings",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are incorrect",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function settingsUpdateAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $settings = json_decode($request->request->get('settings'), true);
+            try {
+                $userManager->updateSettings($userId, $settings);
+            } catch (\Exception $e) {
+                return $this->invalid(array(
+                    'error' => $e->getMessage()
+                ));
+            }
+
+            return $this->success();
+        }
+
+        return $this->unauthorized();
     }
 }

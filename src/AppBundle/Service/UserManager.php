@@ -382,4 +382,13 @@ class UserManager extends BaseManager
 
         return $events;
     }
+
+    public function getSettings($userId)
+    {
+
+    }
+
+    public function updateSettings($userId, $settings)
+    {
+    }
 }
