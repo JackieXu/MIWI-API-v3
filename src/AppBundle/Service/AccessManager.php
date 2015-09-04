@@ -79,7 +79,6 @@ class AccessManager extends BaseManager
             'https://www.googleapis.com/auth/plus.me',
             'https://www.googleapis.com/auth/plus.profile.emails.read'
         ));
-        $client->setDeveloperKey('AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg');
         $ticket = $client->verifyIdToken($token);
 
         $oauth2 = new \Google_Service_Oauth2($client);
