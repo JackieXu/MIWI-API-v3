@@ -79,7 +79,7 @@ class AccessManager extends BaseManager
             'https://www.googleapis.com/auth/plus.me',
             'https://www.googleapis.com/auth/plus.profile.emails.read'
         ));
-        $ticket = $client->verifyIdToken($token);
+        $ticket = $client->verifyIdToken($token)->getAttributes();
 
         if ($ticket) {
             $email = $ticket['payload']['email'];
