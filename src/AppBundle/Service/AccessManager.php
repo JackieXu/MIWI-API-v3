@@ -65,15 +65,18 @@ class AccessManager extends BaseManager
     public function loginWithGoogle($token)
     {
 
-        $locator = new FileLocator(array(__DIR__.'/../Resources'));
-        $file = $locator->locate('miwi_google.json', null, true);
-        $key = file_get_contents($file);
+//        $locator = new FileLocator(array(__DIR__.'/../Resources'));
+//        $file = $locator->locate('miwi_google.json', null, true);
+//        $key = file_get_contents($file);
 
         // Verify with Google, return error if not valid
         $client = new \Google_Client();
         $client->setApplicationName('MIWI');
-        $token_data = $client->verifyIdToken($token);
-        var_dump($token_data->getAttributes());
+        $client->setAccessToken(json_encode($token));
+        $oauth2 = new \Google_Service_Oauth2($client);
+        $userInfo = $oauth2->userinfo->get();
+        var_dump($userInfo); die();
+
 //
 //        $credentials = new \Google_Auth_AssertionCredentials(
 //            '202539044446-3nn5else4gj3iv1alqb2qesgc78usp23@developer.gserviceaccount.com',
