@@ -72,18 +72,19 @@ class AccessManager extends BaseManager
         // Verify with Google, return error if not valid
         $client = new \Google_Client();
         $client->setApplicationName('MIWI');
-        $client->setAccessToken($token);
+        $token_data = $client->verifyIdToken($token);
+        var_dump($token_data->getAttributes());
+//
+//        $credentials = new \Google_Auth_AssertionCredentials(
+//            '202539044446-3nn5else4gj3iv1alqb2qesgc78usp23@developer.gserviceaccount.com',
+//            array(
+//                'email',
+//                'profile'
+//            ),
+//            $key
+//        );
 
-        $credentials = new \Google_Auth_AssertionCredentials(
-            '202539044446-3nn5else4gj3iv1alqb2qesgc78usp23@developer.gserviceaccount.com',
-            array(
-                'email',
-                'profile'
-            ),
-            $key
-        );
-
-        var_dump($credentials); die();
+//        var_dump($credentials); die();
 
 
 //        if ($ticket) {
