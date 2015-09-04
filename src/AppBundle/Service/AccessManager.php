@@ -3,6 +3,8 @@
 
 namespace AppBundle\Service;
 
+use Symfony\Component\Config\FileLocator;
+
 /**
  * Class AccessManager
  *
@@ -62,20 +64,26 @@ class AccessManager extends BaseManager
      */
     public function loginWithGoogle($token)
     {
+
+        $locator = new FileLocator(array(__DIR__.'/../Resources'));
+        $file = $locator->locate('miwi_google.json', null, true);
+        $key = file_get_contents($file);
+
         // Verify with Google, return error if not valid
         $client = new \Google_Client();
         $client->setApplicationName('MIWI');
-        $client->setClientId('202539044446-n8ab0pvvupgvi9c8ogh6nmfuin8kavli.apps.googleusercontent.com');
-        $client->setClientSecret('dkzXR65BmcwoUCcdY9QzT0p_');
-        $client->setDeveloperKey('AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg');
-        $client->setScopes(array(
-            'email',
-            'profile'
-        ));
-        $client->authenticate($token);
-        $token = json_decode($client->getAccessToken(), true);
+        $client->setAccessToken($token);
 
-        var_dump($token); die();
+        $credentials = new \Google_Auth_AssertionCredentials(
+            '202539044446-3nn5else4gj3iv1alqb2qesgc78usp23@developer.gserviceaccount.com',
+            array(
+                'email',
+                'profile'
+            ),
+            $key
+        );
+
+        var_dump($credentials); die();
 
 
 //        if ($ticket) {
