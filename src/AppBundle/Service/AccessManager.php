@@ -81,13 +81,9 @@ class AccessManager extends BaseManager
         ));
         $ticket = $client->verifyIdToken($token);
 
-        $oauth2 = new \Google_Service_Oauth2($client);
-        $userInfo = $oauth2->userinfo->get();
-
         if ($ticket) {
             var_dump($ticket->getAttributes());
         }
-        var_dump($userInfo); die();
 
     }
 
