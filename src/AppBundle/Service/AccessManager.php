@@ -71,8 +71,8 @@ class AccessManager extends BaseManager
 
         // Verify with Google, return error if not valid
         $client = new \Google_Client();
-//        $client->setClientId('202539044446-n8ab0pvvupgvi9c8ogh6nmfuin8kavli.apps.googleusercontent.com');
-//        $client->setClientSecret('dkzXR65BmcwoUCcdY9QzT0p_');
+        $client->setClientId('202539044446-n8ab0pvvupgvi9c8ogh6nmfuin8kavli.apps.googleusercontent.com');
+        $client->setClientSecret('dkzXR65BmcwoUCcdY9QzT0p_');
         $client->setApplicationName('MIWI');
         $client->setScopes(array(
             'https://www.googleapis.com/auth/plus.login',
@@ -89,20 +89,6 @@ class AccessManager extends BaseManager
             var_dump($ticket->getAttributes());
         }
         var_dump($userInfo); die();
-
-//
-//        $credentials = new \Google_Auth_AssertionCredentials(
-//            '202539044446-3nn5else4gj3iv1alqb2qesgc78usp23@developer.gserviceaccount.com',
-//            array(
-//                'email',
-//                'profile'
-//            ),
-//            $key
-//        );
-
-//        var_dump($credentials); die();
-
-
 
     }
 
