@@ -66,8 +66,8 @@ class AccessManager extends BaseManager
         $client = new \Google_Client();
         $client->setApplicationName('MIWI');
         $client->setDeveloperKey('AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg');
-
-        $ticket = $client->verifyIdToken($token);
+        $client->setAccessToken($token);
+        $ticket = $client->verifyIdToken();
 
         if ($ticket) {
             $data = $ticket->getAttributes();
