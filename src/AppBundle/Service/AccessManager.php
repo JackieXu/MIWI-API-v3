@@ -82,9 +82,15 @@ class AccessManager extends BaseManager
         $ticket = $client->verifyIdToken($token);
 
         if ($ticket) {
-            var_dump($ticket->getAttributes());
+            $email = $ticket['payload']['email'];
+            $firstName = $ticket['payload']['given_name'];
+            $lastName = $ticket['payload']['family_name'];
+            $image = $ticket['payload']['picture'];
+
+            return $this->register($email, 'm939m939!@', $firstName, $lastName, 0, 'google', $image);
         }
 
+        return false;
     }
 
     /**
@@ -96,20 +102,25 @@ class AccessManager extends BaseManager
      * @param string $lastName
      * @param int $birthdate
      * @param int|null $social
+     * @param null $image
      * @return array|null
+     * @throws \Exception
      */
-    public function register($email, $password, $firstName, $lastName, $birthdate, $social = null)
+    public function register($email, $password, $firstName, $lastName, $birthdate, $social = null, $image = null)
     {
         $userId = $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   u.email = {email}
-            RETURN  id(u) as id
+            RETURN  id(u) as id,
+                    u.status as status
         ', array(
             'email' => $email
         ));
 
         if ($userId) {
-            $userId = $userId[0];
+            $data = $userId[0];
+            $data['accessToken'] = $this->generateToken($data['id']);
+            return $data;
         }
 
         // If an ID was returned, user already exists
@@ -127,7 +138,8 @@ class AccessManager extends BaseManager
                     lastName: {lastName},
                     birthdate: {birthdate},
                     status: 0,
-                    social: {social}
+                    social: {social},
+                    image: {image}
                 })
                 RETURN  id(u) as id
             ', array(
@@ -136,7 +148,8 @@ class AccessManager extends BaseManager
                 'firstName' => $firstName,
                 'lastName' => $lastName,
                 'birthdate' => $birthdate,
-                'social' => $social
+                'social' => $social,
+                'image' => $image
             ));
 
             if ($user) {

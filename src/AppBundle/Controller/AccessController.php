@@ -136,11 +136,11 @@ class AccessController extends BaseController
         $accessManager = $this->get('manager.access');
         $userToken = $accessManager->loginWithGoogle($options->getValue('googleAccessToken'));
 
-        return new JsonResponse(array(
-            'id' => null,
-            'accessToken' => $userToken,
-            'status' => 0
-        ));
+        if ($userToken) {
+            return $this->success($userToken);
+        }
+
+        return $this->invalid();
     }
 
     /**
