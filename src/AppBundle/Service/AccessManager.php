@@ -72,7 +72,7 @@ class AccessManager extends BaseManager
         // Verify with Google, return error if not valid
         $client = new \Google_Client();
         $client->setApplicationName('MIWI');
-        $client->setAccessToken(json_encode($token));
+        $client->setAccessToken($token);
         $oauth2 = new \Google_Service_Oauth2($client);
         $userInfo = $oauth2->userinfo->get();
         var_dump($userInfo); die();
