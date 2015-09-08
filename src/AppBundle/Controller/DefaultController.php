@@ -82,13 +82,11 @@ class DefaultController extends BaseController
                 ));
                 break;
             case 'POST':
-                $parameters = $this->getParameters($request);
-
-                $userId = (int) $parameters['userId'];
-                $objectId = (int) $parameters['objectId'];
-                $objectType = $parameters['objectType'];
-                $type = $parameters['type'];
-                $people = explode(',', $parameters['people']);
+                $userId = (int) $request->request->get('userId');
+                $objectId = (int) $request->request->get('objectId');
+                $objectType = $request->request->get('objectType');
+                $type = $request->request->get('type');
+                $people = explode(',', $request->request->get('people'));
                 $rPeople = array();
 
                 foreach ($people as $person) {
