@@ -394,7 +394,7 @@ class UserController extends BaseController
      * @ApiDoc(
      *  description="Add user device",
      *  tags={},
-     *  section="user",
+     *  section="users",
      *  requirements={
      *      {
      *          "name"="deviceId",
