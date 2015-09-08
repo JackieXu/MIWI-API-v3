@@ -388,7 +388,7 @@ class UserController extends BaseController
     /**
      * Add user device
      *
-     * @Route("user/{userId}/devices", requirements={"userId": "\d+"})
+     * @Route("users/{userId}/devices", requirements={"userId": "\d+"})
      * @Method({"POST"})
      *
      * @ApiDoc(
