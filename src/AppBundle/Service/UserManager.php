@@ -391,4 +391,58 @@ class UserManager extends BaseManager
     public function updateSettings($userId, $settings)
     {
     }
+
+    /**
+     * Add device
+     * @param $userId
+     * @param $deviceId
+     * @param $deviceType
+     * @return array|null
+     * @throws \Exception
+     */
+    public function addDevice($userId, $deviceId, $deviceType)
+    {
+        switch ($deviceType) {
+            case 'ios':
+                $user = $this->sendCypherQuery('
+                    MATCH       (u:USER)
+                    WHERE       id(u) = {userId}
+                    WITH        u,
+                                CASE    {deviceId} IN u.iosDevices
+                                WHEN    true
+                                THEN    u.iosDevices
+                                ELSE    u.iosDevices + {deviceId}
+                                END
+                                AS newDevices
+                    SET         u.iosDevices = newDevices
+                    RETURN      id(u) as id
+                ', array(
+                    'userId' => $userId,
+                    'deviceId' => $deviceId
+                ));
+                break;
+            case 'android':
+                $user = $this->sendCypherQuery('
+                    MATCH       (u:USER)
+                    WHERE       id(u) = {userId}
+                    WITH        u,
+                                CASE    {deviceId} IN u.androidDevices
+                                WHEN    true
+                                THEN    u.androidDevices
+                                ELSE    u.androidDevices + {deviceId}
+                                END
+                                AS newDevices
+                    SET         u.androidDevices = newDevices
+                    RETURN      id(u) as id
+                ', array(
+                    'userId' => $userId,
+                    'deviceId' => $deviceId
+                ));
+                break;
+            default:
+                $user = null;
+        }
+
+        return $user;
+    }
 }

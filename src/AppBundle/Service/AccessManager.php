@@ -65,29 +65,28 @@ class AccessManager extends BaseManager
     public function loginWithGoogle($token)
     {
 
-//        $locator = new FileLocator(array(__DIR__.'/../Resources'));
-//        $file = $locator->locate('miwi_google.json', null, true);
-//        $key = file_get_contents($file);
-
-        // Verify with Google, return error if not valid
         $client = new \Google_Client();
+        $client->setApplicationName('MIWI');
         $client->setClientId('202539044446-n8ab0pvvupgvi9c8ogh6nmfuin8kavli.apps.googleusercontent.com');
         $client->setClientSecret('dkzXR65BmcwoUCcdY9QzT0p_');
-        $client->setApplicationName('MIWI');
         $client->setScopes(array(
             'https://www.googleapis.com/auth/plus.login',
             'https://www.googleapis.com/auth/plus.me',
             'https://www.googleapis.com/auth/plus.profile.emails.read'
         ));
-        $ticket = $client->verifyIdToken($token)->getAttributes();
 
-        if ($ticket) {
-            $email = $ticket['payload']['email'];
-            $firstName = $ticket['payload']['given_name'];
-            $lastName = $ticket['payload']['family_name'];
-            $image = $ticket['payload']['picture'];
+        if ($ticket = $client->verifyIdToken($token)->getAttributes()) {
+            $payload = $ticket['payload'];
 
-            return $this->register($email, 'm939m939!@', $firstName, $lastName, 0, 'google', $image);
+            return $this->register(
+                $payload['email'],
+                'm939m939!@',
+                $payload['given_name'],
+                $payload['family_name'],
+                0,
+                'google',
+                $payload['picture']
+            );
         }
 
         return false;
