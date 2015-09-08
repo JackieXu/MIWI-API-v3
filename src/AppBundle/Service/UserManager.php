@@ -156,7 +156,7 @@ class UserManager extends BaseManager
      * @param int $limit
      * @param int $offset
      * @param int $interestId
-     * @param int $query
+     * @param string $query
      * @return array
      * @throws \Exception
      */
@@ -444,5 +444,48 @@ class UserManager extends BaseManager
         }
 
         return $user;
+    }
+
+    public function getUserComments($userId)
+    {
+        $comments = $this->sendCypherQuery('
+                MATCH   (u:USER)-[:COMMENTED_WITH]->(c:COMMENT)
+                WHERE   id(u) = {userId}
+                RETURN  id(c) as id,
+                        c.text as text
+                LIMIT   5
+            ', array(
+            'userId' => $userId,
+        ));
+
+        return $comments;
+    }
+
+    public function getUsers()
+    {
+        $users = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            RETURN  id(u) as id,
+                    u.firstName + " " + u.lastName as name
+            ORDER BY id DESC
+            LIMIT   5
+        ', array(
+            'userId' => 1
+        ));
+
+        return $users;
+    }
+
+    public function getDevices($userId)
+    {
+        $devices = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+            RETURN  u.androidDevices as devices
+        ', array(
+            'userId' => $userId
+        ));
+
+        return $devices;
     }
 }

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Cool behind-the-scenes stuff -->
+    <meta charset="UTF-8" />
+
+    <!-- Names are imporant, ya know -->
+    <title>Push Notifications Tester</title>
+</head>
+<body>
+<form method="POST" action="{{ path('app_default_notificationtester', {'userId': userId}) }}" id="notification-form">
+    <fieldset>
+        <legend>Push Notification Tester</legend>
+        <input type="hidden" id="userId" name="userId" value="{{ userId }}" />
+        <label for="objectType">Object Type</label><br />
+        <select name="objectType" id="objectType">
+            {% for key, object in objects %}
+                <option value="{{ key }}">{{ key }}</option>
+            {% endfor %}
+        </select><br />
+        <label for="objectId">Object ID</label><br />
+        <select name="objectId" id="objectId">
+        </select><br />
+        <label for="type">Type</label><br />
+        <select name="type" id="type">
+        </select><br />
+        <label >
+            Add people<br />
+            {% for user in data.users|slice(0, 5) %}
+                <input type="checkbox" name="people[]" value="{{ user.id }}" >
+                ({{ user.id }}) {{ user.name }}<br />
+            {% endfor %}
+        </label>
+        <input type="submit" value="Send" />
+    </fieldset>
+</form>
+<script>
+    (function (document) {
+        "use strict";
+
+        var $ = function (id) {
+                    return document.getElementById(id)
+                },
+                data = {
+                    interest: [
+                        {% for interest in data.interests %}
+                        {
+                            id: {{ interest.id }},
+                            title: "{{ interest.name }}"
+                        },
+                        {% endfor %}
+                    ],
+                    post: [
+                        {% for post in data.posts %}
+                        {
+                            id: {{ post.id }},
+                            title: "{{ post.body }}"
+                        },
+                        {% endfor %}
+                    ],
+                    comment: [
+                        {% for comment in data.comments %}
+                        {
+                            id: {{ comment.id }},
+                            title: "{{ comment.text }}"
+                        }
+                        {% endfor %}
+                    ]
+                },
+                types = {
+                    interest: [
+                        {% for key, object in objects %}
+                        {% if key == 'interest' %}
+                        {% for type in object %}
+                        "{{ type }}",
+                        {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                    ],
+                    post: [
+                        {% for key, object in objects %}
+                        {% if key == 'post' %}
+                        {% for type in object %}
+                        "{{ type }}",
+                        {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                    ],
+                    comment: [
+                        {% for key, object in objects %}
+                        {% if key == 'comment' %}
+                        {% for type in object %}
+                        "{{ type }}",
+                        {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                    ]
+                };
+
+        $('objectType').addEventListener('change', function () {
+            $('objectId').innerHTML = "";
+            $('type').innerHTML = "";
+            data[this.value].forEach(function (value) {
+                var el = document.createElement('option');
+                el.setAttribute('value', value.id);
+                el.innerHTML = '(' + value.id + ') ' + value.title;
+                $('objectId').appendChild(el);
+            });
+            types[this.value].forEach(function (value) {
+                var el = document.createElement('option');
+                el.setAttribute('value', value);
+                el.innerHTML = value;
+                $('type').appendChild(el);
+            });
+        }, false);
+
+        $('notification-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var xhr = new XMLHttpRequest(),
+                    formData = new FormData(),
+                    people = [];
+            xhr.open('POST', "{{ path('app_default_notificationtester', {'userId': userId}) }}", true);
+            xhr.onload = function () {
+                if (this.status == 200) {
+                    console.log(this.responseText);
+                }
+            };
+
+            formData.append('userId', $('userId').value);
+            formData.append('objectId', $('objectId').value);
+            formData.append('objectType', $('objectType').value);
+            formData.append('type', $('type').value);
+
+            // Silly nodelists, arrays but not arrays.
+            Array.prototype.forEach.call(document.querySelectorAll('input[name="people[]"]'), function (personNode) {
+                if (personNode.checked) {
+                    people.push(personNode.value);
+                }
+            });
+
+            formData.append('people', people);
+            xhr.send(formData);
+            return false;
+        }, false);
+    }(document))
+</script>
+</body>
+</html>

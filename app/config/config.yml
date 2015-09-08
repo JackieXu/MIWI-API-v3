@@ -51,6 +51,13 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
+rms_push_notifications:
+  android:
+      timeout: 5 # Seconds
+      gcm:
+          api_key: AIzaSyCQwE_4Zd2hciHSUATeII4yRMN5zWIjGNk
+          use_multi_curl: true
+
 nelmio_api_doc:
     name:   MIWI API Documentation V3
     request_listener:
