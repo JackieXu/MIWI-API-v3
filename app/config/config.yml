@@ -55,7 +55,7 @@ rms_push_notifications:
   android:
       timeout: 5 # Seconds
       gcm:
-          api_key: AIzaSyCQwE_4Zd2hciHSUATeII4yRMN5zWIjGNk
+          api_key: AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg
           use_multi_curl: true
 
 nelmio_api_doc:
