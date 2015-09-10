@@ -107,7 +107,7 @@ class DefaultController extends BaseController
 
                 $headers = array(
                     "Content-Type" => "application/json",
-                    "Authorization" => "key=" . "AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg"
+                    "Authorization" => "key=AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg"
                 );
 
                 $data = array(
