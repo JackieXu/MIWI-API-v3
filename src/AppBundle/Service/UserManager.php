@@ -486,6 +486,6 @@ class UserManager extends BaseManager
             'userId' => $userId
         ));
 
-        return $devices;
+        return array_key_exists('devices', $devices) ? $devices['devices'] : array();
     }
 }
