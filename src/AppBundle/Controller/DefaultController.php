@@ -115,6 +115,8 @@ class DefaultController extends BaseController
                     'registration_ids' => $devices
                 );
 
+                $this->get('logger')->log('info', json_encode($data));
+
                 $ch = curl_init();
 
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
