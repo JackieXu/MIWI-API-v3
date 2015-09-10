@@ -95,26 +95,28 @@ class DefaultController extends BaseController
 
                 $devices = $this->get('manager.user')->getDevices($userId);
 
-                $push = $this->get('rms_push_notifications');
+                $data = array(
+                    'type' => 'notification',
+                    'data' => array(
+                        'objectId' => $objectId,
+                        'objectType' => $objectType,
+                        'type' => $type,
+                        'people' => $rPeople
+                    )
+                );
 
-                foreach ($devices as $deviceId) {
-                    $data = array(
-                        'type' => 'notification',
-                        'data' => array(
-                            'objectId' => $objectId,
-                            'objectType' => $objectType,
-                            'type' => $type,
-                            'people' => $rPeople
-                        )
-                    );
-
-                    $message = new AndroidMessage();
-                    $message->setGCM(true);
-                    $message->setData($data);
-                    $message->setDeviceIdentifier($deviceId);
-
-                    $push->send($message);
-                }
+                $request = new \HttpRequest();
+                $request->setUrl('https://android.googleapis.com/gcm/send');
+                $request->setHeaders(array(
+                    'Authorization' => 'key=AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg',
+                    'Content-Type' => 'application/json'
+                ));
+                $request->setMethod(HTTP_METH_POST);
+                $request->setBody(json_encode(array(
+                    'registration_ids' => $devices,
+                    'data' => $data
+                )));
+                $request->send();
 
                 return $this->success('ok');
             default:
