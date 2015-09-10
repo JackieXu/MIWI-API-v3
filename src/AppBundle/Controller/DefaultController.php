@@ -127,7 +127,7 @@ class DefaultController extends BaseController
                 $response = curl_exec($ch);
                 curl_close($ch);
 
-                return $this->success('ok');
+                return $this->success($response);
             default:
                 return $this->invalid();
         }
