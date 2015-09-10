@@ -95,7 +95,7 @@ class DefaultController extends BaseController
 
                 $devices = $this->get('manager.user')->getDevices($userId);
 
-                $data = array(
+                $objectData = array(
                     'type' => 'notification',
                     'data' => array(
                         'objectId' => $objectId,
@@ -105,18 +105,27 @@ class DefaultController extends BaseController
                     )
                 );
 
-                $request = new \HttpRequest();
-                $request->setUrl('https://android.googleapis.com/gcm/send');
-                $request->setHeaders(array(
-                    'Authorization' => 'key=AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg',
-                    'Content-Type' => 'application/json'
-                ));
-                $request->setMethod(HTTP_METH_POST);
-                $request->setBody(json_encode(array(
-                    'registration_ids' => $devices,
-                    'data' => $data
-                )));
-                $request->send();
+                $headers = array(
+                    "Content-Type" => "application/json",
+                    "Authorization" => "key=" . "AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg"
+                );
+
+                $data = array(
+                    'data' => $objectData,
+                    'registration_ids' => $devices
+                );
+
+                $ch = curl_init();
+
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_URL, "https://android.googleapis.com/gcm/send");
+                curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                error_log(json_encode($data));
+                $response = curl_exec($ch);
+                curl_close($ch);
 
                 return $this->success('ok');
             default:
