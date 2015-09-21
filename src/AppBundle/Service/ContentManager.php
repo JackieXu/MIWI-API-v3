@@ -176,9 +176,35 @@ class ContentManager extends BaseManager
         return $score[0];
     }
 
+    /**
+     * @param int $userId
+     * @param int $itemId
+     * @param string $text
+     * @return bool
+     * @throws \Exception
+     */
     public function comment($userId, $itemId, $text)
     {
+        $commentId = $this->sendCypherQuery('
+            MATCH   (u:USER), (i:ITEM)
+            WHERE   id(u) = {userId}
+            AND     id(i) = {itemId}
+            WITH    i, u
+            CREATE  (u)-[uc:HAS_COMMENTED]->(c:COMMENT {
+                text: {text}
+            })-[ci:COMMENT_ON]->(i)
+            RETURN  id(c) as id
+        ', array(
+            'itemId' => $itemId,
+            'userId' => $userId,
+            'text' => $text
+        ));
 
+        if ($commentId) {
+            return $commentId[0]['id'];
+        }
+
+        return false;
     }
 
     /**

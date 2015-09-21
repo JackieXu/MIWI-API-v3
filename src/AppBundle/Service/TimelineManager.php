@@ -56,43 +56,6 @@ class TimelineManager extends BaseManager
             LIMIT       {limit}
         ';
 
-        $groupsCypherString = '
-            MATCH       (g:GROUP)-[gi:ASSOCIATED_WITH]->(i:INTEREST), (u:USER)
-            WHERE       id(i) = {interestId}
-            AND         id(u) = {userId}
-            RETURN      id(g) as id,
-                        g.title as title,
-                        g.body as body,
-                        g.user as admin,
-                        g.website as website,
-                        g.createdOn as creationDate,
-                        g.updatedOn as updateDate,
-                        g.members as members,
-                        "group" as type
-            ORDER BY    g.creation_date
-            SKIP        {offset}
-            LIMIT       1
-        ';
-
-        $eventsCypherString = '
-            MATCH       (e:EVENT)-[ei:ASSOCIATED_WITH]->(i:INTEREST), (u:USER)
-            WHERE       id(i) = {interestId}
-            AND         id(u) = {userId}
-            RETURN      id(e) as id,
-                        e.title as title,
-                        e.user as admin,
-                        e.body as body,
-                        e.website as website,
-                        e.location as location,
-                        e.startDate as startDate,
-                        e.endDate as endDate,
-                        e.members as members,
-                        "event" as type
-            ORDER BY    e.creation_date
-            SKIP        {offset}
-            LIMIT       1
-        ';
-
         $peopleCypherString = '
             MATCH           (u:USER)-[ui:LIKES]->(i:INTEREST)<-[fi:LIKES]-(f:USER)
             WHERE           id(u) = {userId}
@@ -118,69 +81,12 @@ class TimelineManager extends BaseManager
                 'parameters' => $parameters
             ),
             array(
-                'statement' => $groupsCypherString,
-                'parameters' => $parameters
-            ),
-            array(
-                'statement' => $eventsCypherString,
-                'parameters' => $parameters
-            ),
-            array(
                 'statement' => $peopleCypherString,
                 'parameters' => $parameters
             )
         ));
 
         $timelineItems = call_user_func_array('array_merge', $timelineItems);
-        $items = array();
-
-        foreach ($timelineItems as $item) {
-            if (array_key_exists('type', $item) && $item['type'] === 'content') {
-                $data = $this->container->get('formatter')->formatContent($item, $userId);
-            } elseif (array_key_exists('admin', $item)) {
-                $data = $item;
-                $data['admin'] = $this->container->get('formatter')->formatUser($data['admin']);
-            } else {
-                $data = $item;
-            }
-            $items[] = $data;
-        }
-
-        return $items;
-    }
-
-    public function getGroupTimeline($userId, $groupId, $offset, $limit)
-    {
-        $timelineItems = $this->sendCypherQuery('
-            MATCH       (c:CONTENT)-[ci:ASSOCIATED_WITH]->(i:INTEREST)<-[:ASSOCIATED_WITH]-(g:GROUP), (u:USER)
-            WHERE       id(g) = {groupId}
-            AND         id(u) = {userId}
-            AND NOT     (u)-[:HAS_HIDDEN]->(c)
-            RETURN      id(c) as id,
-                        c.user as author,
-                        c.title as title,
-                        c.body as body,
-                        c.date as date,
-                        c.visibility as visibility,
-                        c.upvotes as upvotes,
-                        c.downvotes as downvotes,
-                        c.images as images,
-                        c.shares as shares,
-                        c.comments as comments,
-                        "content" as type,
-                        labels(c) as labels,
-                        c.interestId as interestId,
-                        c.link as link
-            ORDER BY    c.date DESC
-            SKIP        {offset}
-            LIMIT       {limit}
-        ', array(
-            'userId' => $userId,
-            'groupId' => $groupId,
-            'offset' => $offset,
-            'limit' => $limit
-        ));
-
         $items = array();
 
         foreach ($timelineItems as $item) {

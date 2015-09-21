@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\CommentValidator;
 use AppBundle\Validator\TokenValidator;
 use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -171,11 +172,47 @@ class ItemActionController extends BaseController
      * )
      *
      * @param Request $request
+     * @param string $itemId
      * @return Response
      */
-    public function commentAction(Request $request)
+    public function commentAction(Request $request, $itemId)
     {
-        return $this->invalid();
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+            $commentValidator = new CommentValidator($request->request->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $itemId = (int) $itemId;
+        $userId = (int) $commentValidator->getValue('userId');
+        $text = $commentValidator->getValue('text');
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        $accessManager = $this->get('manager.access');
+        $contentManager = $this->get('manager.content');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $commentId = $contentManager->comment($userId, $itemId, $text);
+
+            if ($commentId) {
+                return $this->success(array(
+                    'id' => $commentId
+                ));
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
     }
 
     /**

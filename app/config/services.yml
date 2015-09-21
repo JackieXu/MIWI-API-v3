@@ -23,12 +23,8 @@ services:
         class: AppBundle\Service\UserManager
         parent: manager.base
 
-    manager.group:
-        class: AppBundle\Service\GroupManager
-        parent: manager.base
-
-    manager.event:
-        class: AppBundle\Service\EventManager
+    manager.content:
+        class: AppBundle\Service\ContentManager
         parent: manager.base
 
     formatter:
