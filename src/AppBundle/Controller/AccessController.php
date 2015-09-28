@@ -173,14 +173,14 @@ class AccessController extends BaseController
 
         try {
             $options = new GoogleValidator(array(
-                'googleAccessToken' => $token
+                'facebookAccessToken' => $token
             ));
         } catch (InvalidOptionsException $e) {
             return $this->unauthorized();
         }
 
         $accessManager = $this->get('manager.access');
-        $userToken = $accessManager->loginWithGoogle($options->getValue('googleAccessToken'));
+        $userToken = $accessManager->loginWithFacebook($options->getValue('googleAccessToken'));
 
         return new JsonResponse(array(
             'accessToken' => $userToken

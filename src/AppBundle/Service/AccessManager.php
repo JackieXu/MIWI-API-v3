@@ -3,7 +3,8 @@
 
 namespace AppBundle\Service;
 
-use Symfony\Component\Config\FileLocator;
+use Facebook\Facebook;
+
 
 /**
  * Class AccessManager
@@ -86,6 +87,38 @@ class AccessManager extends BaseManager
                 0,
                 'google',
                 $payload['picture']
+            );
+        }
+
+        return false;
+    }
+
+    /**
+     * Login with Facebook access token
+     *
+     * @param $accessToken
+     * @return array|bool|null
+     */
+    public function loginWithFacebook($accessToken)
+    {
+        $fb = new Facebook(array(
+            'app_id' => '',
+            'app_secret' => '',
+            'default_graph_version' => 'v2.4'
+        ));
+
+        $response = $fb->get('/me?fields=id,first_name,last_name,picture', $accessToken);
+        $user = $response->getGraphNode();
+
+        if ($user) {
+            return $this->register(
+                $user->getField('email'),
+                'm939m939!@',
+                $user->getField('first_name'),
+                $user->getField('last_name'),
+                0,
+                'facebook',
+                $user->getField('picture')
             );
         }
 

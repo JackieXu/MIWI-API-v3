@@ -19,7 +19,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "google/apiclient": "1.1.4",
         "symfony/serializer": "2.0.7",
-        "richsage/rms-push-notifications-bundle": "dev-master"
+        "richsage/rms-push-notifications-bundle": "dev-master",
+        "facebook/php-sdk-v4": "5.0.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
