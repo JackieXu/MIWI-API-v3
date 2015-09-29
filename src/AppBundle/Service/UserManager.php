@@ -492,4 +492,23 @@ class UserManager extends BaseManager
 
         return array();
     }
+
+    public function formatUser($userId)
+    {
+        $user = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+            RETURN  id(u) as id,
+                    u.firstName + " " + u.lastName as name,
+                    u.image as image
+        ', array(
+            'userId' => $userId
+        ));
+
+        if ($user) {
+            return $user[0];
+        }
+
+        return false;
+    }
 }
