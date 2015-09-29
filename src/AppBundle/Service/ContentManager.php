@@ -241,4 +241,128 @@ class ContentManager extends BaseManager
 
         return $status[0]['status'];
     }
+
+    /***
+     * @param $title
+     * @param $body
+     * @param $images
+     * @param $userId
+     * @param $interestId
+     * @return bool
+     * @throws \Exception
+     */
+    public function create($title, $body, $images, $userId, $interestId)
+    {
+        $images = $this->processImages($images);
+
+        if ($interestId === 0) {
+            $itemId = $this->sendCypherQuery('
+                MATCH   (u:USER)
+                WHERE   id(u) = {userId}
+                WITH    u
+                CREATE  (u)-[:HAS_POSTED]->(i:ITEM:CONTENT {
+                    title: {title}
+                    body: {body}
+                    images: {images}
+                })
+                RETURN id(i) as id
+            ', array(
+                'title' => $title,
+                'body' => $body,
+                'images' => $images,
+                'userId' => $userId
+            ));
+        } else {
+            $itemId = $this->sendCypherQuery('
+                MATCH   (u:USER), (i:INTEREST)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {interestId}
+                WITH    u, i
+                CREATE  (u)-[:HAS_POSTED]->(c:ITEM:CONTENT {
+                    title: {title}
+                    body: {body}
+                    images: {images}
+                })-[:ASSOCIATED_WITH]->(i)
+                RETURN id(c) as id
+            ', array(
+                'title' => $title,
+                'body' => $body,
+                'images' => $images,
+                'userId' => $userId,
+                'interestId' => $interestId
+            ));
+        }
+
+        if ($itemId) {
+            return $itemId[0]['id'];
+        }
+
+        return false;
+    }
+
+    private function processImages($images)
+    {
+        $templateString = '%s/img/node/%s';
+        $saveRoot = '/var/www/av3/web';
+        $webRoot = 'http://av3.miwi.com';
+        $fileName = uniqid();
+
+        $files = array();
+
+        foreach ($images as $string) {
+            if (filter_var($string, FILTER_VALIDATE_URL) !== false) {
+                return $string;
+            }
+
+            if (strpos($string, ',')) {
+
+                $data = explode(',', $string);
+                $image = base64_decode($data[1]);
+
+            } else {
+
+                $image = base64_decode($string);
+
+            }
+
+            $file = finfo_open();
+            $mimeType = finfo_buffer($file, $image, FILEINFO_MIME_TYPE);
+            finfo_close($file);
+
+            $mimeArray = explode('/', $mimeType);
+            $extension = array_pop($mimeArray);
+
+            $saveLocation = sprintf($templateString, $saveRoot, $fileName . '_orig.' . $extension);
+            $webLocation = sprintf($templateString, $webRoot, $fileName . '_orig.' . $extension);
+
+            $files[] = $this->saveData($saveLocation, $webLocation, $image);
+        }
+
+        return $files;
+    }
+
+    private function saveData($saveLocation, $webLocation, $content)
+    {
+        $temp = tempnam(sys_get_temp_dir(), 'temp');
+
+        if (!($f = @fopen($temp, 'wb'))) {
+            $temp = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('temp');
+            if (!($f = @fopen($temp, 'wb'))) {
+                trigger_error(sprintf('Error writing temp file `%s`', $temp), E_USER_WARNING);
+                return false;
+            }
+        }
+
+        @fwrite($f, $content);
+        @fclose($f);
+
+        if (!@rename($temp, $saveLocation)) {
+            @unlink($saveLocation);
+            @rename($temp, $saveLocation);
+        }
+
+        @chmod($saveLocation, 0777);
+
+        return $webLocation;
+    }
 }

@@ -3,10 +3,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Validator\ItemValidator;
+use AppBundle\Validator\TokenValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 /**
  * Class ItemController
@@ -72,7 +76,42 @@ class ItemController extends BaseController
      */
     public function createAction(Request $request)
     {
-        return $this->invalid();
+        try {
+            $itemValidator = new ItemValidator($request->request->all());
+            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $userId = $itemValidator->getValue('userId');
+        $interestId = $itemValidator->getValue('interestId');
+        $title = $itemValidator->getValue('title');
+        $body = $itemValidator->getValue('body');
+        $images = $itemValidator->getValue('images');
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $itemManager = $this->get('manager.content');
+            $itemId = $itemManager->create($title, $body, $images, $userId, $interestId);
+
+            if ($itemId) {
+                return $this->success(array(
+                    'id' => $itemId
+                ));
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
     }
 
     /**
