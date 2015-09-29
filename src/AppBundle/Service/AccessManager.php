@@ -102,8 +102,8 @@ class AccessManager extends BaseManager
     public function loginWithFacebook($accessToken)
     {
         $fb = new Facebook(array(
-            'app_id' => '',
-            'app_secret' => '',
+            'app_id' => '1002354526458218',
+            'app_secret' => 'b06f8127a85b0ae50bddb2f099108377',
             'default_graph_version' => 'v2.4'
         ));
 
@@ -171,7 +171,8 @@ class AccessManager extends BaseManager
                     birthdate: {birthdate},
                     status: 0,
                     social: {social},
-                    image: {image}
+                    image: {image},
+                    notficationId: 0
                 })
                 RETURN  id(u) as id
             ', array(

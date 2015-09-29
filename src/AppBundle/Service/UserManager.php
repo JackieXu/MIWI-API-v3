@@ -511,4 +511,18 @@ class UserManager extends BaseManager
 
         return false;
     }
+
+    public function getNotificationId($userId)
+    {
+        $id = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+            SET     u.notitifcationId = u.notificationId + 1
+            RETURN  u.notificationId as notificationId
+        ', array(
+            'userId' => $userId
+        ));
+
+        return $id[0]['notificationId'];
+    }
 }

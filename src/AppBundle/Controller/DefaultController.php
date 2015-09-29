@@ -88,12 +88,14 @@ class DefaultController extends BaseController
                 $type = $request->request->get('type');
                 $people = explode(',', $request->request->get('people'));
                 $rPeople = array();
+                $userManager = $this->get('manager.user');
 
                 foreach ($people as $person) {
-                    $rPeople[] = (int) $person;
+                    $rPeople[] = $userManager->formatUser((int) $person);
                 }
 
-                $devices = $this->get('manager.user')->getDevices($userId);
+                $devices = $userManager->getDevices($userId);
+                $notificationId = $userManager->getNotificationId($userId);
 
                 $objectData = array(
                     'type' => 'notification',
@@ -101,7 +103,8 @@ class DefaultController extends BaseController
                         'objectId' => $objectId,
                         'objectType' => $objectType,
                         'type' => $type,
-                        'people' => $rPeople
+                        'people' => $rPeople,
+                        'id' => $notificationId
                     )
                 );
 
