@@ -6,6 +6,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Security\Exception\UserExistsException;
 use AppBundle\Validator\EmailValidator;
+use AppBundle\Validator\FacebookValidator;
 use AppBundle\Validator\GoogleValidator;
 use AppBundle\Validator\LoginValidator;
 use AppBundle\Validator\PasswordTokenValidator;
@@ -172,7 +173,7 @@ class AccessController extends BaseController
         $token = $request->headers->get('accessToken');
 
         try {
-            $options = new GoogleValidator(array(
+            $options = new FacebookValidator(array(
                 'facebookAccessToken' => $token
             ));
         } catch (InvalidOptionsException $e) {
