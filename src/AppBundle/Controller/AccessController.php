@@ -170,7 +170,7 @@ class AccessController extends BaseController
      */
     public function loginWithFacebookAction(Request $request)
     {
-        $token = $request->headers->get('accessToken');
+        $token = $request->request->get('accessToken');
 
         try {
             $options = new FacebookValidator(array(
