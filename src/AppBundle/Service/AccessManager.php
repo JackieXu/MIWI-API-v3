@@ -111,7 +111,13 @@ class AccessManager extends BaseManager
         $user = $response->getGraphNode();
 
         if ($user) {
-            error_log($user->getField('picture'));
+            try {
+                $picture = json_decode($user->getField('picture'), true);
+                $picture = $picture['url'];
+            } catch (\Exception $e) {
+                $picture = 'http://av3.miwi.com/img/default_avatar.png';
+                error_log($e->getMessage());
+            }
             return $this->register(
                 $user->getField('email'),
                 'm939m939!@',
@@ -119,7 +125,7 @@ class AccessManager extends BaseManager
                 $user->getField('last_name'),
                 0,
                 'facebook',
-                $user->getField('picture')
+                $picture
             );
         }
 
