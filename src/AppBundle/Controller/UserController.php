@@ -464,25 +464,148 @@ class UserController extends BaseController
     }
 
     /**
+     * Deactivate user
+     *
+     * @Route("users/{userId}/deactivate", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Deactivate user",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *  },
+     *  parameters={
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * }
+     *
      * @param Request $request
+     * @param string $userId
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deactivateAction(Request $request, $userId)
     {
-        return $this->invalid();
+        try {
+            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $userId = (int) $userId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $status = $userManager->setUserStatus($userId, 'INACTIVE');
+
+            if ($status) {
+                return $this->success();
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
     }
 
     /**
+     * Reactivate user
+     *
+     * @Route("users/{userId}/reactivate", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Reactivate user",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *  },
+     *  parameters={
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * }
+     *
      * @param Request $request
+     * @param string $userId
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function reactivateAction(Request $request, $userId)
     {
-        return $this->invalid();
+        try {
+            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $userId = (int) $userId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $status = $userManager->setUserStatus($userId, 'ACTIVE');
+
+            if ($status) {
+                return $this->success();
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
     }
 
     /**
+     * Delete user
+     *
+     * @Route("users/{userId}/delete", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Delete user",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *  },
+     *  parameters={
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * }
+     *
      * @param Request $request
+     * @param string $userId
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteAction(Request $request, $userId)
