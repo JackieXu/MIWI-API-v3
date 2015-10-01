@@ -199,7 +199,11 @@ class AccessManager extends BaseManager
             if (array_key_exists('id', $user) && is_int($user['id'])) {
                 $token = $this->generateToken($user['id']);
 
-                return array($user['id'], $token, 0);
+                return array(
+                    'id' => $user['id'],
+                    'accessToken' => $token,
+                    'status' => 0
+                );
             }
 
             return null;
