@@ -484,7 +484,7 @@ class UserController extends BaseController
      *      500="Returned when an error occured"
      *  },
      *  authentication=true
-     * }
+     * )
      *
      * @param Request $request
      * @param string $userId
@@ -543,7 +543,7 @@ class UserController extends BaseController
      *      500="Returned when an error occured"
      *  },
      *  authentication=true
-     * }
+     * )
      *
      * @param Request $request
      * @param string $userId
@@ -602,7 +602,7 @@ class UserController extends BaseController
      *      500="Returned when an error occured"
      *  },
      *  authentication=true
-     * }
+     * )
      *
      * @param Request $request
      * @param string $userId
