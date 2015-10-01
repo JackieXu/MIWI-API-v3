@@ -111,6 +111,7 @@ class AccessManager extends BaseManager
         $user = $response->getGraphNode();
 
         if ($user) {
+            error_log($user->getField('picture'));
             return $this->register(
                 $user->getField('email'),
                 'm939m939!@',
