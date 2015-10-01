@@ -181,11 +181,13 @@ class AccessController extends BaseController
         }
 
         $accessManager = $this->get('manager.access');
-        $userToken = $accessManager->loginWithFacebook($options->getValue('googleAccessToken'));
+        $userToken = $accessManager->loginWithFacebook($options->getValue('facebookAccessToken'));
 
-        return new JsonResponse(array(
-            'accessToken' => $userToken
-        ));
+        if ($userToken) {
+            return $this->success($userToken);
+        }
+
+        return $this->invalid();
     }
 
     /**
