@@ -104,7 +104,8 @@ class DefaultController extends BaseController
                         'objectType' => $objectType,
                         'type' => $type,
                         'people' => $rPeople,
-                        'id' => $notificationId
+                        'id' => $notificationId,
+                        'date' => time()
                     )
                 );
 
