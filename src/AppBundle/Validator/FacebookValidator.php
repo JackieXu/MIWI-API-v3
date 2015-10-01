@@ -4,7 +4,9 @@
 namespace AppBundle\Validator;
 
 
-class FacebookValidator
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class FacebookValidator extends Validator
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
