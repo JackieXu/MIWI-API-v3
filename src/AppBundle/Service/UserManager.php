@@ -390,6 +390,21 @@ class UserManager extends BaseManager
 
     public function updateSettings($userId, $settings)
     {
+        $acceptedSettings = array(
+            'location',
+            'firstName',
+            'lastName',
+            'email',
+            'password',
+            'emailMentions',
+            'emailVotes',
+            'emailComments',
+            'appMentions',
+            'appVotes',
+            'appMentions'
+        );
+
+        return true;
     }
 
     /**
