@@ -462,4 +462,31 @@ class UserController extends BaseController
 
         return $this->unauthorized();
     }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deactivateAction(Request $request, $userId)
+    {
+        return $this->invalid();
+    }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function reactivateAction(Request $request, $userId)
+    {
+        return $this->invalid();
+    }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteAction(Request $request, $userId)
+    {
+        return $this->invalid();
+    }
 }

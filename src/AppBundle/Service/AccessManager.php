@@ -176,12 +176,13 @@ class AccessManager extends BaseManager
                     firstName: {firstName},
                     lastName: {lastName},
                     birthdate: {birthdate},
-                    status: 0,
+                    status: {status},
                     social: {social},
                     image: {image},
                     notficationId: 0
                 })
-                RETURN  id(u) as id
+                RETURN  id(u) as id,
+                        u.status as status
             ', array(
                 'email' => $email,
                 'password' => $password,
@@ -189,7 +190,8 @@ class AccessManager extends BaseManager
                 'lastName' => $lastName,
                 'birthdate' => $birthdate,
                 'social' => $social,
-                'image' => $image
+                'image' => $image,
+                'status' => 'REGISTERED'
             ));
 
             if ($user) {
@@ -202,7 +204,7 @@ class AccessManager extends BaseManager
                 return array(
                     'id' => $user['id'],
                     'accessToken' => $token,
-                    'status' => 0
+                    'status' => $user['status']
                 );
             }
 

@@ -298,7 +298,7 @@ class InterestController extends BaseController
 
             if ($interests) {
                 $userManager = $this->get('manager.user');
-                $userManager->setUserStatus($userId, 1);
+                $userManager->setUserStatus($userId, 'ACTIVE');
                 return $this->success();
             }
 
@@ -504,7 +504,7 @@ class InterestController extends BaseController
             $interestManager->shareInterests($shareObjectTypeCorrected);
 
             $userManager = $this->get('manager.user');
-            $userManager->setUserStatus($userId, 2);
+            $userManager->setUserStatus($userId, 'ACTIVE');
 
             return $this->success();
         }

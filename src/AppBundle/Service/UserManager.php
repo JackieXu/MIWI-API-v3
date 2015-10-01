@@ -15,7 +15,7 @@ class UserManager extends BaseManager
      * Sets user status
      *
      * @param int $userId
-     * @param int $status
+     * @param string $status
      * @return bool True on success, false on failure
      * @throws \Exception
      */
