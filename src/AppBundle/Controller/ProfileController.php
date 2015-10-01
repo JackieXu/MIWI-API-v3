@@ -224,6 +224,11 @@ class ProfileController extends BaseController
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $userManager = $this->get('manager.user');
             $settings = json_decode($request->request->get('settings'), true);
+            foreach ($settings as $setting => $value) {
+                if (strpos($setting, 'email') === false || strpos($setting, 'app') === false) {
+                    $settings[$setting] = boolval($value);
+                }
+            }
             try {
                 $userManager->updateSettings($userId, $settings);
             } catch (\Exception $e) {
