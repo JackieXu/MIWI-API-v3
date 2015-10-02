@@ -724,7 +724,7 @@ class UserManager extends BaseManager
             WHERE   id(u) = {userId}
             RETURN  id(u) as id,
                     u.firstName as firstName,
-                    u.lastName as lastName
+                    u.lastName as lastName,
                     u.image as image
         ', array(
             'userId' => $userId
