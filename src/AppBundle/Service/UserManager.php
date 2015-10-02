@@ -522,7 +522,7 @@ class UserManager extends BaseManager
                 RETURN  id(u) as id
             ', array(
                 'userId' => $userId,
-                'email' => password_hash($settings['password'], PASSWORD_BCRYPT)
+                'password' => password_hash($settings['password'], PASSWORD_BCRYPT)
             ));
         }
 
