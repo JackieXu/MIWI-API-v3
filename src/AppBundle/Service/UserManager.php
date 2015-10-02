@@ -723,7 +723,8 @@ class UserManager extends BaseManager
             MATCH   (u:USER)
             WHERE   id(u) = {userId}
             RETURN  id(u) as id,
-                    u.firstName + " " + u.lastName as name,
+                    u.firstName as firstName,
+                    u.lastName as lastName
                     u.image as image
         ', array(
             'userId' => $userId
