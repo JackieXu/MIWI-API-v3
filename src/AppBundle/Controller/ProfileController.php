@@ -316,12 +316,7 @@ class ProfileController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $userManager = $this->get('manager.user');
-            $settings = json_decode($request->request->get('settings'), true);
-            foreach ($settings as $setting => $value) {
-                if (strpos($setting, 'email') === false || strpos($setting, 'app') === false) {
-                    $settings[$setting] = boolval($value);
-                }
-            }
+            $settings = json_decode($request->getContent(), true);
             try {
                 $userManager->updateProfileSettings($userId, $settings);
             } catch (\Exception $e) {
@@ -388,7 +383,7 @@ class ProfileController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $userManager = $this->get('manager.user');
-            $settings = json_decode($request->request->get('settings'), true);
+            $settings = json_decode($request->getContent(), true);
 
             try {
                 $userManager->updateSecuritySettings($userId, $settings);
@@ -456,7 +451,7 @@ class ProfileController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $userManager = $this->get('manager.user');
-            $settings = json_decode($request->request->get('settings'), true);
+            $settings = json_decode($request->getContent(), true);
             foreach ($settings as $setting => $value) {
                 if (strpos($setting, 'email') === false || strpos($setting, 'app') === false) {
                     $settings[$setting] = boolval($value);
