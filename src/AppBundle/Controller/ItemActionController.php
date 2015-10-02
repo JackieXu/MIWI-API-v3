@@ -274,13 +274,16 @@ class ItemActionController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $timelineManager = $this->get('manager.timeline');
-//            $votes = $timelineManager->flagItem($userId, $itemId);
+            $item = $timelineManager->flagItem($userId, $itemId);
 
-            return $this->success();
+            if ($item) {
+                return $this->success();
+            }
+
+            return $this->invalid();
         }
 
-        return $this->forbidden();
-
+        return $this->unauthorized();
     }
 
     /**

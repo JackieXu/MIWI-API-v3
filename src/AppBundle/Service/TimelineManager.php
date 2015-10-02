@@ -284,16 +284,50 @@ class TimelineManager extends BaseManager
         return $status[0]['status'];
     }
 
+    /**
+     * Flag item
+     *
+     * @param $userId
+     * @param $itemId
+     * @return bool
+     * @throws \Exception
+     */
     public function flagItem($userId, $itemId)
     {
         $item = $this->sendCypherQuery('
-            MATCH   (u:USER), (i:ITEM)
-            WHERE   id(u) = {userId}
-            AND     id(i) = {itemId}
-            CREATE UNIQUE
+            MATCH           (u:USER), (i:ITEM)
+            WHERE           id(u) = {userId}
+            AND             id(i) = {itemId}
+            CREATE UNIQUE   (u)-[:HAS_FLAGGED]->(i)
+            RETURN          i.title as title,
+                            u.firstName as firstName,
+                            u.lastName as lastName,
+                            u.email as email
         ', array(
-
+            'userId' => $userId,
+            'itemId' => $itemId
         ));
+
+        if ($item) {
+
+            $message = \Swift_Message::newInstance('An item got reported on Vurze');
+            $message->setBody($this->templateEngine->render(':mails/item:reported.html.twig', array(
+                'user' => array(
+                    'firstName' => $item[0]['firstName'],
+                    'lastName' => $item[0]['lastName'],
+                    'email' => $item[0]['email']
+                ),
+                'title' => $item[0]['title']
+            )));
+            $message->setTo('info@miwi.com');
+            $message->setFrom('info@miwi.com');
+
+            $this->mailer->send($message);
+
+            return $item[0]['id'];
+        }
+
+        return false;
     }
 
 
