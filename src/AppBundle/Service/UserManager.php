@@ -501,11 +501,11 @@ class UserManager extends BaseManager
         if (array_key_exists('email', $settings)) {
             if (filter_var($settings['email'], FILTER_VALIDATE_EMAIL) !== false) {
                 $userId = $this->sendCypherQuery('
-                MATCH   (u:USER)
-                WHERE   id(u) = {userId}
-                SET     u.email = {email}
-                RETURN  id(u) as id
-            ', array(
+                    MATCH   (u:USER)
+                    WHERE   id(u) = {userId}
+                    SET     u.email = {email}
+                    RETURN  id(u) as id
+                ', array(
                     'email' => $settings['email']
                 ));
             } else {

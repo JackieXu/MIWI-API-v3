@@ -284,5 +284,17 @@ class TimelineManager extends BaseManager
         return $status[0]['status'];
     }
 
+    public function flagItem($userId, $itemId)
+    {
+        $item = $this->sendCypherQuery('
+            MATCH   (u:USER), (i:ITEM)
+            WHERE   id(u) = {userId}
+            AND     id(i) = {itemId}
+            CREATE UNIQUE
+        ', array(
+
+        ));
+    }
+
 
 }

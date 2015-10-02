@@ -216,6 +216,74 @@ class ItemActionController extends BaseController
     }
 
     /**
+     * Flag an item
+     *
+     * @Route("items/{itemId}/flag")
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Flag an item",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"="true",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are missing or invalid"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $itemId
+     * @return Response
+     */
+    public function flagAction(Request $request, $itemId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        try {
+            $userValidator = new UserValidator($request->request->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userValidator->getValue('userId');
+        $itemId = (int) $itemId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $timelineManager = $this->get('manager.timeline');
+//            $votes = $timelineManager->flagItem($userId, $itemId);
+
+            return $this->success();
+        }
+
+        return $this->forbidden();
+
+    }
+
+    /**
      * Share item
      *
      * @Route("items/{itemId}/share", requirements={"itemId": "\d+"})
