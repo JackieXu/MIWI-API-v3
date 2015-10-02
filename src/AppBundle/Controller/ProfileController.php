@@ -71,7 +71,9 @@ class ProfileController extends BaseController
 
             try {
                 $image = $userManager->updateImage($userId, $request->getContent());
-                return $this->success($image);
+                return $this->success(array(
+                    'url' => $image
+                ));
             } catch (\Exception $e) {
                 return $this->invalid();
             }
