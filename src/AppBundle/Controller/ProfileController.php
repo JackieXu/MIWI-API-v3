@@ -16,6 +16,71 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 class ProfileController extends BaseController
 {
     /**
+     * Update user profile image
+     *
+     * Expects base64 image data inside the content body of the request.
+     *
+     * @Route("users/{userId}/image", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Update user profile image",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are incorrect",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function updateImageAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+
+            try {
+                $image = $userManager->updateImage($userId, $request->getContent());
+                return $this->success($image);
+            } catch (\Exception $e) {
+                return $this->invalid();
+            }
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
      * Get user profile
      *
      * The `extended` attribute can be set to a value of `1` to get a more extensive profile, which includes:
