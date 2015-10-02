@@ -85,53 +85,13 @@ class ProfileController extends BaseController
     }
 
     /**
-     * Get user settings
+     * Get user profile settings
      *
-     * @Route("users/{userId}/settings", requirements={"userId": "\d+"})
+     * @Route("users/{userId}/settings/profile", requirements={"userId": "\d+"})
      * @Method({"GET"})
      *
-     * @param Request $request
-     * @param string $userId
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function settingsAction(Request $request, $userId)
-    {
-        try {
-            $tokenValidator = new TokenValidator(array(
-                'accessToken' => $request->headers->get('accessToken')
-            ));
-        } catch (InvalidOptionsException $e) {
-            return $this->invalid(array(
-                'error' => $e->getMessage()
-            ));
-        } catch (MissingOptionsException $e) {
-            return $this->invalid(array(
-                'error' => $e->getMessage()
-            ));
-        }
-
-        $accessManager = $this->get('manager.access');
-        $accessToken = $tokenValidator->getValue('accessToken');
-        $userId = (int) $userId;
-
-        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
-            $userManager = $this->get('manager.user');
-            $settings = $userManager->getSettings($userId);
-
-            return $this->success($settings);
-        }
-
-        return $this->unauthorized();
-    }
-
-    /**
-     * Update user settings
-     *
-     * @Route("users/{userId}/settings", requirements={"userId": "\d+"})
-     * @Method({"PATCH"})
-     *
      * @ApiDoc(
-     *  description="Update user settings",
+     *  description="Get user profile settings",
      *  tags={},
      *  section="users",
      *  requirements={
@@ -154,7 +114,187 @@ class ProfileController extends BaseController
      * @param string $userId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function settingsUpdateAction(Request $request, $userId)
+    public function getProfileSettingsAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $settings = $userManager->getProfileSettings($userId);
+
+            return $this->success($settings);
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
+     * Get user security settings
+     *
+     * @Route("users/{userId}/settings/security", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get user security settings",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are incorrect",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getSecuritySettingsAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $settings = $userManager->getSecuritySettings($userId);
+
+            return $this->success($settings);
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
+     * Get user notification settings
+     *
+     * @Route("users/{userId}/settings/notification", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get user notification settings",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are incorrect",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getNotificationSettingsAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $settings = $userManager->getNotificationSettings($userId);
+
+            return $this->success($settings);
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
+     * Update user profile settings
+     *
+     * @Route("users/{userId}/settings/profile", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Update user profile settings",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are incorrect",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function updateProfileSettingsAction(Request $request, $userId)
     {
         try {
             $tokenValidator = new TokenValidator(array(
@@ -183,7 +323,151 @@ class ProfileController extends BaseController
                 }
             }
             try {
-                $userManager->updateSettings($userId, $settings);
+                $userManager->updateProfileSettings($userId, $settings);
+            } catch (\Exception $e) {
+                return $this->invalid(array(
+                    'error' => $e->getMessage()
+                ));
+            }
+
+            return $this->success();
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
+     * Update user security settings
+     *
+     * @Route("users/{userId}/settings/security", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Update user security settings",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are incorrect",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function updateSecuritySettingsAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $settings = json_decode($request->request->get('settings'), true);
+            foreach ($settings as $setting => $value) {
+                if (strpos($setting, 'email') === false || strpos($setting, 'app') === false) {
+                    $settings[$setting] = boolval($value);
+                }
+            }
+            try {
+                $userManager->updateSecuritySettings($userId, $settings);
+            } catch (\Exception $e) {
+                return $this->invalid(array(
+                    'error' => $e->getMessage()
+                ));
+            }
+
+            return $this->success();
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
+     * Update user notification settings
+     *
+     * @Route("users/{userId}/settings/notification", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Update user notification settings",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are incorrect",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function updateNotificationSettingsAction(Request $request, $userId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $settings = json_decode($request->request->get('settings'), true);
+            foreach ($settings as $setting => $value) {
+                if (strpos($setting, 'email') === false || strpos($setting, 'app') === false) {
+                    $settings[$setting] = boolval($value);
+                }
+            }
+            try {
+                $userManager->updateNotificationSettings($userId, $settings);
             } catch (\Exception $e) {
                 return $this->invalid(array(
                     'error' => $e->getMessage()

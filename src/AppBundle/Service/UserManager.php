@@ -383,16 +383,58 @@ class UserManager extends BaseManager
         return $events;
     }
 
-    public function getSettings($userId)
+    public function getProfileSettings($userId)
     {
         $settings = $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   id(u) = {userId}
             RETURN  u.location as location,
                     u.firstName as firstName,
-                    u.lastName as lastName,
-                    u.email as email,
-                    u.emailMentions as emailMentions,
+                    u.lastName as lastName
+        ', array(
+            'userId' => $userId
+        ));
+
+        if ($settings) {
+            $settings = $settings[0];
+
+            return array(
+                'location' => $settings['location'] ? $settings['location'] : '',
+                'firstName' => $settings['firstName'] ? $settings['firstName'] : '',
+                'lastName' => $settings['lastName'] ? $settings['lastName'] : ''
+            );
+        }
+
+        return false;
+    }
+
+    public function getSecuritySettings($userId)
+    {
+        $settings = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+            RETURN  u.email as email
+        ', array(
+            'userId' => $userId
+        ));
+
+        if ($settings) {
+            $settings = $settings[0];
+
+            return array(
+                'email' => $settings['email'] ? $settings['email'] : ''
+            );
+        }
+
+        return false;
+    }
+
+    public function getNotificationSettings($userId)
+    {
+        $settings = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+            RETURN  u.emailMentions as emailMentions,
                     u.emailVotes as emailVotes,
                     u.emailComments as emailComments,
                     u.appMentions as appMentions,
@@ -404,11 +446,8 @@ class UserManager extends BaseManager
 
         if ($settings) {
             $settings = $settings[0];
+
             return array(
-                'location' => $settings['location'] ? $settings['location'] : '',
-                'firstName' => $settings['firstName'] ? $settings['firstName'] : '',
-                'lastName' => $settings['lastName'] ? $settings['lastName'] : '',
-                'email' => $settings['email'] ? $settings['email'] : '',
                 'emailMentions' => $settings['emailMentions'] ? $settings['emailMentions'] : false,
                 'emailVotes' => $settings['emailVotes'] ? $settings['emailVotes'] : false,
                 'emailComments' => $settings['emailComments'] ? $settings['emailComments'] : false,
@@ -416,6 +455,116 @@ class UserManager extends BaseManager
                 'appVotes' => $settings['appVotes'] ? $settings['appVotes'] : false,
                 'appComments' => $settings['appComments'] ? $settings['appComments'] : false,
             );
+        }
+
+        return false;
+    }
+
+    public function updateProfileSettings($userId, $settings)
+    {
+        $acceptedSettings = array(
+            'location',
+            'firstName',
+            'lastName'
+        );
+
+        $cypherString = '
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+        ';
+
+        foreach ($acceptedSettings as $setting) {
+            if (array_key_exists($setting, $settings)) {
+                $cypherString .= sprintf('
+                    SET     u.%s = {%s}
+                ', $setting, $setting);
+            }
+        }
+
+        $cypherString .= '
+            RETURN  id(u) as id
+        ';
+
+        $settings['userId'] = $userId;
+
+        $userId = $this->sendCypherQuery($cypherString, $settings);
+
+        if ($userId) {
+            return $settings[0]['id'];
+        }
+
+        return false;
+    }
+
+    public function updateSecuritySettings($userId, $settings)
+    {
+        if (array_key_exists('email', $settings)) {
+            if (filter_var($settings['email'], FILTER_VALIDATE_EMAIL) !== false) {
+                $userId = $this->sendCypherQuery('
+                MATCH   (u:USER)
+                WHERE   id(u) = {userId}
+                SET     u.email = {email}
+                RETURN  id(u) as id
+            ', array(
+                    'email' => $settings['email']
+                ));
+            } else {
+                return false;
+            }
+        }
+
+        if (array_key_exists('password', $settings)) {
+            $userId = $this->sendCypherQuery('
+                MATCH   (u:USER)
+                WHERE   id(u) = {userId}
+                SET     u.password = {password}
+                RETURN  id(u) as id
+            ', array(
+                'email' => password_hash($settings['password'], PASSWORD_BCRYPT)
+            ));
+        }
+
+        if ($userId) {
+            return $settings[0]['id'];
+        }
+
+        return false;
+    }
+
+    public function updateNotificationSettings($userId, $settings)
+    {
+        $acceptedSettings = array(
+            'emailMentions',
+            'emailVotes',
+            'emailComments',
+            'appMentions',
+            'appVotes',
+            'appMentions'
+        );
+
+        $cypherString = '
+            MATCH   (u:USER)
+            WHERE   id(u) = {userId}
+        ';
+
+        foreach ($acceptedSettings as $setting) {
+            if (array_key_exists($setting, $settings)) {
+                $cypherString .= sprintf('
+                    SET     u.%s = {%s}
+                ', $setting, $setting);
+            }
+        }
+
+        $cypherString .= '
+            RETURN  id(u) as id
+        ';
+
+        $settings['userId'] = $userId;
+
+        $userId = $this->sendCypherQuery($cypherString, $settings);
+
+        if ($userId) {
+            return $settings[0]['id'];
         }
 
         return false;
