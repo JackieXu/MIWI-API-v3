@@ -506,6 +506,7 @@ class UserManager extends BaseManager
                     SET     u.email = {email}
                     RETURN  id(u) as id
                 ', array(
+                    'userId' => $userId,
                     'email' => $settings['email']
                 ));
             } else {
@@ -520,6 +521,7 @@ class UserManager extends BaseManager
                 SET     u.password = {password}
                 RETURN  id(u) as id
             ', array(
+                'userId' => $userId,
                 'email' => password_hash($settings['password'], PASSWORD_BCRYPT)
             ));
         }
