@@ -549,7 +549,9 @@ class InterestController extends BaseController
     public function deleteAction(Request $request, $interestId)
     {
         try {
-            $userValidator = new UserValidator($request->request->all());
+            $userValidator = new UserValidator(array(
+                'userId' => $request->headers->get('userId')
+            ));
             $tokenValidator = new TokenValidator(array(
                 'accessToken' => $request->headers->get('accessToken')
             ));
