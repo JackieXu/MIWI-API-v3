@@ -572,13 +572,9 @@ class InterestController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $userManager = $this->get('manager.user');
-            $interest = $userManager->deleteInterest($userId, $interestId);
+            $userManager->deleteInterest($userId, $interestId);
 
-            if ($interest) {
-                return $this->success();
-            }
-
-            return $this->invalid();
+            return $this->success();
         }
 
         return $this->unauthorized();
