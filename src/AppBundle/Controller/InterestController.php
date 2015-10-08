@@ -511,4 +511,74 @@ class InterestController extends BaseController
 
         return $this->forbidden();
     }
+
+    /**
+     * Delete interest from user's list
+     *
+     * @Route("interests/{interestId}", requirements={"interestId": "\d+"})
+     * @Method({"DELETE"})
+     *
+     * @ApiDoc(
+     *  description="Delete interest from user's list",
+     *  tags={},
+     *  section="interests",
+     *  parameters={
+     *
+     *  },
+     *  requirements={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      204="Returned when successful",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $interestId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteAction(Request $request, $interestId)
+    {
+        try {
+            $userValidator = new UserValidator($request->request->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $userId = (int) $userValidator->getValue('userId');
+        $interestId = (int) $interestId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $interest = $userManager->deleteInterest($userId, $interestId);
+
+            if ($interest) {
+                return $this->success();
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
+    }
 }

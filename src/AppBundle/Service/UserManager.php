@@ -822,4 +822,24 @@ class UserManager extends BaseManager
 
         return $webLocation;
     }
+
+    public function deleteInterest($userId, $interestId)
+    {
+        $interest = $this->sendCypherQuery('
+            MATCH   (u:USER)-[r:LIKES]->(i:INTEREST)
+            WHERE   id(u) = {userId}
+            AND     id(i) = {interestId}
+            DELETE  r
+            RETURN  id(u)
+        ', array(
+            'userId' => $userId,
+            'interestId' => $interestId
+        ));
+
+        if ($interest) {
+            return true;
+        }
+
+        return false;
+    }
 }
