@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Validator\ItemValidator;
+use AppBundle\Validator\LimitValidator;
 use AppBundle\Validator\TokenValidator;
 use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -144,6 +145,7 @@ class ItemController extends BaseController
     {
         try {
             $userValidator = new UserValidator($request->query->all());
+            $limitValidator = new LimitValidator($request->query->all());
             $tokenValidator = new TokenValidator(array(
                 'accessToken' => $request->headers->get('accessToken')
             ));
@@ -164,7 +166,18 @@ class ItemController extends BaseController
         $itemManager = $this->get('manager.content');
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
-            return $this->invalid();
+            $offset = (int) $limitValidator->getValue('offset');
+            $limit = (int) $limitValidator->getValue('limit');
+            
+            $comments = $itemManager->getComments($itemId, $userId, $offset, $limit);
+
+            if ($comments) {
+                return $this->success($comments);
+            }
+
+            return $this->invalid(array(
+                'error' => 'Invalid item'
+            ));
         }
 
         return $this->unauthorized();

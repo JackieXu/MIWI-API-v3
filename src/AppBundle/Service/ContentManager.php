@@ -260,10 +260,68 @@ class ContentManager extends BaseManager
         ));
 
         if ($item) {
+            $data = $item[0];
+
+            $data['images'] = explode(',', $data['images']);
+
             return $item[0];
         }
 
         return false;
+    }
+
+
+    public function getComments($itemId, $userId, $offset, $limit)
+    {
+        $comments = $this->sendCypherQuery('
+            MATCH   (c:COMMENT)-[:COMMENT_ON]->(i:ITEM)
+            WHERE   id(i) = {itemId}
+            RETURN  c.title as title,
+                    c.body as body,
+                    c.user as user
+                    c.upvotes as upvotes,
+                    c/downvotes as downvotes
+        ', array(
+            'itemId' => $itemId
+        ));
+
+        $res = array();
+
+        foreach ($comments as $comment) {
+            $data = array(
+                'title' => $comment['title'],
+                'body' => $comment['body'],
+                'upvotes' => $comment['upvotes'],
+                'downvotes' => $comment['downvotes'],
+                'user' => array()
+            );
+
+            $user = $this->sendCypherQuery('
+                MATCH   (u:USER)
+                WHERE   id(u) = {userId}
+                RETURN  id(u) as id,
+                        u.firstName as firstName,
+                        u.lastName as lastName,
+                        u.image as image
+            ', array(
+                'userId' => $comment['user']
+            ));
+
+            if ($user) {
+                $data['user'] = $user[0];
+            } else {
+                $data['user'] = array(
+                    'id' => -1,
+                    'firstName' => 'Vurze',
+                    'lastName' => '',
+                    'image' => 'http://api.miwi.com/img/node/default_img.png'
+                );
+            }
+
+            $res[] = $data;
+        }
+
+        return $res;
     }
 
     /***
