@@ -292,7 +292,7 @@ class ContentManager extends BaseManager
             $data['images'] = explode(',', $data['images']);
 
             if (!is_array($data['images'])) {
-                if (empty($data['images'])) {
+                if (empty($data['images']) || strlen(trim($data['images'])) === 0) {
                     $data['images'] = null;
                 } else {
                     $data['images'] = array($data['images']);
