@@ -242,6 +242,30 @@ class ContentManager extends BaseManager
         return $status[0]['status'];
     }
 
+    public function get($itemId, $userId)
+    {
+        $item = $this->sendCypherQuery('
+            MATCH   (i:ITEM)
+            WHERE   id(i) = {itemId}
+            RETURN  id(i) as id,
+                    t.title as title,
+                    t.body as body,
+                    t.images as images,
+                    t.link as link,
+                    t.upvotes as upvotes,
+                    t.downvotes as downvotes,
+                    t.comments as comments
+        ', array(
+            'itemId' => $itemId
+        ));
+
+        if ($item) {
+            return $item[0];
+        }
+
+        return false;
+    }
+
     /***
      * @param $title
      * @param $body

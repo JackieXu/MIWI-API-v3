@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Validator\ItemValidator;
 use AppBundle\Validator\TokenValidator;
+use AppBundle\Validator\UserValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -47,6 +48,70 @@ class ItemController extends BaseController
     public function overviewAction(Request $request)
     {
         return $this->invalid();
+    }
+
+    /**
+     * Get item
+     *
+     * @Route("items/{itemId}", requirements={"itemId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get item",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $itemId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewAction(Request $request, $itemId)
+    {
+        try {
+            $userValidator = new UserValidator($request->query->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $itemId = (int) $itemId;
+        $userId = (int) $userValidator->getValue('userId');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+        $itemManager = $this->get('manager.content');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $item = $itemManager->get($itemId, $userId);
+
+            if ($item) {
+                return $this->success($item);
+            }
+
+            return $this->invalid(array(
+                'error' => 'Invalid item'
+            ));
+        }
+
+        return $this->unauthorized();
     }
 
     /**
@@ -139,11 +204,49 @@ class ItemController extends BaseController
      * )
      *
      * @param Request $request
+     * @param string $itemId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editAction(Request $request)
+    public function editAction(Request $request, $itemId)
     {
-        return $this->invalid();
+        try {
+            $itemValidator = new ItemValidator($request->request->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $userId = $itemValidator->getValue('userId');
+        $interestId = $itemValidator->getValue('interestId');
+        $title = $itemValidator->getValue('title');
+        $body = $itemValidator->getValue('body');
+        $images = $itemValidator->getValue('images');
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $itemManager = $this->get('manager.content');
+            $itemId = $itemManager->edit($itemId, $title, $body, $images, $userId, $interestId);
+
+            if ($itemId) {
+                return $this->success(array(
+                    'id' => $itemId
+                ));
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
     }
 
     /**
