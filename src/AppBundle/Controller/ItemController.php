@@ -144,8 +144,13 @@ class ItemController extends BaseController
     public function commentsAction(Request $request, $itemId)
     {
         try {
-            $userValidator = new UserValidator($request->query->all());
-            $limitValidator = new LimitValidator($request->query->all());
+            $userValidator = new UserValidator(array(
+                'userId' => $request->query->get('userId')
+            ));
+            $limitValidator = new LimitValidator(array(
+                'limit' => $request->query->get('limit'),
+                'offset' => $request->query->get('offset')
+            ));
             $tokenValidator = new TokenValidator(array(
                 'accessToken' => $request->headers->get('accessToken')
             ));
@@ -168,7 +173,7 @@ class ItemController extends BaseController
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $offset = (int) $limitValidator->getValue('offset');
             $limit = (int) $limitValidator->getValue('limit');
-            
+
             $comments = $itemManager->getComments($itemId, $userId, $offset, $limit);
 
             if ($comments) {
