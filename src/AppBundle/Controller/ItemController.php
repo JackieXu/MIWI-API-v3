@@ -176,13 +176,7 @@ class ItemController extends BaseController
 
             $comments = $itemManager->getComments($itemId, $userId, $offset, $limit);
 
-            if ($comments) {
-                return $this->success($comments);
-            }
-
-            return $this->invalid(array(
-                'error' => 'Invalid item'
-            ));
+            return $this->success($comments);
         }
 
         return $this->unauthorized();
