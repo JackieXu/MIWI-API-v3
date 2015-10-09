@@ -312,7 +312,7 @@ class ContentManager extends BaseManager
     }
 
 
-    public function getComments($itemId, $userId, $offset, $limit)
+    public function getComments($itemId, $userId, $offset = 0, $limit = 30)
     {
         $comments = $this->sendCypherQuery('
             MATCH   (c:COMMENT)-[:COMMENT_ON]->(i:ITEM)
@@ -322,8 +322,12 @@ class ContentManager extends BaseManager
                     c.user as user
                     c.upvotes as upvotes,
                     c/downvotes as downvotes
+            SKIP    {offset}
+            LIMIT   {limit}
         ', array(
-            'itemId' => $itemId
+            'itemId' => $itemId,
+            'offset' => $offset,
+            'limit' => $limit
         ));
 
         $res = array();
