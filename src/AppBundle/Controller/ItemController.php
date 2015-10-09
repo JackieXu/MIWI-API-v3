@@ -78,7 +78,9 @@ class ItemController extends BaseController
     {
         try {
             $itemValidator = new ItemValidator($request->request->all());
-            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid(array(
                 'error' => $e->getMessage()
