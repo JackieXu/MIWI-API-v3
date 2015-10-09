@@ -264,7 +264,8 @@ class ContentManager extends BaseManager
                     id(u) as userId,
                     u.firstName as userFirstName,
                     u.lastName as userLastName,
-                    u.image as userImage
+                    u.image as userImage,
+                    labels(i) as labels
         ', array(
             'itemId' => $itemId
         ));
@@ -286,7 +287,8 @@ class ContentManager extends BaseManager
                     'firstName' => $item[0]['userFirstName'],
                     'lastName' => $item[0]['userLastName'],
                     'image' => $item[0]['userImage']
-                )
+                ),
+                'type' => (in_array('ARTICLE', $item[0]['labels'])) ? 'article' : 'post'
             );
 
             if ($data['images']) {
