@@ -148,8 +148,8 @@ class ItemController extends BaseController
                 'userId' => $request->query->get('userId')
             ));
             $limitValidator = new LimitValidator(array(
-                'limit' => $request->query->get('limit'),
-                'offset' => $request->query->get('offset')
+                'limit' => $request->query->get('limit', '30'),
+                'offset' => $request->query->get('offset', '0')
             ));
             $tokenValidator = new TokenValidator(array(
                 'accessToken' => $request->headers->get('accessToken')
