@@ -281,7 +281,7 @@ class ContentManager extends BaseManager
                     'id' => $item[0]['interestId'],
                     'name' => $item[0]['interestName']
                 ),
-                'user' => array(
+                'postedBy' => array(
                     'id' => $item[0]['userId'],
                     'firstName' => $item[0]['userFirstName'],
                     'lastName' => $item[0]['userLastName'],
