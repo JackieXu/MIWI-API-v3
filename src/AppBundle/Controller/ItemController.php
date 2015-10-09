@@ -115,6 +115,62 @@ class ItemController extends BaseController
     }
 
     /**
+     * Get item comments
+     *
+     * @Route("items/{itemId}/comments", requirements={"itemId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Get item comments",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $itemId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function commentsAction(Request $request, $itemId)
+    {
+        try {
+            $userValidator = new UserValidator($request->query->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $itemId = (int) $itemId;
+        $userId = (int) $userValidator->getValue('userId');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+        $itemManager = $this->get('manager.content');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
      * Create new item
      *
      * @Route("items")
