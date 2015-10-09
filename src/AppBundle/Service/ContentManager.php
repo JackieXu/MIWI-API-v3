@@ -248,13 +248,13 @@ class ContentManager extends BaseManager
             MATCH   (i:ITEM)
             WHERE   id(i) = {itemId}
             RETURN  id(i) as id,
-                    t.title as title,
-                    t.body as body,
-                    t.images as images,
-                    t.link as link,
-                    t.upvotes as upvotes,
-                    t.downvotes as downvotes,
-                    t.comments as comments
+                    i.title as title,
+                    i.body as body,
+                    i.images as images,
+                    i.link as link,
+                    i.upvotes as upvotes,
+                    i.downvotes as downvotes,
+                    i.comments as comments
         ', array(
             'itemId' => $itemId
         ));
