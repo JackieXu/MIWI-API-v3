@@ -245,8 +245,12 @@ class ContentManager extends BaseManager
     public function get($itemId, $userId)
     {
         $item = $this->sendCypherQuery('
-            MATCH   (i:ITEM)
+            MATCH   (i:ITEM)-[:ASSOCIATED_WITH]->(n:INTEREST)
             WHERE   id(i) = {itemId}
+            WITH    i,n
+            MATCH   (u:USER)
+            WHERE   id(u) = i.user
+            WITH    i,n,u
             RETURN  id(i) as id,
                     i.title as title,
                     i.body as body,
@@ -254,13 +258,36 @@ class ContentManager extends BaseManager
                     i.link as link,
                     i.upvotes as upvotes,
                     i.downvotes as downvotes,
-                    i.comments as comments
+                    i.comments as comments,
+                    id(n) as interestId,
+                    n.name as interestName,
+                    id(u) as userId,
+                    u.firstName as userFirstName,
+                    u.lastName as userLastName,
+                    u.image as userImage
         ', array(
             'itemId' => $itemId
         ));
 
         if ($item) {
-            $data = $item[0];
+            $data = array(
+                'title' => $item[0]['title'],
+                'body' => $item[0]['body'],
+                'images' => $item[0]['images'],
+                'link' => $item[0]['link'],
+                'upvotes' => $item[0]['upvotes'],
+                'downvotes' => $item[0]['downvotes'],
+                'interest' => array(
+                    'id' => $item[0]['interestId'],
+                    'name' => $item[0]['interestName']
+                ),
+                'user' => array(
+                    'id' => $item[0]['userId'],
+                    'firstName' => $item[0]['userFirstName'],
+                    'lastName' => $item[0]['userLastName'],
+                    'image' => $item[0]['userImage']
+                )
+            );
 
             $data['images'] = explode(',', $data['images']);
 
