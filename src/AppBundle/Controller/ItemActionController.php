@@ -147,7 +147,7 @@ class ItemActionController extends BaseController
     /**
      * Comments on an item
      *
-     * @Route("items/{itemId}/comment", requirements={"itemId": "\d+"})
+     * @Route("items/{itemId}/comments", requirements={"itemId": "\d+"})
      * @Method({"POST"})
      *
      * @ApiDoc(
