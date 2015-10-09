@@ -321,7 +321,7 @@ class ContentManager extends BaseManager
             WHERE   id(i) = {itemId}
             RETURN  c.title as title,
                     c.body as body,
-                    c.user as user
+                    c.user as user,
                     c.upvotes as upvotes,
                     c/downvotes as downvotes
             SKIP    {offset}
