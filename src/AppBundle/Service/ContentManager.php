@@ -323,7 +323,7 @@ class ContentManager extends BaseManager
                     c.body as body,
                     c.user as user,
                     c.upvotes as upvotes,
-                    c/downvotes as downvotes
+                    c.downvotes as downvotes
             SKIP    {offset}
             LIMIT   {limit}
         ', array(

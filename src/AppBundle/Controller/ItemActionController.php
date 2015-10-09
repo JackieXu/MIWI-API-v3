@@ -194,7 +194,7 @@ class ItemActionController extends BaseController
 
         $itemId = (int) $itemId;
         $userId = (int) $commentValidator->getValue('userId');
-        $text = $commentValidator->getValue('text');
+        $text = $commentValidator->getValue('comment');
         $accessToken = $tokenValidator->getValue('accessToken');
 
         $accessManager = $this->get('manager.access');

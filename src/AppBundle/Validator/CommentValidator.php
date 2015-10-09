@@ -11,7 +11,8 @@ class CommentValidator extends UserValidator
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefined(array(
-            'text'
+            'comment',
+            'userId'
         ));
     }
 }
