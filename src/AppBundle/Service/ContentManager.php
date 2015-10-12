@@ -599,9 +599,10 @@ class ContentManager extends BaseManager
 
     private function saveData($saveLocation, $webLocation, $content)
     {
+        $temp = tempnam(sys_get_temp_dir(), 'temp');
         error_log($saveLocation);
         error_log($webLocation);
-        $temp = tempnam(sys_get_temp_dir(), 'temp');
+        error_log($temp);
 
         if (!($f = fopen($temp, 'wb'))) {
             $temp = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('temp');
