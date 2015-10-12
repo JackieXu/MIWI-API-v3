@@ -406,7 +406,7 @@ class ContentManager extends BaseManager
      */
     public function create($title, $body, $images, $userId, $interestId)
     {
-        $images = $this->processImages($images);
+        $imagesRes = $this->processImages($images);
 
         if ($interestId === 0) {
             $itemId = $this->sendCypherQuery('
@@ -422,7 +422,7 @@ class ContentManager extends BaseManager
             ', array(
                 'title' => $title,
                 'body' => $body,
-                'images' => $images,
+                'images' => $imagesRes,
                 'userId' => $userId
             ));
         } else {
@@ -440,7 +440,7 @@ class ContentManager extends BaseManager
             ', array(
                 'title' => $title,
                 'body' => $body,
-                'images' => $images,
+                'images' => $imagesRes,
                 'userId' => $userId,
                 'interestId' => $interestId
             ));
