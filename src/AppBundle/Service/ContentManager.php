@@ -208,7 +208,23 @@ class ContentManager extends BaseManager
         ));
 
         if ($commentId) {
-            return $commentId[0]['id'];
+            $userData = $this->sendCypherQuery('
+                MATCH   (u:USER)
+                WHERE   id(u) = {userId}
+                RETURN  id(u) as id,
+                        u.firstName as firstName,
+                        u.lastName as lastName,
+                        u.image as image
+            ', array(
+                'userId' => $userId
+            ));
+
+            return array(
+                'id' => $commentId[0]['id'],
+                'comment' => $commentId[0]['text'],
+                'date' => $commentId[0]['id'],
+                'user' => $userData[0]
+            );
         }
 
         return false;
