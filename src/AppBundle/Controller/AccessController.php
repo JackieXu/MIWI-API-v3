@@ -255,7 +255,7 @@ class AccessController extends BaseController
         $accessManager = $this->get('manager.access');
 
         try {
-            list($userId, $accessToken, $status) = $accessManager->register(
+            $data = $accessManager->register(
                 $options->getValue('email'),
                 $options->getValue('password'),
                 $options->getValue('firstName'),
@@ -263,6 +263,9 @@ class AccessController extends BaseController
                 $options->getValue('birthdate'),
                 null
             );
+            $userId = $data['id'];
+            $accessToken = $data['accessToken'];
+            $status = $data['status'];
         } catch (UserExistsException $e) {
             return $this->invalid(array(
                 $e->getMessage()
