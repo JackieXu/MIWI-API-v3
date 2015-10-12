@@ -473,6 +473,9 @@ class ContentManager extends BaseManager
         }
 
         if ($itemId) {
+            if (!$itemId[0]['images']) {
+                $itemId[0]['images'] = null;
+            }
             return $itemId[0];
         }
 
@@ -542,6 +545,9 @@ class ContentManager extends BaseManager
         }
 
         if ($itemId) {
+            if (!$itemId[0]['images']) {
+                $itemId[0]['images'] = null;
+            }
             return $itemId[0];
         }
 

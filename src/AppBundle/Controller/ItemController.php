@@ -235,12 +235,10 @@ class ItemController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $itemManager = $this->get('manager.content');
-            $itemId = $itemManager->create($title, $body, $images, $userId, $interestId);
+            $item = $itemManager->create($title, $body, $images, $userId, $interestId);
 
-            if ($itemId) {
-                return $this->success(array(
-                    'id' => $itemId
-                ));
+            if ($item) {
+                return $this->success($item);
             }
 
             return $this->invalid();
@@ -303,12 +301,10 @@ class ItemController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $itemManager = $this->get('manager.content');
-            $itemId = $itemManager->edit($itemId, $title, $body, $images, $userId, $interestId);
+            $item = $itemManager->edit($itemId, $title, $body, $images, $userId, $interestId);
 
-            if ($itemId) {
-                return $this->success(array(
-                    'id' => $itemId
-                ));
+            if ($item) {
+                return $this->success($item);
             }
 
             return $this->invalid();
