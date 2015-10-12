@@ -31,30 +31,57 @@ class TimelineManager extends BaseManager
             'limit' => $limit
         );
 
-        $contentItemsCypherString = '
-            MATCH       (c:CONTENT)-[ci:ASSOCIATED_WITH]->(i:INTEREST), (u:USER)
-            WHERE       id(i) = {interestId}
-            AND         id(u) = {userId}
-            AND NOT     (u)-[:HAS_HIDDEN]->(c)
-            RETURN      id(c) as id,
-                        c.user as author,
-                        c.title as title,
-                        c.body as body,
-                        c.date as date,
-                        c.visibility as visibility,
-                        c.upvotes as upvotes,
-                        c.downvotes as downvotes,
-                        c.images as images,
-                        c.shares as shares,
-                        c.comments as comments,
-                        "content" as type,
-                        labels(c) as labels,
-                        c.interestId as interestId,
-                        c.link as link
-            ORDER BY    c.date DESC
-            SKIP        {offset}
-            LIMIT       {limit}
-        ';
+        if ($interestId === 0) {
+            $contentItemsCypherString = '
+                MATCH       (c:CONTENT), (u:USER)
+                WHERE       id(i) = {interestId}
+                AND         id(u) = {userId}
+                AND NOT     (u)-[:HAS_HIDDEN]->(c)
+                RETURN      id(c) as id,
+                            c.user as author,
+                            c.title as title,
+                            c.body as body,
+                            c.date as date,
+                            c.visibility as visibility,
+                            c.upvotes as upvotes,
+                            c.downvotes as downvotes,
+                            c.images as images,
+                            c.shares as shares,
+                            c.comments as comments,
+                            "content" as type,
+                            labels(c) as labels,
+                            c.interestId as interestId,
+                            c.link as link
+                ORDER BY    c.date DESC
+                SKIP        {offset}
+                LIMIT       {limit}
+            ';
+        } else {
+            $contentItemsCypherString = '
+                MATCH       (c:CONTENT)-[ci:ASSOCIATED_WITH]->(i:INTEREST), (u:USER)
+                WHERE       id(i) = {interestId}
+                AND         id(u) = {userId}
+                AND NOT     (u)-[:HAS_HIDDEN]->(c)
+                RETURN      id(c) as id,
+                            c.user as author,
+                            c.title as title,
+                            c.body as body,
+                            c.date as date,
+                            c.visibility as visibility,
+                            c.upvotes as upvotes,
+                            c.downvotes as downvotes,
+                            c.images as images,
+                            c.shares as shares,
+                            c.comments as comments,
+                            "content" as type,
+                            labels(c) as labels,
+                            c.interestId as interestId,
+                            c.link as link
+                ORDER BY    c.date DESC
+                SKIP        {offset}
+                LIMIT       {limit}
+            ';
+        }
 
         $peopleCypherString = '
             MATCH           (u:USER)-[ui:LIKES]->(i:INTEREST)<-[fi:LIKES]-(f:USER)

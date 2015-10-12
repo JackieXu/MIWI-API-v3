@@ -250,7 +250,6 @@ class InterestManager extends BaseManager
      *
      * @param int $userId
      * @param string $interestName
-     * @param string $visibility
      * @return bool
      * @throws \Exception
      */
