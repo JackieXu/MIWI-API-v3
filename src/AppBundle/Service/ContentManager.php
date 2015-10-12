@@ -194,7 +194,8 @@ class ContentManager extends BaseManager
                 text: {text},
                 upvotes: 0,
                 downvotes: 0,
-                date: {date}
+                date: {date},
+                user: {userId}
             })-[ci:COMMENT_ON]->(i)
             RETURN  id(c) as id,
                     c.text as text,

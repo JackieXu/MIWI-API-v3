@@ -201,12 +201,10 @@ class ItemActionController extends BaseController
         $contentManager = $this->get('manager.content');
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
-            $commentId = $contentManager->comment($userId, $itemId, $text);
+            $comment = $contentManager->comment($userId, $itemId, $text);
 
-            if ($commentId) {
-                return $this->success(array(
-                    'id' => $commentId
-                ));
+            if ($comment) {
+                return $this->success($comment);
             }
 
             return $this->invalid();
