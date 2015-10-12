@@ -599,6 +599,8 @@ class ContentManager extends BaseManager
 
     private function saveData($saveLocation, $webLocation, $content)
     {
+        error_log($saveLocation);
+        error_log($webLocation);
         $temp = tempnam(sys_get_temp_dir(), 'temp');
 
         if (!($f = @fopen($temp, 'wb'))) {
