@@ -229,7 +229,6 @@ class ItemController extends BaseController
         $title = $itemValidator->getValue('title');
         $body = $itemValidator->getValue('body');
         $images = explode(',', $itemValidator->getValue('images'));
-        error_log($images);
 
         $accessManager = $this->get('manager.access');
         $accessToken = $tokenValidator->getValue('accessToken');
