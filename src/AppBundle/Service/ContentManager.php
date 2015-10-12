@@ -3,6 +3,7 @@
 
 namespace AppBundle\Service;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 /**
@@ -599,10 +600,8 @@ class ContentManager extends BaseManager
 
     private function saveData($saveLocation, $webLocation, $content)
     {
-        $file = fopen($saveLocation, 'wb');
-        fwrite($file, $content);
-        fclose($file);
-        chmod($saveLocation, 0777);
+        $fs = new Filesystem();
+        $fs->dumpFile($saveLocation, $content);
 
         return $webLocation;
 //
