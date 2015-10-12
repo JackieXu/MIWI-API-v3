@@ -359,7 +359,7 @@ class ContentManager extends BaseManager
 
         foreach ($comments as $comment) {
             $data = array(
-                'text' => $comment['text'],
+                'comment' => $comment['text'],
                 'date' => $comment['date'],
                 'upvotes' => $comment['upvotes'],
                 'downvotes' => $comment['downvotes'],
