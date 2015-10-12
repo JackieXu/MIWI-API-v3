@@ -421,13 +421,12 @@ class InterestController extends BaseController
 
         $userId = (int) $userId;
         $interestName = strtolower($interestValidator->getValue('name'));
-        $visibility = $interestValidator->getValue('visibility');
         $accessManager = $this->get('manager.access');
         $accessToken = $tokenValidator->getValue('accessToken');
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $interestManager = $this->get('manager.interest');
-            $interest = $interestManager->addInterest($userId, $interestName, $visibility);
+            $interest = $interestManager->addInterest($userId, $interestName);
 
             if ($interest) {
                 return $this->success();

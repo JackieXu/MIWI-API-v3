@@ -283,7 +283,39 @@ class UserController extends BaseController
      */
     public function followAction(Request $request, $userId)
     {
-        return $this->invalid();
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $followId = (int) $request->request->get('followId');
+        $userId = (int) $userId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userManager = $this->get('manager.user');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $followUser = $userManager->followUser($followId, $userId);
+
+            if ($followUser) {
+                return $this->success();
+            }
+
+            return $this->invalid(array(
+                'error' => 'Invalid user to follow'
+            ));
+        }
+
+        return $this->unauthorized();
     }
 
     /**

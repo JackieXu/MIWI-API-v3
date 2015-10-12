@@ -254,7 +254,7 @@ class InterestManager extends BaseManager
      * @return bool
      * @throws \Exception
      */
-    public function addInterest($userId, $interestName, $visibility)
+    public function addInterest($userId, $interestName)
     {
         $interest = $this->sendCypherQuery('
             MERGE   (i:INTEREST {name: {name}})
@@ -267,8 +267,7 @@ class InterestManager extends BaseManager
                     i.name as name
         ', array(
             'userId' => $userId,
-            'name' => $interestName,
-            'visibility' => $visibility
+            'name' => $interestName
         ));
 
         if ($interest) {
