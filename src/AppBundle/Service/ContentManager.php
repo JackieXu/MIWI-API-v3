@@ -414,8 +414,8 @@ class ContentManager extends BaseManager
                 WHERE   id(u) = {userId}
                 WITH    u
                 CREATE  (u)-[:HAS_POSTED]->(i:ITEM:CONTENT {
-                    title: {title}
-                    body: {body}
+                    title: {title},
+                    body: {body},
                     images: {images}
                 })
                 RETURN id(i) as id
@@ -432,8 +432,8 @@ class ContentManager extends BaseManager
                 AND     id(i) = {interestId}
                 WITH    u, i
                 CREATE  (u)-[:HAS_POSTED]->(c:ITEM:CONTENT {
-                    title: {title}
-                    body: {body}
+                    title: {title},
+                    body: {body},
                     images: {images}
                 })-[:ASSOCIATED_WITH]->(i)
                 RETURN id(c) as id
