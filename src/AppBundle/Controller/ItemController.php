@@ -228,7 +228,7 @@ class ItemController extends BaseController
         $interestId = $itemValidator->getValue('interestId');
         $title = $itemValidator->getValue('title');
         $body = $itemValidator->getValue('body');
-        $images = $itemValidator->getValue('images');
+        $images = explode(',', $itemValidator->getValue('images'));
 
         $accessManager = $this->get('manager.access');
         $accessToken = $tokenValidator->getValue('accessToken');

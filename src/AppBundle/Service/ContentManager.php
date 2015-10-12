@@ -462,33 +462,35 @@ class ContentManager extends BaseManager
 
         $files = array();
 
-        foreach ($images as $string) {
-            if (filter_var($string, FILTER_VALIDATE_URL) !== false) {
-                return $string;
+        if (is_array($images)) {
+            foreach ($images as $string) {
+                if (filter_var($string, FILTER_VALIDATE_URL) !== false) {
+                    return $string;
+                }
+
+                if (strpos($string, ',')) {
+
+                    $data = explode(',', $string);
+                    $image = base64_decode($data[1]);
+
+                } else {
+
+                    $image = base64_decode($string);
+
+                }
+
+                $file = finfo_open();
+                $mimeType = finfo_buffer($file, $image, FILEINFO_MIME_TYPE);
+                finfo_close($file);
+
+                $mimeArray = explode('/', $mimeType);
+                $extension = array_pop($mimeArray);
+
+                $saveLocation = sprintf($templateString, $saveRoot, $fileName . '_orig.' . $extension);
+                $webLocation = sprintf($templateString, $webRoot, $fileName . '_orig.' . $extension);
+
+                $files[] = $this->saveData($saveLocation, $webLocation, $image);
             }
-
-            if (strpos($string, ',')) {
-
-                $data = explode(',', $string);
-                $image = base64_decode($data[1]);
-
-            } else {
-
-                $image = base64_decode($string);
-
-            }
-
-            $file = finfo_open();
-            $mimeType = finfo_buffer($file, $image, FILEINFO_MIME_TYPE);
-            finfo_close($file);
-
-            $mimeArray = explode('/', $mimeType);
-            $extension = array_pop($mimeArray);
-
-            $saveLocation = sprintf($templateString, $saveRoot, $fileName . '_orig.' . $extension);
-            $webLocation = sprintf($templateString, $webRoot, $fileName . '_orig.' . $extension);
-
-            $files[] = $this->saveData($saveLocation, $webLocation, $image);
         }
 
         return $files;
