@@ -413,7 +413,7 @@ class ContentManager extends BaseManager
                 MATCH   (u:USER)
                 WHERE   id(u) = {userId}
                 WITH    u
-                CREATE  (u)-[:HAS_POSTED]->(i:ITEM:CONTENT {
+                CREATE  (u)-[:HAS_POSTED]->(D:ITEM:CONTENT {
                     title: {title},
                     body: {body},
                     images: {images},
@@ -423,14 +423,14 @@ class ContentManager extends BaseManager
                     downvotes: 0,
                     comments: 0
                 })
-                RETURN  id(i) as id,
-                        i.title as title,
-                        i.body as body,
-                        i.images as images,
-                        i.date as date,
-                        i.upvotes as upvotes,
-                        i.downvotes as downvotes,
-                        i.comments as comments
+                RETURN  id(d) as id,
+                        d.title as title,
+                        d.body as body,
+                        d.images as images,
+                        d.date as date,
+                        d.upvotes as upvotes,
+                        d.downvotes as downvotes,
+                        d.comments as comments
             ', array(
                 'title' => $title,
                 'body' => $body,
@@ -444,7 +444,7 @@ class ContentManager extends BaseManager
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 WITH    u, i
-                CREATE  (u)-[:HAS_POSTED]->(i:ITEM:CONTENT {
+                CREATE  (u)-[:HAS_POSTED]->(d:ITEM:CONTENT {
                     title: {title},
                     body: {body},
                     images: {images},
@@ -454,14 +454,14 @@ class ContentManager extends BaseManager
                     downvotes: 0,
                     comments: 0
                 })-[:ASSOCIATED_WITH]->(i)
-                RETURN  id(i) as id,
-                        i.title as title,
-                        i.body as body,
-                        i.images as images,
-                        i.date as date,
-                        i.upvotes as upvotes,
-                        i.downvotes as downvotes,
-                        i.comments as comments
+                RETURN  id(d) as id,
+                        d.title as title,
+                        d.body as body,
+                        d.images as images,
+                        d.date as date,
+                        d.upvotes as upvotes,
+                        d.downvotes as downvotes,
+                        d.comments as comments
             ', array(
                 'title' => $title,
                 'body' => $body,
