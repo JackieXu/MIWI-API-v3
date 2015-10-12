@@ -599,30 +599,34 @@ class ContentManager extends BaseManager
 
     private function saveData($saveLocation, $webLocation, $content)
     {
-        $temp = tempnam(sys_get_temp_dir(), 'temp');
-        error_log($saveLocation);
-        error_log($webLocation);
-        error_log($temp);
-
-        if (!($f = fopen($temp, 'wb'))) {
-            $temp = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('temp');
-            if (!($f = fopen($temp, 'wb'))) {
-                trigger_error(sprintf('Error writing temp file `%s`', $temp), E_USER_WARNING);
-                return false;
-            }
-        }
-
-        fwrite($f, $content);
-        fclose($f);
-
-        if (!rename($temp, $saveLocation)) {
-            unlink($saveLocation);
-            rename($temp, $saveLocation);
-        }
-
+        $file = fopen($saveLocation, 'wb');
+        fwrite($file, $content);
+        fclose($file);
         chmod($saveLocation, 0777);
 
         return $webLocation;
+//
+//        $temp = tempnam(sys_get_temp_dir(), 'temp');
+//
+//        if (!($f = fopen($temp, 'wb'))) {
+//            $temp = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('temp');
+//            if (!($f = fopen($temp, 'wb'))) {
+//                trigger_error(sprintf('Error writing temp file `%s`', $temp), E_USER_WARNING);
+//                return false;
+//            }
+//        }
+//
+//        fwrite($f, $content);
+//        fclose($f);
+//
+//        if (!rename($temp, $saveLocation)) {
+//            unlink($saveLocation);
+//            rename($temp, $saveLocation);
+//        }
+//
+//        chmod($saveLocation, 0777);
+//
+//        return $webLocation;
     }
 
 }
