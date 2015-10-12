@@ -191,13 +191,20 @@ class ContentManager extends BaseManager
             AND     id(i) = {itemId}
             WITH    i, u
             CREATE  (u)-[uc:HAS_COMMENTED]->(c:COMMENT {
-                text: {text}
+                text: {text},
+                upvotes: 0,
+                downvotes: 0,
+                date: {date}
             })-[ci:COMMENT_ON]->(i)
-            RETURN  id(c) as id
+            RETURN  id(c) as id,
+                    c.text as text,
+                    c.upvotes as upvotes,
+                    c.downvotes as downvotes,
         ', array(
             'itemId' => $itemId,
             'userId' => $userId,
-            'text' => $text
+            'text' => $text,
+            'date' => time()
         ));
 
         if ($commentId) {
@@ -319,9 +326,9 @@ class ContentManager extends BaseManager
         $comments = $this->sendCypherQuery('
             MATCH   (c:COMMENT)-[:COMMENT_ON]->(i:ITEM)
             WHERE   id(i) = {itemId}
-            RETURN  c.title as title,
-                    c.body as body,
+            RETURN  c.text as text,
                     c.user as user,
+                    c.date as date,
                     c.upvotes as upvotes,
                     c.downvotes as downvotes
             SKIP    {offset}
@@ -336,8 +343,8 @@ class ContentManager extends BaseManager
 
         foreach ($comments as $comment) {
             $data = array(
-                'title' => $comment['title'],
-                'body' => $comment['body'],
+                'text' => $comment['text'],
+                'date' => $comment['date'],
                 'upvotes' => $comment['upvotes'],
                 'downvotes' => $comment['downvotes'],
                 'user' => array()
