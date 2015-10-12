@@ -416,14 +416,27 @@ class ContentManager extends BaseManager
                 CREATE  (u)-[:HAS_POSTED]->(i:ITEM:CONTENT {
                     title: {title},
                     body: {body},
-                    images: {images}
+                    images: {images},
+                    user: {userId},
+                    date: {date},
+                    upvotes: 0,
+                    downvotes: 0,
+                    comments: 0
                 })
-                RETURN id(i) as id
+                RETURN  id(i) as id,
+                        i.title as title,
+                        i.body as body,
+                        i.images as images,
+                        i.date as date,
+                        i.upvotes as upvotes,
+                        i.downvotes as downvotes,
+                        i.comments as comments
             ', array(
                 'title' => $title,
                 'body' => $body,
                 'images' => $imagesRes,
-                'userId' => $userId
+                'userId' => $userId,
+                'date' => time()
             ));
         } else {
             $itemId = $this->sendCypherQuery('
@@ -431,23 +444,105 @@ class ContentManager extends BaseManager
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 WITH    u, i
-                CREATE  (u)-[:HAS_POSTED]->(c:ITEM:CONTENT {
+                CREATE  (u)-[:HAS_POSTED]->(i:ITEM:CONTENT {
                     title: {title},
                     body: {body},
-                    images: {images}
+                    images: {images},
+                    user: {userId},
+                    date: {date},
+                    upvotes: 0,
+                    downvotes: 0,
+                    comments: 0
                 })-[:ASSOCIATED_WITH]->(i)
-                RETURN id(c) as id
+                RETURN  id(i) as id,
+                        i.title as title,
+                        i.body as body,
+                        i.images as images,
+                        i.date as date,
+                        i.upvotes as upvotes,
+                        i.downvotes as downvotes,
+                        i.comments as comments
             ', array(
                 'title' => $title,
                 'body' => $body,
                 'images' => $imagesRes,
                 'userId' => $userId,
-                'interestId' => $interestId
+                'interestId' => $interestId,
+                'date' => time()
             ));
         }
 
         if ($itemId) {
-            return $itemId[0]['id'];
+            return $itemId[0];
+        }
+
+        return false;
+    }
+
+    public function edit($itemId, $title, $body, $images, $userId, $interestId)
+    {
+        $imagesRes = $this->processImages($images);
+
+        if ($interestId === 0) {
+            $itemId = $this->sendCypherQuery('
+                MATCH   (u:USER), (i:ITEM)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {itemId}
+                WITH    u, i
+                SET     i.title = {title}
+                SET     i.body = {body}
+                SET     i.images: {images},
+                SET     i.user: {userId},
+                SET     i.date: {date},
+                RETURN  id(i) as id,
+                        i.title as title,
+                        i.body as body,
+                        i.images as images,
+                        i.date as date,
+                        i.upvotes as upvotes,
+                        i.downvotes as downvotes,
+                        i.comments as comments
+            ', array(
+                'title' => $title,
+                'body' => $body,
+                'images' => $imagesRes,
+                'userId' => $userId,
+                'itemId' => $itemId,
+                'date' => time()
+            ));
+        } else {
+            $itemId = $this->sendCypherQuery('
+                MATCH   (u:USER), (i:ITEM)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {itemId}
+                WITH    u, i
+                SET     i.title = {title}
+                SET     i.body = {body}
+                SET     i.images = {images}
+                SET     i.user = {userId}
+                SET     i.date = {date}
+                SET     i.interestId = {interestId}
+                RETURN  id(i) as id,
+                        i.title as title,
+                        i.body as body,
+                        i.images as images,
+                        i.date as date,
+                        i.upvotes as upvotes,
+                        i.downvotes as downvotes,
+                        i.comments as comments
+            ', array(
+                'title' => $title,
+                'body' => $body,
+                'images' => $imagesRes,
+                'userId' => $userId,
+                'itemId' => $itemId,
+                'interestId' => $interestId,
+                'date' => time()
+            ));
+        }
+
+        if ($itemId) {
+            return $itemId[0];
         }
 
         return false;
@@ -520,4 +615,5 @@ class ContentManager extends BaseManager
 
         return $webLocation;
     }
+
 }
