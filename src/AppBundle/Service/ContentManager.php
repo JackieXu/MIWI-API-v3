@@ -199,7 +199,7 @@ class ContentManager extends BaseManager
             RETURN  id(c) as id,
                     c.text as text,
                     c.upvotes as upvotes,
-                    c.downvotes as downvotes,
+                    c.downvotes as downvotes
         ', array(
             'itemId' => $itemId,
             'userId' => $userId,
