@@ -157,6 +157,64 @@ class InterestController extends BaseController
         return $this->success($interest);
     }
 
+//    /**
+//     * Create new interest
+//     *
+//     * @Route("users/{userId}/interests", requirements={"userId": "\d+"})
+//     * @Method({"POST"})
+//     *
+//     * @ApiDoc(
+//     *  description="Create new interest",
+//     *  tags={},
+//     *  section="interests",
+//     *  requirements={
+//     *
+//     *  },
+//     *  parameters={
+//     *      {
+//     *          "name"="name",
+//     *          "dataType"="string",
+//     *          "description"="Interest name",
+//     *          "required"="true"
+//     *      }
+//     *  },
+//     *  statusCodes={
+//     *      200="Returned when successful",
+//     *      401="Returned when not authenticated",
+//     *      409="Returned when a conflict occurs",
+//     *      500="Returned when an error occured"
+//     *  },
+//     *  authentication=true
+//     * )
+//     *
+//     * @param Request $request
+//     * @param string $userId
+//     * @return \Symfony\Component\HttpFoundation\Response
+//     */
+//    public function addAction(Request $request, $userId)
+//    {
+//        try {
+//            $tokenValidator = new TokenValidator(array(
+//                'accessToken' => $request->headers->get('accessToken')
+//            ));
+//            $interestValidator = new InterestAdditionValidator($request->request->all());
+//        } catch (InvalidOptionsException $e) {
+//            return $this->invalid(array(
+//                'error' => $e->getMessage()
+//            ));
+//        } catch (MissingOptionsException $e) {
+//            return $this->invalid(array(
+//                'error' => $e->getMessage()
+//            ));
+//        }
+//
+//        $interestManager = $this->get('manager.interest');
+//        $userId = (int) $userId;
+//        $interestName = $interestValidator->getValue('name');
+//
+//        return $this->invalid();
+//    }
+
     /**
      * Get user interests
      *

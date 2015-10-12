@@ -216,13 +216,13 @@ class ItemActionController extends BaseController
     }
 
     /**
-     * Flag an item
+     * Report an item
      *
-     * @Route("items/{itemId}/flag")
+     * @Route("items/{itemId}/report")
      * @Method({"POST"})
      *
      * @ApiDoc(
-     *  description="Flag an item",
+     *  description="Report an item",
      *  tags={},
      *  section="items",
      *  requirements={
@@ -275,6 +275,77 @@ class ItemActionController extends BaseController
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $timelineManager = $this->get('manager.timeline');
             $item = $timelineManager->flagItem($userId, $itemId);
+
+            if ($item) {
+                return $this->success();
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
+    }
+
+    /**
+     * Hide an item
+     *
+     * @Route("items/{itemId}/hide")
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Hide an item",
+     *  tags={},
+     *  section="items",
+     *  requirements={
+     *
+     *  },
+     *  parameters={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"="true",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are missing or invalid"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param string $itemId
+     * @return Response
+     */
+    public function hideAction(Request $request, $itemId)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        try {
+            $userValidator = new UserValidator($request->request->all());
+        } catch (MissingOptionsException $e) {
+            return $this->invalid();
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid();
+        }
+
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $userId = (int) $userValidator->getValue('userId');
+        $itemId = (int) $itemId;
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $timelineManager = $this->get('manager.timeline');
+            $item = $timelineManager->hideItem($userId, $itemId);
 
             if ($item) {
                 return $this->success();
