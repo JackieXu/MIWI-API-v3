@@ -253,7 +253,7 @@ class ItemController extends BaseController
      * Edit item
      *
      * @Route("items/{itemId}", requirements={"itemId": "\d+"})
-     * @Method({"PATCH"})
+     * @Method({"POST"})
      *
      * @ApiDoc(
      *  description="Edit item",
