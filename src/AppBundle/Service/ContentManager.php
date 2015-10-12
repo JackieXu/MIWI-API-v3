@@ -603,23 +603,23 @@ class ContentManager extends BaseManager
         error_log($webLocation);
         $temp = tempnam(sys_get_temp_dir(), 'temp');
 
-        if (!($f = @fopen($temp, 'wb'))) {
+        if (!($f = fopen($temp, 'wb'))) {
             $temp = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('temp');
-            if (!($f = @fopen($temp, 'wb'))) {
+            if (!($f = fopen($temp, 'wb'))) {
                 trigger_error(sprintf('Error writing temp file `%s`', $temp), E_USER_WARNING);
                 return false;
             }
         }
 
-        @fwrite($f, $content);
-        @fclose($f);
+        fwrite($f, $content);
+        fclose($f);
 
-        if (!@rename($temp, $saveLocation)) {
-            @unlink($saveLocation);
-            @rename($temp, $saveLocation);
+        if (!rename($temp, $saveLocation)) {
+            unlink($saveLocation);
+            rename($temp, $saveLocation);
         }
 
-        @chmod($saveLocation, 0777);
+        chmod($saveLocation, 0777);
 
         return $webLocation;
     }
