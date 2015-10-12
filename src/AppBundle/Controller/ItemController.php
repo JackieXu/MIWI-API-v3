@@ -224,7 +224,7 @@ class ItemController extends BaseController
             ));
         }
 
-        $userId = $itemValidator->getValue('userId');
+        $userId = (int) $itemValidator->getValue('userId');
         $interestId = $itemValidator->getValue('interestId');
         $title = $itemValidator->getValue('title');
         $body = $itemValidator->getValue('body');
