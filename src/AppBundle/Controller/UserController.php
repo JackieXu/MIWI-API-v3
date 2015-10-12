@@ -247,6 +247,46 @@ class UserController extends BaseController
     }
 
     /**
+     * Add a user to follow
+     *
+     * @Route("users/{userId}/followers", requirements={"userId": "\d+"})
+     * @Method({"POST"})
+     *
+     * @ApiDoc(
+     *  description="Add a user to follow",
+     *  tags={},
+     *  section="users",
+     *  requirements={
+     *      {
+     *          "name"="followId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "description"="User identifier of person to follow",
+     *      }
+     *  },
+     *  parameters={
+     *
+     *  },
+     *  statusCodes={
+     *      200="Returned when successful",
+     *      400="Returned when parameters are invalid or missing",
+     *      401="Returned when not authenticated",
+     *      403="Returned when not authorized",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @param $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function followAction(Request $request, $userId)
+    {
+        return $this->invalid();
+    }
+
+    /**
      * Get user's followers
      *
      * @Route("users/{userId}/followers", requirements={"userId": "\d+"})
