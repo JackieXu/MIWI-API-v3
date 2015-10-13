@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Validator\FavoriteValidator;
 use AppBundle\Validator\FilterValidator;
 use AppBundle\Validator\LimitValidator;
 use AppBundle\Validator\TokenValidator;
@@ -51,14 +52,39 @@ class FavoriteController extends BaseController
     public function favoriteAction(Request $request, $userId)
     {
         try {
-            $itemValidator = new ItemValidator($request->query->all());
+            $itemValidator = new FavoriteValidator($request->request->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
         } catch (MissingOptionsException $e) {
-
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
         } catch (InvalidOptionsException $e) {
-
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
         }
 
-        return $this->invalid();
+        $itemId = (int) $itemValidator->getValue('itemId');
+        $userId = (int) $userId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $favorite = $userManager->favoriteItem($itemId, $userId);
+
+            if ($favorite) {
+                return $this->success();
+            }
+
+            return $this->invalid(array(
+                'error' => 'Invalid item'
+            ));
+        }
+
+        return $this->unauthorized();
     }
 
     /**

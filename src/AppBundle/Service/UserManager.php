@@ -842,4 +842,88 @@ class UserManager extends BaseManager
 
         return false;
     }
+
+    public function favoriteItem($itemId, $userId)
+    {
+        $isFavorited = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:HAS_FAVORITED]->(i:ITEM)
+            WHERE   id(u) = {userId}
+            AND     id(i) = {itemId}
+            RETURN  id(i) as id
+        ', array(
+            'userId' => $userId,
+            'itemid' => $itemId
+        ));
+
+        try {
+            if ($isFavorited) {
+                $this->sendCypherQuery('
+                    MATCH   (u:USER), (i:ITEM)
+                    WHERE   id(u) = {userId}
+                    AND     id(i) = {itemId}
+                    CREATE  (u)-[:HAS_FAVORITED]->(i)
+                    RETURN  id(i) as id
+                ', array(
+                    'itemId' => $itemId,
+                    'userId' => $userId
+                ));
+            } else {
+                $this->sendCypherQuery('
+                    MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:ITEM)
+                    WHERE   id(u) = {userId}
+                    AND     id(i) = {itemId}
+                    DELETE  r
+                ', array(
+                    'userId' => $userId,
+                    'itemid' => $itemId
+                ));
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function followUser($followId, $userId)
+    {
+        $isFollowing = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:IS_FOLLOWING]->(f:USER)
+            WHERE   id(u) = {userId}
+            AND     id(f) = {followId}
+            RETURN  id(f) as id
+        ', array(
+            'userId' => $userId,
+            'followId' => $followId
+        ));
+
+        try {
+            if ($isFollowing) {
+                $this->sendCypherQuery('
+                    MATCH   (u:USER), (f:USER)
+                    WHERE   id(u) = {userId}
+                    AND     id(f) = {followId}
+                    CREATE  (u)-[:IS_FOLLOWING]->(f)
+                    RETURN  id(f) as id
+                ', array(
+                    'followId' => $followId,
+                    'userId' => $userId
+                ));
+            } else {
+                $this->sendCypherQuery('
+                    MATCH   (u:USER)-[r:IS_FOLLOWING]->(f:USER)
+                    WHERE   id(u) = {userId}
+                    AND     id(f) = {followId}
+                    DELETE  r
+                ', array(
+                    'userId' => $userId,
+                    'followId' => $followId
+                ));
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
 }

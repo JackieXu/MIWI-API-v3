@@ -249,7 +249,10 @@ class UserController extends BaseController
     /**
      * Add a user to follow
      *
-     * @Route("users/{userId}/followers", requirements={"userId": "\d+"})
+     * Calling this method again with the same user and followId will remove that
+     * user from the following list
+     *
+     * @Route("users/{userId}/following", requirements={"userId": "\d+"})
      * @Method({"POST"})
      *
      * @ApiDoc(
