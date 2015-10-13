@@ -325,7 +325,7 @@ class TimelineManager extends BaseManager
             MATCH           (u:USER), (i:ITEM)
             WHERE           id(u) = {userId}
             AND             id(i) = {itemId}
-            CREATE UNIQUE   (u)-[:HAS_FLAGGED]->(i)
+            CREATE UNIQUE   (u)-[:HAS_HIDDEN]->(i)
             RETURN          i.title as title,
                             u.firstName as firstName,
                             u.lastName as lastName,
@@ -357,5 +357,27 @@ class TimelineManager extends BaseManager
         return false;
     }
 
+    public function hideItem($userId, $itemId)
+    {
+        $item = $this->sendCypherQuery('
+            MATCH           (u:USER), (i:ITEM)
+            WHERE           id(u) = {userId}
+            AND             id(i) = {itemId}
+            CREATE UNIQUE   (u)-[:HAS_HIDDEN]->(i)
+            RETURN          i.title as title,
+                            u.firstName as firstName,
+                            u.lastName as lastName,
+                            u.email as email
+        ', array(
+            'userId' => $userId,
+            'itemId' => $itemId
+        ));
+
+        if ($item) {
+            return $item[0]['id'];
+        }
+
+        return false;
+    }
 
 }
