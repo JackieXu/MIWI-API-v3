@@ -685,6 +685,33 @@ class UserController extends BaseController
      */
     public function deleteAction(Request $request, $userId)
     {
-        return $this->invalid();
+        try {
+            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $userId = (int) $userId;
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $userManager = $this->get('manager.user');
+            $status = $userManager->deleteUser($userId);
+
+            if ($status) {
+                return $this->success();
+            }
+
+            return $this->invalid();
+        }
+
+        return $this->unauthorized();
     }
 }

@@ -926,4 +926,29 @@ class UserManager extends BaseManager
 
         return true;
     }
+
+    public function deleteUser($userId)
+    {
+        try {
+            $this->sendCypherQuery('
+                MATCH   (u:USER)-[x]-(r)
+                WHERE   id(u) = {userId}
+                DELETE  x, u
+                WITH    r
+                MATCH   (i:ITEM)
+                WHERE   i.user = {userId}
+                DELETE  i
+                WITH    i
+                MATCH   (c:COMMENT)
+                WHERE   c.user = {userId}
+                DELETE  c
+            ', array(
+                'userId' => $userId
+            ));
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
 }
