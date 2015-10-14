@@ -380,9 +380,9 @@ class ContentManager extends BaseManager
             ));
 
             if ($user) {
-                $data['user'] = $user[0];
+                $data['createdBy'] = $user[0];
             } else {
-                $data['user'] = array(
+                $data['createdBy'] = array(
                     'id' => -1,
                     'firstName' => 'Vurze',
                     'lastName' => '',
