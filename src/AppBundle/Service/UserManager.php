@@ -456,7 +456,7 @@ class UserManager extends BaseManager
                     u.emailComments as emailComments,
                     u.appMentions as appMentions,
                     u.appVotes as appVotes,
-                    u.appMentions as appMentions
+                    u.appComments as appComments
         ', array(
             'userId' => $userId
         ));
