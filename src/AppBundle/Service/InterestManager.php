@@ -162,10 +162,12 @@ class InterestManager extends BaseManager
     /**
      * Gets user interests
      *
+     * @param int $profileId
      * @param int $userId
      * @return array
+     * @throws \Exception
      */
-    public function getUserInterests($userId)
+    public function getUserInterests($profileId, $userId)
     {
         $cypherString = '
             MATCH   (u:USER)-[ui:LIKES]->(i:INTEREST)
@@ -175,10 +177,29 @@ class InterestManager extends BaseManager
         ';
 
         $interests = $this->sendCypherQuery($cypherString, array(
-            'userId' => $userId
+            'userId' => $profileId
         ));
 
-        return $interests;
+        $iRes = array();
+
+        foreach ($interests as $interest) {
+            $hasInterest = $this->sendCypherQuery('
+                MATCH   (u:USER)-[ui:LIKES]->(i:INTEREST)
+                WHERE   id(u) = {userId}
+                AND     id(i) = {interestId}
+                RETURN  count(ui) as c
+            ', array(
+                'userId' => $userId,
+                'interestId' =>  $interest['id']
+            ));
+            $iRes[] = array(
+                'id' => $interest['id'],
+                'name' => $interest['name'],
+                'hasInterest' => $hasInterest[0]['c'] === 1
+            );
+        }
+
+        return $iRes;
     }
 
     /**

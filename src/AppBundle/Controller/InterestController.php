@@ -218,7 +218,7 @@ class InterestController extends BaseController
     /**
      * Get user interests
      *
-     * @Route("users/{userId}/interests", requirements={"userId" = "\d+"})
+     * @Route("users/{profileId}/interests", requirements={"profileId" = "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
@@ -228,7 +228,12 @@ class InterestController extends BaseController
      *  requirements={
      *  },
      *  parameters={
-     *
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "description"="User identifier",
+     *          "required"="true"
+     *      }
      *  },
      *  statusCodes={
      *      200="Returned when successful",
@@ -240,16 +245,36 @@ class InterestController extends BaseController
      * )
      *
      * @param Request $request
-     * @param string $userId
+     * @param string $profileId
      * @return JsonResponse
      */
-    public function userInterestsAction(Request $request, $userId)
+    public function userInterestsAction(Request $request, $profileId)
     {
-        $userId = (int) $userId;
-        $interestManager = $this->get('manager.interest');
-        $interests = $interestManager->getUserInterests($userId);
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+            $userValidator = new UserValidator($request->query->all());
+        } catch (\Exception $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
 
-        return $this->success($interests);
+        $profileId = (int) $profileId;
+        $userId = (int) $userValidator->getValue('userId');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+
+            $interestManager = $this->get('manager.interest');
+            $interests = $interestManager->getUserInterests($profileId, $userId);
+
+            return $this->success($interests);
+        }
+
+        return $this->unauthorized();
     }
 
     /**
