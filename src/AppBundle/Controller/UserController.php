@@ -568,7 +568,9 @@ class UserController extends BaseController
     public function deactivateAction(Request $request, $userId)
     {
         try {
-            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid(array(
                 'error' => $e->getMessage()
@@ -627,7 +629,9 @@ class UserController extends BaseController
     public function reactivateAction(Request $request, $userId)
     {
         try {
-            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid(array(
                 'error' => $e->getMessage()
@@ -686,7 +690,9 @@ class UserController extends BaseController
     public function deleteAction(Request $request, $userId)
     {
         try {
-            $tokenValidator = new TokenValidator($request->headers->get('accessToken'));
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid(array(
                 'error' => $e->getMessage()
