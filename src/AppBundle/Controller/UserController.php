@@ -310,7 +310,7 @@ class UserController extends BaseController
             $followUser = $userManager->followUser($followId, $userId);
 
             if ($followUser) {
-                return $this->success();
+                return $this->success($followUser);
             }
 
             return $this->invalid(array(
