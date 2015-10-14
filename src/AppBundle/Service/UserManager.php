@@ -878,17 +878,17 @@ class UserManager extends BaseManager
     public function favoriteItem($itemId, $userId)
     {
         $isFavorited = $this->sendCypherQuery('
-            MATCH   (u:USER)-[:HAS_FAVORITED]->(i:ITEM)
+            MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:ITEM)
             WHERE   id(u) = {userId}
             AND     id(i) = {itemId}
-            RETURN  id(i) as id
+            RETURN  COUNT(r) as c
         ', array(
             'userId' => $userId,
             'itemId' => $itemId
         ));
 
         try {
-            if ($isFavorited) {
+            if ($isFavorited[0]['c'] === 0) {
                 $r = $this->sendCypherQuery('
                     MATCH   (u:USER), (i:ITEM)
                     WHERE   id(u) = {userId}
@@ -908,6 +908,7 @@ class UserManager extends BaseManager
                     AND     id(i) = {itemId}
                     SET     i.favorites = i.favorites - 1
                     DELETE  r
+                    WITH    i
                     RETURN  i.favorites as favoriteCount
                 ', array(
                     'userId' => $userId,
