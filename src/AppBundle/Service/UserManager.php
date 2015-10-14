@@ -955,32 +955,17 @@ class UserManager extends BaseManager
     public function followUser($followId, $userId)
     {
         $isFollowing = $this->sendCypherQuery('
-            MATCH   (u:USER)-[:IS_FOLLOWING]->(f:USER)
+            MATCH   (u:USER)-[r:IS_FOLLOWING]->(f:USER)
             WHERE   id(u) = {userId}
             AND     id(f) = {followId}
-            RETURN  id(f) as id
+            RETURN  COUNT(r) as c
         ', array(
             'userId' => $userId,
             'followId' => $followId
         ));
 
         try {
-            if ($isFollowing) {
-                $data = $this->sendCypherQuery('
-                    MATCH   (u:USER), (f:USER)
-                    WHERE   id(u) = {userId}
-                    AND     id(f) = {followId}
-                    CREATE  (u)-[:IS_FOLLOWING]->(f)
-                    WITH    u,f
-                    SET     f.followerCount = f.followerCount + 1
-                    SET     u.followingCount = u.followingCount + 1
-                    RETURN  f.followerCount as followerCount
-                ', array(
-                    'followId' => $followId,
-                    'userId' => $userId
-                ));
-                $data[0]['isFollowing'] = true;
-            } else {
+            if ($isFollowing[0]['c'] === 1) {
                 $data = $this->sendCypherQuery('
                     MATCH   (u:USER)-[r:IS_FOLLOWING]->(f:USER)
                     WHERE   id(u) = {userId}
@@ -995,6 +980,22 @@ class UserManager extends BaseManager
                     'followId' => $followId
                 ));
                 $data[0]['isFollowing'] = false;
+
+            } else {
+                $data = $this->sendCypherQuery('
+                    MATCH   (u:USER), (f:USER)
+                    WHERE   id(u) = {userId}
+                    AND     id(f) = {followId}
+                    CREATE  (u)-[:IS_FOLLOWING]->(f)
+                    WITH    u,f
+                    SET     f.followerCount = f.followerCount + 1
+                    SET     u.followingCount = u.followingCount + 1
+                    RETURN  f.followerCount as followerCount
+                ', array(
+                    'followId' => $followId,
+                    'userId' => $userId
+                ));
+                $data[0]['isFollowing'] = true;
             }
 
             return $data[0];
