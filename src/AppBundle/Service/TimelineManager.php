@@ -352,7 +352,7 @@ class TimelineManager extends BaseManager
 
             $this->mailer->send($message);
 
-            return $item[0]['id'];
+            return $item[0]['title'];
         }
 
         return false;
