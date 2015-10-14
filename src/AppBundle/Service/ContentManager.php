@@ -563,6 +563,7 @@ class ContentManager extends BaseManager
         $fileName = uniqid();
 
         $files = array();
+        $fs = new Filesystem();
 
         if (is_array($images)) {
             foreach ($images as $string) {
@@ -591,7 +592,8 @@ class ContentManager extends BaseManager
                 $saveLocation = sprintf($templateString, $saveRoot, $fileName . '_orig.' . $extension);
                 $webLocation = sprintf($templateString, $webRoot, $fileName . '_orig.' . $extension);
 
-                $files[] = $this->saveData($saveLocation, $webLocation, $image);
+                $fs->dumpFile($saveLocation, $image);
+                $files[] = $webLocation;
             }
         }
 

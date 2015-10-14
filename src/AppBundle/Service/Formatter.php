@@ -105,7 +105,16 @@ class Formatter extends BaseManager
             'userId' => $user
         ));
 
-        return $data[0];
+        if ($data) {
+            return $data[0];
+        }
+
+        return array(
+            'id' => '-1',
+            'firstName' => 'MIWI',
+            'lastName' => '',
+            'image' => 'http://api.miwi.com/img/node/default_img.png'
+        );
     }
 
     public function formatGroup($groupId, $userId)
