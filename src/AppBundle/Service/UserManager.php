@@ -884,7 +884,7 @@ class UserManager extends BaseManager
             RETURN  id(i) as id
         ', array(
             'userId' => $userId,
-            'itemid' => $itemId
+            'itemId' => $itemId
         ));
 
         try {
@@ -907,7 +907,7 @@ class UserManager extends BaseManager
                     DELETE  r
                 ', array(
                     'userId' => $userId,
-                    'itemid' => $itemId
+                    'itemId' => $itemId
                 ));
             }
         } catch (\Exception $e) {
