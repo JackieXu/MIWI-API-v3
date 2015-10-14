@@ -76,7 +76,7 @@ class FavoriteController extends BaseController
             $favorite = $userManager->favoriteItem($itemId, $userId);
 
             if ($favorite) {
-                return $this->success();
+                return $this->success($favorite);
             }
 
             return $this->invalid(array(

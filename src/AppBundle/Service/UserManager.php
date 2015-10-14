@@ -889,34 +889,37 @@ class UserManager extends BaseManager
 
         try {
             if ($isFavorited) {
-                $this->sendCypherQuery('
+                $r = $this->sendCypherQuery('
                     MATCH   (u:USER), (i:ITEM)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     i.favorites = i.favorites + 1
                     CREATE  (u)-[:HAS_FAVORITED]->(i)
-                    RETURN  id(i) as id
+                    RETURN  i.favorites as favoriteCount
                 ', array(
                     'itemId' => $itemId,
                     'userId' => $userId
                 ));
+                $r[0]['hasFavorited'] = true;
             } else {
-                $this->sendCypherQuery('
+                $r = $this->sendCypherQuery('
                     MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:ITEM)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     i.favorites = i.favorites - 1
                     DELETE  r
+                    RETURN  i.favorites as favoriteCount
                 ', array(
                     'userId' => $userId,
                     'itemId' => $itemId
                 ));
+                $r[0]['hasFavorited'] = false;
             }
         } catch (\Exception $e) {
             return false;
         }
 
-        return true;
+        return $r[0];
     }
 
     /**
