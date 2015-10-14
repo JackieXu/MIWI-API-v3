@@ -96,7 +96,7 @@ class ProfileController extends BaseController
      *  - Name
      *  - Image
      *
-     * @Route("/users/{profile}/profile", requirements={"profileId": "\d+"})
+     * @Route("/users/{profileId}/profile", requirements={"profileId": "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
