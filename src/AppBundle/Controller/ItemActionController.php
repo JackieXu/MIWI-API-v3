@@ -251,18 +251,15 @@ class ItemActionController extends BaseController
             $tokenValidator = new TokenValidator(array(
                 'accessToken' => $request->headers->get('accessToken')
             ));
-        } catch (MissingOptionsException $e) {
-            return $this->invalid();
-        } catch (InvalidOptionsException $e) {
-            return $this->invalid();
-        }
-
-        try {
             $userValidator = new UserValidator($request->request->all());
         } catch (MissingOptionsException $e) {
-            return $this->invalid();
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
         } catch (InvalidOptionsException $e) {
-            return $this->invalid();
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
         }
 
         $accessManager = $this->get('manager.access');
@@ -322,18 +319,15 @@ class ItemActionController extends BaseController
             $tokenValidator = new TokenValidator(array(
                 'accessToken' => $request->headers->get('accessToken')
             ));
-        } catch (MissingOptionsException $e) {
-            return $this->invalid();
-        } catch (InvalidOptionsException $e) {
-            return $this->invalid();
-        }
-
-        try {
             $userValidator = new UserValidator($request->request->all());
         } catch (MissingOptionsException $e) {
-            return $this->invalid();
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
         } catch (InvalidOptionsException $e) {
-            return $this->invalid();
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
         }
 
         $accessManager = $this->get('manager.access');
