@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @package AppBundle\Validator
  */
-class ProfileValidator extends Validator
+class ProfileValidator extends UserValidator
 {
     protected function configureOptions(OptionsResolver $resolver)
     {

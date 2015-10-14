@@ -96,7 +96,7 @@ class ProfileController extends BaseController
      *  - Name
      *  - Image
      *
-     * @Route("/users/{userId}/profile", requirements={"userId": "\d+"})
+     * @Route("/users/{profile}/profile", requirements={"profileId": "\d+"})
      * @Method({"GET"})
      *
      * @ApiDoc(
@@ -121,34 +121,44 @@ class ProfileController extends BaseController
      *      403="Returned when not authorized",
      *      500="Returned when error occured"
      *  },
-     *  authentication=false
+     *  authentication=true
      * )
      *
      * @param Request $request
-     * @param string $userId
+     * @param string $profileId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function profileAction(Request $request, $userId)
+    public function profileAction(Request $request, $profileId)
     {
         try {
             $profileValidator = new ProfileValidator($request->query->all());
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
         } catch (MissingOptionsException $e) {
             return $this->invalid();
         } catch (InvalidOptionsException $e) {
             return $this->invalid();
         }
 
-        $userId = (int) $userId;
+        $userId = (int) $profileValidator->getValue('userId');
+        $profileId = (int) $profileId;
         $wantsExtendedProfile = $profileValidator->getValue('extended') === '1';
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
 
-        $userManager = $this->get('manager.user');
-        $profile = $userManager->getProfile($userId, $wantsExtendedProfile);
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
 
-        if ($profile) {
-            return $this->success($profile);
+            $userManager = $this->get('manager.user');
+            $profile = $userManager->getProfile($profileId, $userId, $wantsExtendedProfile);
+
+            if ($profile) {
+                return $this->success($profile);
+            }
+
+            return $this->invalid();
         }
-
-        return $this->invalid();
+        return $this->unauthorized();
     }
 
     /**

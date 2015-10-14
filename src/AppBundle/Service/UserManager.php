@@ -43,11 +43,12 @@ class UserManager extends BaseManager
      *
      * Returns a simple user profile consisting of an avatar and name, unless `$wantsExtendedProfile` set to true.
      *
+     * @param int $profileId
      * @param int $userId
      * @param bool $wantsExtendedProfile
      * @return array|bool
      */
-    public function getProfile($userId, $wantsExtendedProfile)
+    public function getProfile($profileId, $userId, $wantsExtendedProfile)
     {
         if ($wantsExtendedProfile) {
             $query = '
@@ -71,10 +72,26 @@ class UserManager extends BaseManager
         }
 
         $profile = $this->sendCypherQuery($query, array(
-            'userId' => $userId
+            'userId' => $profileId
         ));
 
         if ($profile) {
+
+            if ($profileId !== $userId) {
+                $isFollowing = $this->sendCypherQuery('
+                    MATCH   (u:USER)-[c:IS_FOLLOWING]->(f:USER)
+                    WHERE   id(u) = {userId}
+                    AND     id(f) = {followId}
+                    RETURN  count(r) as c
+                ', array(
+                    'userId' => $userId,
+                    'followId' => $profileId
+                ));
+
+
+                $profile[0]['isFollowing'] = $isFollowing[0]['c'] === 1;
+            }
+
             return $profile[0];
         }
 
