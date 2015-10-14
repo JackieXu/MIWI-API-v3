@@ -737,6 +737,16 @@ class UserManager extends BaseManager
         return false;
     }
 
+    /**
+     * Get user's notification id
+     *
+     * This is an incrementing number to keep track of a user's
+     * notifications.
+     *
+     * @param $userId
+     * @return mixed
+     * @throws \Exception
+     */
     public function getNotificationId($userId)
     {
         $id = $this->sendCypherQuery('
@@ -751,6 +761,17 @@ class UserManager extends BaseManager
         return $id[0]['notificationId'];
     }
 
+    /**
+     * Update user image
+     *
+     * Updates a user's profile picture. Note that $string is a base64
+     * representation of an image.
+     *
+     * @param int $userId
+     * @param string $string
+     * @return bool
+     * @throws \Exception
+     */
     public function updateImage($userId, $string)
     {
         $templateString = '%s/img/node/%s';
@@ -843,6 +864,17 @@ class UserManager extends BaseManager
         return false;
     }
 
+    /**
+     * Favorite an item
+     *
+     * Functions as a toggle, which means that an already favorited item
+     * will be removed if favorited again.
+     *
+     * @param int $itemId
+     * @param int $userId
+     * @return bool
+     * @throws \Exception
+     */
     public function favoriteItem($itemId, $userId)
     {
         $isFavorited = $this->sendCypherQuery('
@@ -885,6 +917,18 @@ class UserManager extends BaseManager
         return true;
     }
 
+    /**
+     * Follow a user
+     *
+     * Functions as a toggle, which means that an already followed user
+     * will not be followed anymore, if this method is called gain on the
+     * same user.
+     *
+     * @param int $followId
+     * @param int $userId
+     * @return bool
+     * @throws \Exception
+     */
     public function followUser($followId, $userId)
     {
         $isFollowing = $this->sendCypherQuery('
@@ -927,6 +971,15 @@ class UserManager extends BaseManager
         return true;
     }
 
+    /**
+     * Delete user
+     *
+     * Deletes all traces of a user having existed. All his comments and posts
+     * will be deleted. Upvotes and downvotes are kept.
+     *
+     * @param int $userId
+     * @return bool
+     */
     public function deleteUser($userId)
     {
         try {

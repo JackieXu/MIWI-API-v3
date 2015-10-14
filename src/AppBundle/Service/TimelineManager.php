@@ -34,8 +34,7 @@ class TimelineManager extends BaseManager
         if ($interestId === 0) {
             $contentItemsCypherString = '
                 MATCH       (c:CONTENT), (u:USER)
-                WHERE       id(i) = {interestId}
-                AND         id(u) = {userId}
+                WHERE       id(u) = {userId}
                 AND NOT     (u)-[:HAS_HIDDEN]->(c)
                 RETURN      id(c) as id,
                             c.user as author,
