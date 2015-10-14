@@ -83,6 +83,7 @@ class Formatter extends BaseManager
             "link" => $content['link'],
             'title' => $content['title'],
             'commentCount' => $content['comments'],
+            'favoriteCount' => $content['favorites'],
             'hasCommented' => $hasCommented,
             'hasFavorited' => $isFavorited,
             'hasUpvoted' => $hasUpvoted,

@@ -893,6 +893,7 @@ class UserManager extends BaseManager
                     MATCH   (u:USER), (i:ITEM)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
+                    SET     i.favorites = i.favorites + 1
                     CREATE  (u)-[:HAS_FAVORITED]->(i)
                     RETURN  id(i) as id
                 ', array(
@@ -904,6 +905,7 @@ class UserManager extends BaseManager
                     MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:ITEM)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
+                    SET     i.favorites = i.favorites - 1
                     DELETE  r
                 ', array(
                     'userId' => $userId,

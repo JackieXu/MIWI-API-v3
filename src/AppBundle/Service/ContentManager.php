@@ -422,7 +422,8 @@ class ContentManager extends BaseManager
                     date: {date},
                     upvotes: 0,
                     downvotes: 0,
-                    comments: 0
+                    comments: 0,
+                    favorites: 0
                 })
                 RETURN  id(d) as id,
                         d.title as title,
@@ -453,7 +454,8 @@ class ContentManager extends BaseManager
                     date: {date},
                     upvotes: 0,
                     downvotes: 0,
-                    comments: 0
+                    comments: 0,
+                    favorites: 0
                 })-[:ASSOCIATED_WITH]->(i)
                 RETURN  id(d) as id,
                         d.title as title,
