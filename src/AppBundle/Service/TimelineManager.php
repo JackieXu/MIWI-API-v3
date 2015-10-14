@@ -375,7 +375,7 @@ class TimelineManager extends BaseManager
         ));
 
         if ($item) {
-            return $item[0]['id'];
+            return $item[0]['title'];
         }
 
         return false;
