@@ -261,7 +261,6 @@ class InterestManager extends BaseManager
             MATCH   (u:USER)
             WHERE   id(u) = {userId}
             MERGE   (u)-[r:LIKES]->(i)
-            SET     r.visibility = {visibility}
             RETURN  id(i) as id,
                     i.name as name
         ', array(
