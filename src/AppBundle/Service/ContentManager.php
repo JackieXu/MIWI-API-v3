@@ -365,7 +365,7 @@ class ContentManager extends BaseManager
                 'date' => $comment['date'],
                 'upvotes' => $comment['upvotes'],
                 'downvotes' => $comment['downvotes'],
-                'user' => array()
+                'createdBy' => array()
             );
 
             $user = $this->sendCypherQuery('
