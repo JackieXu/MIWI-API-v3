@@ -79,7 +79,7 @@ class UserManager extends BaseManager
 
             if ($profileId !== $userId) {
                 $isFollowing = $this->sendCypherQuery('
-                    MATCH   (u:USER)-[c:IS_FOLLOWING]->(f:USER)
+                    MATCH   (u:USER)-[r:IS_FOLLOWING]->(f:USER)
                     WHERE   id(u) = {userId}
                     AND     id(f) = {followId}
                     RETURN  count(r) as c
