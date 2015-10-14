@@ -966,32 +966,41 @@ class UserManager extends BaseManager
 
         try {
             if ($isFollowing) {
-                $this->sendCypherQuery('
+                $data = $this->sendCypherQuery('
                     MATCH   (u:USER), (f:USER)
                     WHERE   id(u) = {userId}
                     AND     id(f) = {followId}
                     CREATE  (u)-[:IS_FOLLOWING]->(f)
-                    RETURN  id(f) as id
+                    WITH    u,f
+                    SET     f.followerCount = f.followerCount + 1
+                    SET     u.followingCount = u.followingCount + 1
+                    RETURN  f.followerCount as followerCount
                 ', array(
                     'followId' => $followId,
                     'userId' => $userId
                 ));
+                $data[0]['isFollowing'] = true;
             } else {
-                $this->sendCypherQuery('
+                $data = $this->sendCypherQuery('
                     MATCH   (u:USER)-[r:IS_FOLLOWING]->(f:USER)
                     WHERE   id(u) = {userId}
                     AND     id(f) = {followId}
                     DELETE  r
+                    WITH    u,f
+                    SET     f.followerCount = f.followerCount - 1
+                    SET     u.followingCount = u.followingCount - 1
+                    RETURN  f.followerCount as followerCount
                 ', array(
                     'userId' => $userId,
                     'followId' => $followId
                 ));
+                $data[0]['isFollowing'] = false;
             }
+
+            return $data[0];
         } catch (\Exception $e) {
             return false;
         }
-
-        return true;
     }
 
     /**

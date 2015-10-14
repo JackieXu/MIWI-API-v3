@@ -179,7 +179,9 @@ class AccessManager extends BaseManager
                     status: {status},
                     social: {social},
                     image: {image},
-                    notficationId: 0
+                    notficationId: 0,
+                    followingCount: 0,
+                    followerCount: 0
                 })
                 RETURN  id(u) as id,
                         u.status as status
