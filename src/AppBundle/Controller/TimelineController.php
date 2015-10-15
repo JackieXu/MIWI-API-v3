@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Validator\LimitValidator;
+use AppBundle\Validator\SearchValidator;
 use AppBundle\Validator\TimelineValidator;
 use AppBundle\Validator\TokenValidator;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -107,5 +108,86 @@ class TimelineController extends BaseController
         }
 
         return $this->forbidden();
+    }
+
+    /**
+     * Gets interest timeline
+     *
+     * @Route("items/search")
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  description="Gets search results",
+     *  tags={},
+     *  section="items",
+     *  parameters={
+     *      {
+     *          "name"="query",
+     *          "dataType"="string",
+     *          "required"=true,
+     *          "description"="Search query"
+     *      },
+     *      {
+     *          "name"="limit",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="How many items to return",
+     *
+     *      },
+     *      {
+     *          "name"="offset",
+     *          "dataType"="int",
+     *          "required"=false,
+     *          "description"="Number of items to skip"
+     *      }
+     *  },
+     *  requirements={
+     *      {
+     *          "name"="userId",
+     *          "dataType"="int",
+     *          "required"=true,
+     *          "requirement"="\d+",
+     *          "description"="User identifier"
+     *      }
+     *  },
+     *  statusCodes={
+     *      200="Returned when succesful",
+     *      500="Returned when an error occured"
+     *  },
+     *  authentication=true
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function searchAction(Request $request)
+    {
+        try {
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+            $searchValidator = new SearchValidator($request->query->all());
+        } catch (\Exception $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $userId = (int) $searchValidator->getValue('userId');
+        $accessToken = $tokenValidator->getValue('accessToken');
+        $accessManager = $this->get('manager.access');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $query = $searchValidator->getValue('query');
+            $offset = (int) $searchValidator->getValue('offset');
+            $limit = (int) $searchValidator->getValue('limit');
+            $interestId = (int) $searchValidator->getValue('interestId');
+
+            $items = $this->get('manager.content')->search($query, $userId, $interestId, $offset, $limit);
+
+            return $this->success($items);
+        }
+
+        return $this->unauthorized();
     }
 }
