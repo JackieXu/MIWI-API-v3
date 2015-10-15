@@ -577,7 +577,7 @@ class UserManager extends BaseManager
         $userId = $this->sendCypherQuery($cypherString, $settings);
 
         if ($userId) {
-            return $settings[0]['id'];
+            return true;
         }
 
         return false;
