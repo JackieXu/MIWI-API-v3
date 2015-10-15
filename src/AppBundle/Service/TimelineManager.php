@@ -102,7 +102,7 @@ class TimelineManager extends BaseManager
                             collect(id(j)) as otherInterests,
                             commonInterests as commonInterests,
                             "person" as type
-            LIMIT           1
+            LIMIT           2
         ';
 
         $timelineItems = $this->sendCypherQueries(array(
