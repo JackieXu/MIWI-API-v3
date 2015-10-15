@@ -451,10 +451,8 @@ class UserManager extends BaseManager
         $settings = $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   id(u) = {userId}
-            RETURN  u.emailMentions as emailMentions,
-                    u.emailVotes as emailVotes,
+            RETURN  u.emailVotes as emailVotes,
                     u.emailComments as emailComments,
-                    u.appMentions as appMentions,
                     u.appVotes as appVotes,
                     u.appComments as appComments
         ', array(
@@ -465,10 +463,8 @@ class UserManager extends BaseManager
             $settings = $settings[0];
 
             return array(
-                'emailMentions' => $settings['emailMentions'] ? $settings['emailMentions'] : false,
                 'emailVotes' => $settings['emailVotes'] ? $settings['emailVotes'] : false,
                 'emailComments' => $settings['emailComments'] ? $settings['emailComments'] : false,
-                'appMentions' => $settings['appMentions'] ? $settings['appMentions'] : false,
                 'appVotes' => $settings['appVotes'] ? $settings['appVotes'] : false,
                 'appComments' => $settings['appComments'] ? $settings['appComments'] : false,
             );
@@ -553,10 +549,8 @@ class UserManager extends BaseManager
     public function updateNotificationSettings($userId, $settings)
     {
         $acceptedSettings = array(
-            'emailMentions',
             'emailVotes',
             'emailComments',
-            'appMentions',
             'appVotes',
             'appMentions'
         );
