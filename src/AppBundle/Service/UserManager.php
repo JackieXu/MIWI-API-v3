@@ -552,7 +552,7 @@ class UserManager extends BaseManager
             'emailVotes',
             'emailComments',
             'appVotes',
-            'appMentions'
+            'appComments'
         );
 
         $cypherString = '
