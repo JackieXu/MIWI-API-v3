@@ -268,6 +268,7 @@ class ContentManager extends BaseManager
             MATCH   (u:USER), (i:ITEM)
             WHERE   id(u) = {userId}
             AND     id(i) = {itemId}
+            SET     i.comments = i.comments + 1
             WITH    i, u
             CREATE  (u)-[uc:HAS_COMMENTED]->(c:COMMENT {
                 text: {text},
