@@ -201,4 +201,50 @@ class Formatter extends BaseManager
             'interests' => $interests
         );
     }
+
+    public function formatPerson($item)
+    {
+        $commonInterests = array();
+        $otherInterests = array();
+
+        foreach ($item['commonInterests'] as $interest) {
+            $iData = $this->sendCypherQuery('
+                MATCH   (i:INTEREST)
+                WHERE   id(i) = {interestId}
+                RETURN  i.name as name
+            ', array(
+                'interestId' => $interest
+            ));
+
+            $commonInterests[] = array(
+                'id' => $interest,
+                'name' => $iData[0]['name']
+            );
+        }
+
+        foreach ($item['otherInterests'] as $interest) {
+            $iData = $this->sendCypherQuery('
+                MATCH   (i:INTEREST)
+                WHERE   id(i) = {interestId}
+                RETURN  i.name as name
+            ', array(
+                'interestId' => $interest
+            ));
+
+            $otherInterests[] = array(
+                'id' => $interest,
+                'name' => $iData[0]['name']
+            );
+        }
+
+        return array(
+            'id' => $item['id'],
+            'firstName' => $item['firstName'],
+            'lastName' => $item['lastName'],
+            'image' => $item['image'],
+            'commonInterests' => $commonInterests,
+            'otherInterests' => $otherInterests,
+            'type' => 'person'
+        );
+    }
 }

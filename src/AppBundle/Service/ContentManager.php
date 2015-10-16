@@ -13,6 +13,84 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
  */
 class ContentManager extends BaseManager
 {
+    public function search($query, $userId, $interestId, $offset, $limit)
+    {
+        if ($interestId === 0) {
+            $items = $this->sendCypherQuery('
+                MATCH       (c:CONTENT), (u:USER)
+                WHERE       id(u) = {userId}
+                AND NOT     (u)-[:HAS_HIDDEN]->(c)
+                AND         c.body =~ {query}
+                RETURN      id(c) as id,
+                            c.user as author,
+                            c.title as title,
+                            c.body as body,
+                            c.date as date,
+                            c.visibility as visibility,
+                            c.upvotes as upvotes,
+                            c.downvotes as downvotes,
+                            c.images as images,
+                            c.shares as shares,
+                            c.comments as comments,
+                            c.favorites as favorites,
+                            "content" as type,
+                            labels(c) as labels,
+                            c.interestId as interestId,
+                            c.link as link
+                ORDER BY    c.date DESC
+                SKIP        {offset}
+                LIMIT       {limit}
+            ', array(
+                'userId' => $userId,
+                'interestId' => $interestId,
+                'query' => '.*'.$query.'.*',
+                'offset' => $offset,
+                'limit' => $limit
+            ));
+        } else {
+            $items = $this->sendCypherQuery('
+                MATCH       (c:CONTENT)-[:ASSOCIATED_WITH]->(i:INTEREST), (u:USER)
+                WHERE       id(u) = {userId}
+                AND         id(i) = {interestId}
+                AND NOT     (u)-[:HAS_HIDDEN]->(c)
+                AND         c.body =~ {query}
+                RETURN      id(c) as id,
+                            c.user as author,
+                            c.title as title,
+                            c.body as body,
+                            c.date as date,
+                            c.visibility as visibility,
+                            c.upvotes as upvotes,
+                            c.downvotes as downvotes,
+                            c.images as images,
+                            c.shares as shares,
+                            c.comments as comments,
+                            c.favorites as favorites,
+                            "content" as type,
+                            labels(c) as labels,
+                            c.interestId as interestId,
+                            c.link as link
+                ORDER BY    c.date DESC
+                SKIP        {offset}
+                LIMIT       {limit}
+            ', array(
+                'userId' => $userId,
+                'interestId' => $interestId,
+                'query' => '.*'.$query.'.*',
+                'offset' => $offset,
+                'limit' => $limit
+            ));
+        }
+
+        $data = array();
+
+        foreach ($items as $item) {
+            $data[] = $this->container->get('formatter')->formatContent($item, $userId);
+        }
+
+        return $data;
+    }
+
     /**
      * Upvotes an item for a user
      *
