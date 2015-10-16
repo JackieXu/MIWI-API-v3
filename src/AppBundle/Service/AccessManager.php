@@ -119,7 +119,7 @@ class AccessManager extends BaseManager
                 error_log($e->getMessage());
             }
             return $this->register(
-                $user->getField('email'),
+                $user->getField('id').'@facebook.com',
                 'm939m939!@',
                 $user->getField('first_name'),
                 $user->getField('last_name'),
