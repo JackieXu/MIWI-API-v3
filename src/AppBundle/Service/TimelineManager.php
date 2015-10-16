@@ -96,11 +96,13 @@ class TimelineManager extends BaseManager
             WHERE NOT       id(j) IN commonInterests
             AND             fj.type = "active"
             RETURN          id(f) as id,
-                            f.username as name,
+                            f.firstName as firstName,
+                            f.lastName as lastName,
                             f.image as image,
                             collect(id(j)) as otherInterests,
                             commonInterests as commonInterests,
                             "person" as type
+            LIMIT           2
         ';
 
         $timelineItems = $this->sendCypherQueries(array(
@@ -118,13 +120,15 @@ class TimelineManager extends BaseManager
         $items = array();
 
         foreach ($timelineItems as $item) {
-            if (array_key_exists('type', $item) && $item['type'] === 'content') {
-                $data = $this->container->get('formatter')->formatContent($item, $userId);
+            $data = $item;
+            if (array_key_exists('type', $item)) {
+                if ($item['type'] === 'content') {
+                    $data = $this->container->get('formatter')->formatContent($item, $userId);
+                } elseif ($item['type'] === 'person') {
+                    $data = $this->container->get('formatter')->formatPerson($item);
+                }
             } elseif (array_key_exists('admin', $item)) {
-                $data = $item;
                 $data['admin'] = $this->container->get('formatter')->formatUser($data['admin']);
-            } else {
-                $data = $item;
             }
             $items[] = $data;
         }

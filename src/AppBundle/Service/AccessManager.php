@@ -107,7 +107,7 @@ class AccessManager extends BaseManager
             'default_graph_version' => 'v2.4'
         ));
 
-        $response = $fb->get('/me?fields=id,first_name,last_name,picture', $accessToken);
+        $response = $fb->get('/me?fields=id,first_name,last_name,email,picture', $accessToken);
         $user = $response->getGraphNode();
 
         if ($user) {
