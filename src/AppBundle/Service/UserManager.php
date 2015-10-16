@@ -465,8 +465,10 @@ class UserManager extends BaseManager
             $settings = $settings[0];
 
             return array(
+                'emailMentions' => $settings['emailMentions'] ? $settings['emailMentions'] : false,
                 'emailVotes' => $settings['emailVotes'] ? $settings['emailVotes'] : false,
                 'emailComments' => $settings['emailComments'] ? $settings['emailComments'] : false,
+                'appMentions' => $settings['emailMentions'] ? $settings['emailMentions'] : false,
                 'appVotes' => $settings['appVotes'] ? $settings['appVotes'] : false,
                 'appComments' => $settings['appComments'] ? $settings['appComments'] : false
             );
