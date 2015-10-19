@@ -117,12 +117,15 @@ class UserManager extends BaseManager
                 WHERE   id(u) = {userId}
                 AND     p.title =~ {query}
                 RETURN  id(p) as id,
-                        p.image as image,
+                        p.images as images,
+                        p.date as date,
+                        p.body as body,
+                        p.interestId as interestId,
+                        p.favorites as favorites,
                         p.title as title,
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
-                        SUBSTRING(p.body, 0, 200) as body,
                         p.user as author
                 SKIP    {offset}
                 LIMIT   {limit}
@@ -139,13 +142,16 @@ class UserManager extends BaseManager
                 AND     id(i) = {interestId}
                 AND     p.title =~ {query}
                 RETURN  id(p) as id,
-                        p.image as image,
+                        p.images as images,
+                        p.date as date,
+                        p.body as body,
+                        p.favorites as favorites,
                         p.title as title,
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
-                        SUBSTRING(p.body, 0, 200) as body,
                         p.user as author
+                        id(i) as interestId
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
