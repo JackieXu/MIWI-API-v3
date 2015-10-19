@@ -160,6 +160,8 @@ class FavoriteController extends BaseController
         $userManager = $this->get('manager.user');
         $favorites = $userManager->getUserFavoritedPosts($userId, $limit, $offset, $interestId, $query);
 
+        error_log(sprintf('TEST: %d %d %d %s %d', $limit, $offset, $interestId, $query, $userId));
+
         return $this->success($favorites);
     }
 
