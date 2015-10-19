@@ -113,7 +113,7 @@ class UserManager extends BaseManager
     {
         if ($interestId === 0) {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:ITEM)
                 WHERE   id(u) = {userId}
                 AND     p.title =~ {query}
                 RETURN  id(p) as id,
@@ -137,7 +137,7 @@ class UserManager extends BaseManager
             ));
         } else {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:ITEM)-[:ASSOCIATED_WITH]->(i:INTEREST)
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 AND     p.title =~ {query}
