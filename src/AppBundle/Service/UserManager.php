@@ -126,7 +126,8 @@ class UserManager extends BaseManager
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
-                        p.user as author
+                        p.user as author,
+                        labels(p) as labels
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
@@ -150,8 +151,9 @@ class UserManager extends BaseManager
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
-                        p.user as author
-                        id(i) as interestId
+                        p.user as author,
+                        id(i) as interestId,
+                        labels(p) as labels
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
