@@ -133,7 +133,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => '(?i)'.$query.'.*',
+                'query' => '(?i).*'.$query.'.*',
             ));
         } else {
             $posts = $this->sendCypherQuery('
@@ -158,7 +158,7 @@ class UserManager extends BaseManager
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => '(?i)'.$query.'.*',
+                'query' => '(?i).*'.$query.'.*',
                 'interestId' => $interestId
             ));
         }
