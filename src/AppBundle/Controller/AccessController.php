@@ -334,7 +334,7 @@ class AccessController extends BaseController
             return $this->success();
         }
 
-        return $this->invalid();
+        return $this->notFound();
     }
 
     /**
