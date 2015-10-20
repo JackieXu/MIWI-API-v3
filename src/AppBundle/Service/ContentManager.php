@@ -365,6 +365,7 @@ class ContentManager extends BaseManager
                     i.upvotes as upvotes,
                     i.downvotes as downvotes,
                     i.comments as comments,
+                    i.favorites as favorites,
                     id(n) as interestId,
                     n.name as interestName,
                     id(u) as userId,
