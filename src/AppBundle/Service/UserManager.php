@@ -113,46 +113,56 @@ class UserManager extends BaseManager
     {
         if ($interestId === 0) {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:ITEM)
                 WHERE   id(u) = {userId}
                 AND     p.title =~ {query}
                 RETURN  id(p) as id,
-                        p.image as image,
+                        p.images as images,
+                        p.date as date,
+                        p.body as body,
+                        p.interestId as interestId,
+                        p.favorites as favorites,
                         p.title as title,
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
-                        SUBSTRING(p.body, 0, 200) as body,
-                        p.user as author
+                        p.user as author,
+                        labels(p) as labels,
+                        p.link as link
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => '(?i)'.$query.'.*',
+                'query' => '(?i).*'.$query.'.*',
             ));
         } else {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:ITEM)-[:ASSOCIATED_WITH]->(i:INTEREST)
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 AND     p.title =~ {query}
                 RETURN  id(p) as id,
-                        p.image as image,
+                        p.images as images,
+                        p.date as date,
+                        p.body as body,
+                        p.favorites as favorites,
                         p.title as title,
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
-                        SUBSTRING(p.body, 0, 200) as body,
-                        p.user as author
+                        p.user as author,
+                        id(i) as interestId,
+                        labels(p) as labels,
+                        p.link as link
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
                 'userId' => $userId,
                 'limit' => $limit,
                 'offset' => $offset,
-                'query' => '(?i)'.$query.'.*',
+                'query' => '(?i).*'.$query.'.*',
                 'interestId' => $interestId
             ));
         }

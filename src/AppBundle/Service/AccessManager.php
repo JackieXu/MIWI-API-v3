@@ -107,7 +107,7 @@ class AccessManager extends BaseManager
             'default_graph_version' => 'v2.4'
         ));
 
-        $response = $fb->get('/me?fields=id,first_name,last_name,picture', $accessToken);
+        $response = $fb->get('/me?fields=id,first_name,last_name,email,picture', $accessToken);
         $user = $response->getGraphNode();
 
         if ($user) {
@@ -119,7 +119,7 @@ class AccessManager extends BaseManager
                 error_log($e->getMessage());
             }
             return $this->register(
-                $user->getField('email'),
+                $user->getField('id').'@facebook.com',
                 'm939m939!@',
                 $user->getField('first_name'),
                 $user->getField('last_name'),

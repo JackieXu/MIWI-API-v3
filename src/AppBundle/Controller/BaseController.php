@@ -86,6 +86,22 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Returns a 404 response
+     *
+     * @param null $data
+     * @param array $headers
+     * @return JsonResponse|Response
+     */
+    public function notFound($data = null, array $headers = array())
+    {
+        if (is_null($data)) {
+            return new Response($data, 404, $headers);
+        }
+
+        return new JsonResponse($data, 404, $headers);
+    }
+
+    /**
      * Returns a 409 response
      *
      * @param mixed $data

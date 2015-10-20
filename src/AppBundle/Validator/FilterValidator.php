@@ -10,6 +10,8 @@ class FilterValidator extends QueryValidator
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver->setDefined(array(
             'interestId'
         ));

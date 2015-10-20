@@ -268,6 +268,7 @@ class ContentManager extends BaseManager
             MATCH   (u:USER), (i:ITEM)
             WHERE   id(u) = {userId}
             AND     id(i) = {itemId}
+            SET     i.comments = i.comments + 1
             WITH    i, u
             CREATE  (u)-[uc:HAS_COMMENTED]->(c:COMMENT {
                 text: {text},
@@ -375,43 +376,7 @@ class ContentManager extends BaseManager
         ));
 
         if ($item) {
-            $data = array(
-                'title' => $item[0]['title'],
-                'body' => $item[0]['body'],
-                'images' => $item[0]['images'],
-                'link' => $item[0]['link'],
-                'upvotes' => $item[0]['upvotes'],
-                'downvotes' => $item[0]['downvotes'],
-                'interest' => array(
-                    'id' => $item[0]['interestId'],
-                    'name' => $item[0]['interestName']
-                ),
-                'postedBy' => array(
-                    'id' => $item[0]['userId'],
-                    'firstName' => $item[0]['userFirstName'],
-                    'lastName' => $item[0]['userLastName'],
-                    'image' => $item[0]['userImage']
-                ),
-                'type' => (in_array('ARTICLE', $item[0]['labels'])) ? 'article' : 'post'
-            );
-
-            if ($data['images']) {
-                if (!is_array($data['images'])) {
-                    $data['images'] = explode(',', $data['images']);
-                }
-            } else {
-                $data['images'] = null;
-            }
-
-            if (!is_array($data['images'])) {
-                if (empty($data['images']) || strlen(trim($data['images'])) === 0) {
-                    $data['images'] = null;
-                } else {
-                    $data['images'] = array($data['images']);
-                }
-            }
-
-            return $data;
+            return $this->container->get('formatter')->formatContent($item[0], $userId);
         }
 
         return false;
