@@ -351,7 +351,7 @@ class TimelineManager extends BaseManager
                 ),
                 'title' => $item[0]['title']
             )));
-            $message->setTo('info@miwi.com');
+            $message->setTo(array('info@miwi.com', 'finn@miwi.com', 'jackie@miwi.com'));
             $message->setFrom('info@miwi.com');
 
             $this->mailer->send($message);

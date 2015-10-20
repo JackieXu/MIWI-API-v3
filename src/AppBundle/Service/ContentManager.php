@@ -359,6 +359,7 @@ class ContentManager extends BaseManager
                     i.body as body,
                     i.images as images,
                     i.link as link,
+                    i.user as author,
                     i.upvotes as upvotes,
                     i.downvotes as downvotes,
                     i.comments as comments,
