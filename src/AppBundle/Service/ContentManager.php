@@ -121,7 +121,7 @@ class ContentManager extends BaseManager
         switch ($status) {
             case 0:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 1
@@ -131,7 +131,7 @@ class ContentManager extends BaseManager
                 break;
             case 1:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
@@ -141,7 +141,7 @@ class ContentManager extends BaseManager
                 break;
             case 2:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 1
@@ -153,7 +153,7 @@ class ContentManager extends BaseManager
                 break;
             case 3:
                 $query = '
-                    MATCH   (u:USER), (i:ITEM)
+                    MATCH   (u:USER), (i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: 1}]->(i)
@@ -326,7 +326,7 @@ class ContentManager extends BaseManager
     protected function getUserToItemStatus($userId, $itemId)
     {
         $status = $this->sendCypherQuery('
-            MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+            MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
             WHERE   id(u) = {userId}
             AND     id(i) = {itemId}
             RETURN  CASE
@@ -400,6 +400,28 @@ class ContentManager extends BaseManager
             'limit' => $limit
         ));
 
+        $hasUpvoted = count($this->sendCypherQuery('
+            MATCH   (u:USER)-[r:HAS_VOTED]->(c:COMMENT)
+            WHERE   id(u) = {userId}
+            AND     id(c) = {contentId}
+            AND     r.score = 1
+            RETURN  u
+        ', array(
+            'userId' => $userId,
+            'contentId' => $itemId
+        ))) > 0;
+
+        $hasDownvoted = count($this->sendCypherQuery('
+            MATCH   (u:USER)-[r:HAS_VOTED]->(c:COMMENT)
+            WHERE   id(u) = {userId}
+            AND     id(c) = {contentId}
+            AND     r.score = -1
+            RETURN  u
+        ', array(
+            'userId' => $userId,
+            'contentId' => $itemId
+        ))) > 0;
+
         $res = array();
 
         foreach ($comments as $comment) {
@@ -408,7 +430,9 @@ class ContentManager extends BaseManager
                 'date' => $comment['date'],
                 'upvotes' => $comment['upvotes'],
                 'downvotes' => $comment['downvotes'],
-                'createdBy' => array()
+                'createdBy' => array(),
+                'hasUpvoted' => $hasUpvoted,
+                'hasDownvoted' => $hasDownvoted
             );
 
             $user = $this->sendCypherQuery('
