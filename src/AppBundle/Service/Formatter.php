@@ -80,7 +80,7 @@ class Formatter extends BaseManager
             'upvotes' => $content['upvotes'],
             'downvotes' => $content['downvotes'],
             'images' => $images,
-            "link" => $content['link'],
+            "link" => array_key_exists('link', $content) ? $content['link'] : null,
             'title' => $content['title'],
             'commentCount' => $content['comments'],
             'favoriteCount' => $content['favorites'],
