@@ -29,6 +29,8 @@ class UploadManager
         $mimeArray = explode('/', $mimeType);
         $extension = array_pop($mimeArray);
 
+        $object->setContentType($mimeType);
+
         $data = $storageService->objects->insert(
             'vurze-store-1',
             $object,
