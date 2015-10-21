@@ -629,18 +629,15 @@ class ContentManager extends BaseManager
 
     private function processImages($images)
     {
-        $templateString = '%s/img/node/%s';
-        $saveRoot = '/var/www/av3/web';
-        $webRoot = 'http://av3.miwi.com';
-        $fileName = uniqid();
-
         $files = array();
-        $fs = new Filesystem();
+        $fileName = uniqid();
 
         if (is_array($images)) {
             foreach ($images as $string) {
                 if (filter_var($string, FILTER_VALIDATE_URL) !== false) {
-                    return $string;
+                    $files[] = $string;
+
+                    continue;
                 }
 
                 if (strpos($string, ',')) {
@@ -654,52 +651,11 @@ class ContentManager extends BaseManager
 
                 }
 
-                $file = finfo_open();
-                $mimeType = finfo_buffer($file, $image, FILEINFO_MIME_TYPE);
-                finfo_close($file);
-
-                $mimeArray = explode('/', $mimeType);
-                $extension = array_pop($mimeArray);
-
-                $saveLocation = sprintf($templateString, $saveRoot, $fileName . '_orig.' . $extension);
-                $webLocation = sprintf($templateString, $webRoot, $fileName . '_orig.' . $extension);
-
-                $fs->dumpFile($saveLocation, $image);
-                $files[] = $webLocation;
+                $files[] = $this->container->get('manager.upload')->saveData($fileName, $image);
             }
         }
 
         return $files;
-    }
-
-    private function saveData($saveLocation, $webLocation, $content)
-    {
-        $fs = new Filesystem();
-        $fs->dumpFile($saveLocation, $content);
-
-        return $webLocation;
-//
-//        $temp = tempnam(sys_get_temp_dir(), 'temp');
-//
-//        if (!($f = fopen($temp, 'wb'))) {
-//            $temp = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('temp');
-//            if (!($f = fopen($temp, 'wb'))) {
-//                trigger_error(sprintf('Error writing temp file `%s`', $temp), E_USER_WARNING);
-//                return false;
-//            }
-//        }
-//
-//        fwrite($f, $content);
-//        fclose($f);
-//
-//        if (!rename($temp, $saveLocation)) {
-//            unlink($saveLocation);
-//            rename($temp, $saveLocation);
-//        }
-//
-//        chmod($saveLocation, 0777);
-//
-//        return $webLocation;
     }
 
 }

@@ -27,6 +27,9 @@ services:
         class: AppBundle\Service\ContentManager
         parent: manager.base
 
+    manager.upload:
+        class: AppBundle\Service\UploadManager
+
     formatter:
         class: AppBundle\Service\Formatter
         parent: manager.base

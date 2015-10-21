@@ -795,37 +795,28 @@ class UserManager extends BaseManager
      */
     public function updateImage($userId, $string)
     {
-        $templateString = '%s/img/node/%s';
-        $saveRoot = '/var/www/av3/web';
-        $webRoot = 'http://av3.miwi.com';
         $fileName = uniqid();
 
         if (filter_var($string, FILTER_VALIDATE_URL) !== false) {
-            return $string;
-        }
 
-        if (strpos($string, ',')) {
-
-            $data = explode(',', $string);
-            $image = base64_decode($data[1]);
+            $location = $string;
 
         } else {
 
-            $image = base64_decode($string);
+            if (strpos($string, ',')) {
+
+                $data = explode(',', $string);
+                $image = base64_decode($data[1]);
+
+            } else {
+
+                $image = base64_decode($string);
+
+            }
+
+            $location = $this->container->get('manager.upload')->saveData($fileName, $image);
 
         }
-
-        $file = finfo_open();
-        $mimeType = finfo_buffer($file, $image, FILEINFO_MIME_TYPE);
-        finfo_close($file);
-
-        $mimeArray = explode('/', $mimeType);
-        $extension = array_pop($mimeArray);
-
-        $saveLocation = sprintf($templateString, $saveRoot, $fileName . '_orig.' . $extension);
-        $webLocation = sprintf($templateString, $webRoot, $fileName . '_orig.' . $extension);
-
-        $location = $this->saveData($saveLocation, $webLocation, $image);
 
         $this->sendCypherQuery('
             MATCH   (u:USER)
@@ -838,31 +829,6 @@ class UserManager extends BaseManager
         ));
 
         return $location;
-    }
-
-    private function saveData($saveLocation, $webLocation, $content)
-    {
-        $temp = tempnam(sys_get_temp_dir(), 'temp');
-
-        if (!($f = @fopen($temp, 'wb'))) {
-            $temp = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('temp');
-            if (!($f = @fopen($temp, 'wb'))) {
-                trigger_error(sprintf('Error writing temp file `%s`', $temp), E_USER_WARNING);
-                return false;
-            }
-        }
-
-        @fwrite($f, $content);
-        @fclose($f);
-
-        if (!@rename($temp, $saveLocation)) {
-            @unlink($saveLocation);
-            @rename($temp, $saveLocation);
-        }
-
-        @chmod($saveLocation, 0777);
-
-        return $webLocation;
     }
 
     public function deleteInterest($userId, $interestId)
