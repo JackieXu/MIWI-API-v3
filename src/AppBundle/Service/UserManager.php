@@ -202,6 +202,7 @@ class UserManager extends BaseManager
                         p.comments as comments,
                         p.favorites as favorites,
                         SUBSTRING(p.body, 0, 200) as body,
+                        p.images as images,
                         "post" as type,
                         p.user as author,
                         p.date as date
@@ -227,6 +228,7 @@ class UserManager extends BaseManager
                         p.comments as comments,
                         p.favorites as favorites,
                         SUBSTRING(p.body, 0, 200) as body,
+                        p.images as images,
                         "post" as type,
                         p.user as author,
                         p.date as date
