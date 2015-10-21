@@ -28,10 +28,11 @@ class UploadManager
             array(
                 'name' => $name,
                 'data' => $content,
-                'uploadType' => 'media'
+                'uploadType' => 'multipart',
+                'predefinedAcl' => 'publicRead'
             )
         );
 
-        return $data->getMediaLink();
+        return $data->getName();
     }
 }

@@ -651,7 +651,14 @@ class ContentManager extends BaseManager
 
                 }
 
-                $files[] = $this->container->get('manager.upload')->saveData($fileName, $image);
+                $file = finfo_open();
+                $mimeType = finfo_buffer($file, $image, FILEINFO_MIME_TYPE);
+                finfo_close($file);
+
+                $mimeArray = explode('/', $mimeType);
+                $extension = array_pop($mimeArray);
+
+                $files[] = $this->container->get('manager.upload')->saveData($fileName.'.'.$extension, $image);
             }
         }
 
