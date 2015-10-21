@@ -29,8 +29,8 @@ class TimelineManager extends BaseManager
             'interestId' => $interestId,
             'offset' => $offset,
             'limit' => $limit,
-            'peopleOffset' => floor($offset / $limit) * 1,
-            'peopleLimit' => floor($limit / 10)
+            'peopleOffset' => (int) floor($offset / $limit) * 1,
+            'peopleLimit' => (int) floor($limit / 10)
         );
 
         if ($interestId === 0) {
