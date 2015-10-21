@@ -35,9 +35,8 @@ class UploadManager
             array(
                 'name' => $name.'.'.$extension,
                 'data' => $content,
-                'uploadType' => 'multipart',
-                'predefinedAcl' => 'publicRead',
-                'contentType' => $mimeType
+                'uploadType' => 'media',
+                'predefinedAcl' => 'publicRead'
             )
         );
 
