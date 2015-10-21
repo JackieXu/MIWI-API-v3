@@ -22,17 +22,25 @@ class UploadManager
         $object = new \Google_Service_Storage_StorageObject();
         $storageService = new \Google_Service_Storage($client);
 
+        $file = finfo_open();
+        $mimeType = finfo_buffer($file, $content, FILEINFO_MIME_TYPE);
+        finfo_close($file);
+
+        $mimeArray = explode('/', $mimeType);
+        $extension = array_pop($mimeArray);
+
         $data = $storageService->objects->insert(
             'vurze-store-1',
             $object,
             array(
-                'name' => $name,
+                'name' => $name.'.'.$extension,
                 'data' => $content,
                 'uploadType' => 'multipart',
-                'predefinedAcl' => 'publicRead'
+                'predefinedAcl' => 'publicRead',
+                'contentType' => $mimeType
             )
         );
 
-        return $data->getName();
+        return 'https://vurze-store-1.storage.googleapis.com/'.$data->getName();
     }
 }
