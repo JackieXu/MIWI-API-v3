@@ -195,7 +195,7 @@ class AccessManager extends BaseManager
                 'social' => $social,
                 'image' => $image,
                 'status' => 'REGISTERED',
-                'registerDate' => time()
+                'date' => time()
             ));
 
             if ($user) {
