@@ -181,7 +181,8 @@ class AccessManager extends BaseManager
                     image: {image},
                     notficationId: 0,
                     followingCount: 0,
-                    followerCount: 0
+                    followerCount: 0,
+                    date: {date}
                 })
                 RETURN  id(u) as id,
                         u.status as status
@@ -193,7 +194,8 @@ class AccessManager extends BaseManager
                 'birthdate' => $birthdate,
                 'social' => $social,
                 'image' => $image,
-                'status' => 'REGISTERED'
+                'status' => 'REGISTERED',
+                'registerDate' => time()
             ));
 
             if ($user) {
