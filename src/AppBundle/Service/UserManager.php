@@ -205,7 +205,8 @@ class UserManager extends BaseManager
                         p.images as images,
                         "post" as type,
                         p.user as author,
-                        p.date as date
+                        p.date as date,
+                        labels(p) as labels
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
@@ -231,7 +232,8 @@ class UserManager extends BaseManager
                         p.images as images,
                         "post" as type,
                         p.user as author,
-                        p.date as date
+                        p.date as date,
+                        labels(p) as labels
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
