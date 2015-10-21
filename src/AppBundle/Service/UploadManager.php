@@ -10,7 +10,7 @@ class UploadManager
     {
         $client = new \Google_Client();
         $client->setApplicationName("MIWI");
-        $client->setAuthConfigFile('/var/www/av3/app/config/gcm.json');
+        $client->setAuthConfigFile('/var/www/v3/app/config/gcm.json');
 
         $object = new \Google_Service_Storage_StorageObject();
         $storageService = new \Google_Service_Storage($client);
