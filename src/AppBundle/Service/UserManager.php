@@ -200,8 +200,11 @@ class UserManager extends BaseManager
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
+                        p.favorites as favorites,
                         SUBSTRING(p.body, 0, 200) as body,
-                        "post" as type
+                        "post" as type,
+                        p.user as author,
+                        p.date as date
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
@@ -222,8 +225,11 @@ class UserManager extends BaseManager
                         p.upvotes as upvotes,
                         p.downvotes as downvotes,
                         p.comments as comments,
+                        p.favorites as favorites,
                         SUBSTRING(p.body, 0, 200) as body,
-                        "post" as type
+                        "post" as type,
+                        p.user as author,
+                        p.date as date
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
