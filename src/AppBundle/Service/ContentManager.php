@@ -280,7 +280,8 @@ class ContentManager extends BaseManager
             RETURN  id(c) as id,
                     c.text as text,
                     c.upvotes as upvotes,
-                    c.downvotes as downvotes
+                    c.downvotes as downvotes,
+                    i.user as user
         ', array(
             'itemId' => $itemId,
             'userId' => $userId,
@@ -299,6 +300,16 @@ class ContentManager extends BaseManager
             ', array(
                 'userId' => $userId
             ));
+
+            $this->container->get('manager.notification')->sendNotification(
+                (int) $commentId[0]['user'],
+                NotificationManager::NOTIFICATION_OBJECT_TYPE_POST,
+                NotificationManager::NOTIFICATION_OBJECT_ACTION_COMMENT,
+                $itemId,
+                array(
+                    $userId
+                )
+            );
 
             return array(
                 'id' => $commentId[0]['id'],

@@ -156,44 +156,52 @@ class TimelineManager extends BaseManager
         switch ($status) {
             case 0:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 1
                     SET     i.upvotes = i.upvotes + 1
-                    RETURN  i.upvotes as upvotes
+                    RETURN  i.upvotes as upvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             case 1:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
                     SET     i.upvotes = i.upvotes - 1
-                    RETURN  i.upvotes as upvotes
+                    RETURN  i.upvotes as upvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             case 2:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 1
                     SET     i.downvotes = i.downvotes - 1
                     SET     i.upvotes = i.upvotes + 1
                     RETURN  i.upvotes as upvotes,
-                            i.downvotes as downvotes
+                            i.downvotes as downvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             case 3:
                 $query = '
-                    MATCH   (u:USER), (i:CONTENT)
+                    MATCH   (u:USER), (i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: 1}]->(i)
                     SET     i.upvotes = i.upvotes + 1
-                    RETURN  i.upvotes as upvotes
+                    RETURN  i.upvotes as upvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             default:
@@ -204,6 +212,16 @@ class TimelineManager extends BaseManager
             'itemId' => $itemId,
             'userId' => $userId
         ));
+
+        $this->container->get('manager.notification')->sendNotification(
+            (int) $score[0]['user'],
+            in_array('POST', $score[0]['labels']) ? NotificationManager::NOTIFICATION_OBJECT_TYPE_POST : NotificationManager::NOTIFICATION_OBJECT_TYPE_COMMENT,
+            NotificationManager::NOTIFICATION_OBJECT_ACTION_UPVOTE,
+            $itemId,
+            array(
+                $userId
+            )
+        );
 
         return $score[0];
     }
@@ -228,44 +246,53 @@ class TimelineManager extends BaseManager
         switch ($status) {
             case 0:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = -1
                     SET     i.downvotes = i.downvotes + 1
-                    RETURN  i.downvotes as downvotes
+                    RETURN  i.downvotes as downvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             case 1:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = -1
                     SET     i.downvotes = i.downvotes + 1
                     SET     i.upvotes = i.upvotes - 1
                     RETURN  i.upvotes as upvotes,
-                            i.downvotes as downvotes
+                            i.downvotes as downvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             case 2:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i,
+                            labels(i) as labels)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
                     SET     i.downvotes = i.downvotes - 1
-                    RETURN  i.upvotes as upvotes
+                    RETURN  i.upvotes as upvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             case 3:
                 $query = '
-                    MATCH   (u:USER), (i:CONTENT)
+                    MATCH   (u:USER), (i)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: -1}]->(i)
                     SET     i.downvotes = i.downvotes + 1
-                    RETURN  i.downvotes as downvotes
+                    RETURN  i.downvotes as downvotes,
+                            i.user as user,
+                            labels(i) as labels
                 ';
                 break;
             default:
@@ -276,6 +303,16 @@ class TimelineManager extends BaseManager
             'itemId' => $itemId,
             'userId' => $userId
         ));
+
+        $this->container->get('manager.notification')->sendNotification(
+            (int) $score[0]['user'],
+            in_array('POST', $score[0]['labels']) ? NotificationManager::NOTIFICATION_OBJECT_TYPE_POST : NotificationManager::NOTIFICATION_OBJECT_TYPE_COMMENT,
+            NotificationManager::NOTIFICATION_OBJECT_ACTION_DOWNVOTE,
+            $itemId,
+            array(
+                $userId
+            )
+        );
 
         return $score[0];
     }
