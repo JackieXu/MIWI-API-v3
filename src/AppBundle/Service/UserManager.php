@@ -206,7 +206,8 @@ class UserManager extends BaseManager
                         "post" as type,
                         p.user as author,
                         p.date as date,
-                        labels(p) as labels
+                        labels(p) as labels,
+                        p.interestId as interestId
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
@@ -233,7 +234,8 @@ class UserManager extends BaseManager
                         "post" as type,
                         p.user as author,
                         p.date as date,
-                        labels(p) as labels
+                        labels(p) as labels,
+                        p.interestId as interestId
                 SKIP    {offset}
                 LIMIT   {limit}
             ', array(
