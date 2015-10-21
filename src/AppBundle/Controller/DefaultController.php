@@ -51,7 +51,7 @@ class DefaultController extends BaseController
                 $users = $userManager->getUsers();
                 $posts = $userManager->getUserPosts($userId, 5, 0, 0, '');
                 $comments = $userManager->getUserComments($userId);
-                $interests = $interestManager->getUserInterests($userId);
+                $interests = $interestManager->getUserInterests($userId, $userId);
 
                 $objects = array(
                     'interest' => array(

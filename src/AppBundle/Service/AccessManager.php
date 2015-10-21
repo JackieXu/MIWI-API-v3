@@ -182,7 +182,9 @@ class AccessManager extends BaseManager
                     notficationId: 0,
                     followingCount: 0,
                     followerCount: 0,
-                    date: {date}
+                    date: {date},
+                    iosDevices: [],
+                    androidDevices: []
                 })
                 RETURN  id(u) as id,
                         u.status as status

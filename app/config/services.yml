@@ -27,6 +27,10 @@ services:
         class: AppBundle\Service\ContentManager
         parent: manager.base
 
+    manager.notification:
+        class: AppBundle\Service\NotificationManager
+        parent: manager.base
+
     manager.upload:
         class: AppBundle\Service\UploadManager
 
