@@ -16,7 +16,7 @@ class UploadManager
         $storageService = new \Google_Service_Storage($client);
 
         $data = $storageService->objects->insert(
-            'vurze-1',
+            'vurze-store-1',
             $object,
             array(
                 'name' => $name,
