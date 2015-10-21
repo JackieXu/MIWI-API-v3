@@ -90,6 +90,7 @@ class TimelineManager extends BaseManager
             MATCH           (u:USER)-[ui:LIKES]->(i:INTEREST)<-[fi:LIKES]-(f:USER)
             WHERE           id(u) = {userId}
             AND             u <> f
+            AND NOT         (u)-[:IS_FOLLOWING]->(f)
             WITH            f,
                             collect(id(i)) as commonInterests,
                             count(i) as commonInterestCount
