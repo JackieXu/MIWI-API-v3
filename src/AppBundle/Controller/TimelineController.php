@@ -111,7 +111,7 @@ class TimelineController extends BaseController
     }
 
     /**
-     * Gets interest timeline
+     * Gets interest timeline search results
      *
      * @Route("items/search")
      * @Method({"GET"})

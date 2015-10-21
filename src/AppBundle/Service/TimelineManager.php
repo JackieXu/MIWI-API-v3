@@ -28,7 +28,9 @@ class TimelineManager extends BaseManager
             'userId' => $userId,
             'interestId' => $interestId,
             'offset' => $offset,
-            'limit' => $limit
+            'limit' => $limit,
+            'peopleOffset' => floor($offset / $limit) * 1,
+            'peopleLimit' => floor($limit / 10)
         );
 
         if ($interestId === 0) {
@@ -102,7 +104,8 @@ class TimelineManager extends BaseManager
                             collect(id(j)) as otherInterests,
                             commonInterests as commonInterests,
                             "person" as type
-            LIMIT           2
+            SKIP            {peopleOffset}
+            LIMIT           {peopleLimit}
         ';
 
         $timelineItems = $this->sendCypherQueries(array(
@@ -120,18 +123,14 @@ class TimelineManager extends BaseManager
         $items = array();
 
         foreach ($timelineItems as $item) {
-            $data = $item;
-            if (array_key_exists('type', $item)) {
-                if ($item['type'] === 'content') {
-                    $data = $this->container->get('formatter')->formatContent($item, $userId);
-                } elseif ($item['type'] === 'person') {
-                    $data = $this->container->get('formatter')->formatPerson($item);
-                }
-            } elseif (array_key_exists('admin', $item)) {
-                $data['admin'] = $this->container->get('formatter')->formatUser($data['admin']);
+            if ($item['type'] === 'content') {
+                $items[] = $this->container->get('formatter')->formatContent($item, $userId);
+            } elseif ($item['type'] === 'person') {
+                $items[] = $this->container->get('formatter')->formatPerson($item);
             }
-            $items[] = $data;
         }
+
+        shuffle($items);
 
         return $items;
     }
