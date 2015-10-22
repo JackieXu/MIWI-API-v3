@@ -68,8 +68,10 @@ class AccessManager extends BaseManager
 
         $client = new \Google_Client();
         $client->setApplicationName('Vurze');
-        $client->setClientId('202539044446-n8ab0pvvupgvi9c8ogh6nmfuin8kavli.apps.googleusercontent.com');
-        $client->setClientSecret('dkzXR65BmcwoUCcdY9QzT0p_');
+//        $client->setClientId('202539044446-n8ab0pvvupgvi9c8ogh6nmfuin8kavli.apps.googleusercontent.com');
+//        $client->setClientSecret('dkzXR65BmcwoUCcdY9QzT0p_');
+        $client->setClientId('583057551622-lmhk0vg6ne9jp7l83jifm0qvj0jf8id3.apps.googleusercontent.com');
+        $client->setClientSecret('p2cQ3B-21hxUjQeCfgWOU_qc');
         $client->setScopes(array(
             'https://www.googleapis.com/auth/plus.login',
             'https://www.googleapis.com/auth/plus.me',
