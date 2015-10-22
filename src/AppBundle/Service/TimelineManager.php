@@ -162,6 +162,7 @@ class TimelineManager extends BaseManager
                     SET     ui.score = 1
                     SET     i.upvotes = i.upvotes + 1
                     RETURN  i.upvotes as upvotes,
+                            i.downvotes as downvotes,
                             i.user as user,
                             labels(i) as labels
                 ';
@@ -174,6 +175,7 @@ class TimelineManager extends BaseManager
                     SET     ui.score = 0
                     SET     i.upvotes = i.upvotes - 1
                     RETURN  i.upvotes as upvotes,
+                            i.downvotes as downvotes,
                             i.user as user,
                             labels(i) as labels
                 ';
@@ -200,6 +202,7 @@ class TimelineManager extends BaseManager
                     CREATE  (u)-[ui:HAS_VOTED {score: 1}]->(i)
                     SET     i.upvotes = i.upvotes + 1
                     RETURN  i.upvotes as upvotes,
+                            i.downvotes as downvotes,
                             i.user as user,
                             labels(i) as labels
                 ';
@@ -223,7 +226,10 @@ class TimelineManager extends BaseManager
             )
         );
 
-        return $score[0];
+        return array(
+            'upvotes' => $score[0]['upvotes'],
+            'downvotes' => $score[0]['downvotes']
+        );
     }
 
     /**
@@ -252,6 +258,7 @@ class TimelineManager extends BaseManager
                     SET     ui.score = -1
                     SET     i.downvotes = i.downvotes + 1
                     RETURN  i.downvotes as downvotes,
+                            i.upvotes as upvotes,
                             i.user as user,
                             labels(i) as labels
                 ';
@@ -279,6 +286,7 @@ class TimelineManager extends BaseManager
                     SET     ui.score = 0
                     SET     i.downvotes = i.downvotes - 1
                     RETURN  i.upvotes as upvotes,
+                            i.downvotes as downvotes,
                             i.user as user,
                             labels(i) as labels
                 ';
@@ -291,6 +299,7 @@ class TimelineManager extends BaseManager
                     CREATE  (u)-[ui:HAS_VOTED {score: -1}]->(i)
                     SET     i.downvotes = i.downvotes + 1
                     RETURN  i.downvotes as downvotes,
+                            i.upvotes as upvotes,
                             i.user as user,
                             labels(i) as labels
                 ';
@@ -314,7 +323,10 @@ class TimelineManager extends BaseManager
             )
         );
 
-        return $score[0];
+        return array(
+            'upvotes' => $score[0]['upvotes'],
+            'downvotes' => $score[0]['downvotes']
+        );
     }
 
     /**
