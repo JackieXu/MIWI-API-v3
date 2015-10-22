@@ -67,7 +67,7 @@ class AccessManager extends BaseManager
     {
 
         $client = new \Google_Client();
-        $client->setApplicationName('MIWI');
+        $client->setApplicationName('Vurze');
         $client->setClientId('202539044446-n8ab0pvvupgvi9c8ogh6nmfuin8kavli.apps.googleusercontent.com');
         $client->setClientSecret('dkzXR65BmcwoUCcdY9QzT0p_');
         $client->setScopes(array(
