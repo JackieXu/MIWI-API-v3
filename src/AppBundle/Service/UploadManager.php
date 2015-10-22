@@ -32,7 +32,7 @@ class UploadManager
         $object->setContentType($mimeType);
 
         $data = $storageService->objects->insert(
-            'vurze-store-1',
+            'vurze-storage-1',
             $object,
             array(
                 'name' => $name.'.'.$extension,
