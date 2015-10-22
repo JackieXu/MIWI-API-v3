@@ -485,10 +485,10 @@ class UserManager extends BaseManager
             $settings = $settings[0];
 
             return array(
-                'emailVotes' => $settings['emailVotes'] ? $settings['emailVotes'] : false,
-                'emailComments' => $settings['emailComments'] ? $settings['emailComments'] : false,
-                'appVotes' => $settings['appVotes'] ? $settings['appVotes'] : false,
-                'appComments' => $settings['appComments'] ? $settings['appComments'] : false,
+                'emailVotes' => array_key_exists('emailVotes', $settings) ? $settings['emailVotes'] : true,
+                'emailComments' => array_key_exists('emailComments', $settings) ? $settings['emailComments'] : true,
+                'appVotes' => array_key_exists('appVotes', $settings) ? $settings['appVotes'] : true,
+                'appComments' => array_key_exists('appComments', $settings) ? $settings['appComments'] : true,
             );
         }
 
