@@ -75,4 +75,4 @@ nelmio_api_doc:
 hype_mailchimp:
     api_key: c1c8448179693cfdd62d6b08331e8cea-us9
     default_list: miwi-list
-    ssl: false
+    ssl: true
