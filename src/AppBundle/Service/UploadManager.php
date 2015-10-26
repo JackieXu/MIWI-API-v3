@@ -9,13 +9,13 @@ class UploadManager
     public function saveData($name, $content)
     {
         $client = new \Google_Client();
-        $client->setApplicationName("Vurze");
+        $client->setApplicationName("MIWI");
 
 
         $credential = new \Google_Auth_AssertionCredentials(
-            "583057551622-lro22lks59qlb0g0nghjj5rfiikcapmg@developer.gserviceaccount.com",
+            "202539044446-tfa6611ea0v491evalvpclarcos5822h@developer.gserviceaccount.com",
             ['https://www.googleapis.com/auth/devstorage.read_write'],
-            file_get_contents("/var/www/v3/app/config/Vurze-e003d965269e.p12")
+            file_get_contents("/var/www/v3/app/config/gcm.p12")
         );
         $client->setAssertionCredentials($credential);
 
@@ -32,7 +32,7 @@ class UploadManager
         $object->setContentType($mimeType);
 
         $data = $storageService->objects->insert(
-            'vurze-storage-1',
+            'vurze-store-1',
             $object,
             array(
                 'name' => $name.'.'.$extension,
@@ -42,6 +42,6 @@ class UploadManager
             )
         );
 
-        return 'https://vurze-storage-1.storage.googleapis.com/'.$data->getName();
+        return 'https://vurze-store-1.storage.googleapis.com/'.$data->getName();
     }
 }

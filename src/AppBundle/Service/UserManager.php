@@ -963,15 +963,15 @@ class UserManager extends BaseManager
                 ));
                 $data[0]['isFollowing'] = false;
 
-                $this->container->get('manager.notification')->sendNotification(
-                    $followId,
-                    NotificationManager::NOTIFICATION_OBJECT_TYPE_INTEREST,
-                    NotificationManager::NOTIFICATION_OBJECT_ACTION_UNFOLLOW,
-                    $followId,
-                    array(
-                        $userId
-                    )
-                );
+//                $this->container->get('manager.notification')->sendNotification(
+//                    $followId,
+//                    NotificationManager::NOTIFICATION_OBJECT_TYPE_INTEREST,
+//                    NotificationManager::NOTIFICATION_OBJECT_ACTION_UNFOLLOW,
+//                    $followId,
+//                    array(
+//                        $userId
+//                    )
+//                );
             } else {
                 $data = $this->sendCypherQuery('
                     MATCH   (u:USER), (f:USER)
@@ -987,16 +987,16 @@ class UserManager extends BaseManager
                     'userId' => $userId
                 ));
                 $data[0]['isFollowing'] = true;
-
-                $this->container->get('manager.notification')->sendNotification(
-                    $followId,
-                    NotificationManager::NOTIFICATION_OBJECT_TYPE_INTEREST,
-                    NotificationManager::NOTIFICATION_OBJECT_ACTION_FOLLOW,
-                    $followId,
-                    array(
-                        $userId
-                    )
-                );
+//
+//                $this->container->get('manager.notification')->sendNotification(
+//                    $followId,
+//                    NotificationManager::NOTIFICATION_OBJECT_TYPE_INTEREST,
+//                    NotificationManager::NOTIFICATION_OBJECT_ACTION_FOLLOW,
+//                    $followId,
+//                    array(
+//                        $userId
+//                    )
+//                );
             }
 
             return $data[0];

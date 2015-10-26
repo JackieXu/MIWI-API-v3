@@ -218,7 +218,7 @@ class TimelineManager extends BaseManager
 
         $this->container->get('manager.notification')->sendNotification(
             (int) $score[0]['user'],
-            in_array('POST', $score[0]['labels']) ? NotificationManager::NOTIFICATION_OBJECT_TYPE_POST : NotificationManager::NOTIFICATION_OBJECT_TYPE_COMMENT,
+            NotificationManager::NOTIFICATION_OBJECT_TYPE_POST,
             NotificationManager::NOTIFICATION_OBJECT_ACTION_UPVOTE,
             $itemId,
             array(
@@ -313,15 +313,15 @@ class TimelineManager extends BaseManager
             'userId' => $userId
         ));
 
-        $this->container->get('manager.notification')->sendNotification(
-            (int) $score[0]['user'],
-            in_array('POST', $score[0]['labels']) ? NotificationManager::NOTIFICATION_OBJECT_TYPE_POST : NotificationManager::NOTIFICATION_OBJECT_TYPE_COMMENT,
-            NotificationManager::NOTIFICATION_OBJECT_ACTION_DOWNVOTE,
-            $itemId,
-            array(
-                $userId
-            )
-        );
+//        $this->container->get('manager.notification')->sendNotification(
+//            (int) $score[0]['user'],
+//            in_array('POST', $score[0]['labels']) ? NotificationManager::NOTIFICATION_OBJECT_TYPE_POST : NotificationManager::NOTIFICATION_OBJECT_TYPE_COMMENT,
+//            NotificationManager::NOTIFICATION_OBJECT_ACTION_DOWNVOTE,
+//            $itemId,
+//            array(
+//                $userId
+//            )
+//        );
 
         return array(
             'upvotes' => $score[0]['upvotes'],
