@@ -32,6 +32,32 @@ class DefaultController extends BaseController
     }
 
     /**
+     * Register e-mail
+     *
+     * Vurze: bcf991ea80
+     * Biddy: a926f58d77
+     *
+     * @Route("/mailing-list/{list}")
+     * @Method({"POST"})
+     *
+     * @param Request $request
+     * @param string $list
+     * @return Response
+     * @throws \Hype\MailchimpBundle\Mailchimp\MailchimpAPIException
+     */
+    public function registerEmailAction(Request $request, $list)
+    {
+        $email = $request->request->get('email');
+
+        $mailchimp = $this->get('hype_mailchimp');
+        $data = $mailchimp->getList()->setListId($list)->subscribe($email);
+
+        error_log(sprintf('MAILCHIMP: %s', json_encode($data)));
+
+        return $this->success();
+    }
+
+    /**
      * Push notification test system
      *
      * @Route("users/{userId}/push-notification-tester", requirements={"userId": "\d+"})

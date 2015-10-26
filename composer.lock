@@ -4,8 +4,64 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bbab9c2e83fbdd6c349508b6f672dc46",
+    "hash": "802de4eeda4356c50ff5db922b4dea15",
+    "content-hash": "e28927c06ae5917f66ff1cc5909b3db7",
     "packages": [
+        {
+            "name": "ahmedsamy/hype-mailchimp-bundle",
+            "version": "dev-master",
+            "target-dir": "Hype/MailchimpBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AhmedSamy/HypeMailchimpBundle.git",
+                "reference": "89980e9b56d1ad073da6cce65a0edda1b43322e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AhmedSamy/HypeMailchimpBundle/zipball/89980e9b56d1ad073da6cce65a0edda1b43322e1",
+                "reference": "89980e9b56d1ad073da6cce65a0edda1b43322e1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "kriswallsmith/buzz": ">=0.7",
+                "php": ">=5.3.2",
+                "symfony/framework-bundle": "2.*"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Hype\\MailchimpBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ahmed Samy",
+                    "email": "ahmed.samy.cs@gmail.com",
+                    "homepage": "http://www.ahmed-samy.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Mailchimp V2.0 API Object Oriented wrapper",
+            "homepage": "https://github.com/AhmedSamy/hype-mailchimp-api-2.0",
+            "keywords": [
+                "api",
+                "curl",
+                "http client",
+                "mailchimp",
+                "newsletter"
+            ],
+            "time": "2015-07-02 20:45:08"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.2.4",
@@ -2884,7 +2940,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "richsage/rms-push-notifications-bundle": 20
+        "richsage/rms-push-notifications-bundle": 20,
+        "ahmedsamy/hype-mailchimp-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

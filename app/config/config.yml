@@ -71,3 +71,8 @@ nelmio_api_doc:
             formats: []
             method: accept_header
             default_format: json
+
+hype_mailchimp:
+    api_key: c1c8448179693cfdd62d6b08331e8cea-us9
+    default_list: miwi-list
+    ssl: false
