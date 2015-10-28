@@ -20,7 +20,8 @@
         "google/apiclient": "1.1.4",
         "symfony/serializer": "2.0.7",
         "richsage/rms-push-notifications-bundle": "dev-master",
-        "facebook/php-sdk-v4": "5.0.0"
+        "facebook/php-sdk-v4": "5.0.0",
+        "ahmedsamy/hype-mailchimp-bundle": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

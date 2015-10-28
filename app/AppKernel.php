@@ -17,6 +17,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new RMS\PushNotificationsBundle\RMSPushNotificationsBundle(),
+            new Hype\MailchimpBundle\HypeMailchimpBundle(),
             new AppBundle\AppBundle(),
         );
 
