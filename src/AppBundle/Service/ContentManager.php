@@ -495,7 +495,7 @@ class ContentManager extends BaseManager
                 MATCH   (u:USER)
                 WHERE   id(u) = {userId}
                 WITH    u
-                CREATE  (u)-[:HAS_POSTED]->(d:ITEM:CONTENT {
+                CREATE  (u)-[:HAS_POSTED]->(d:ITEM:CONTENT:POST {
                     title: {title},
                     body: {body},
                     images: {images},
@@ -528,7 +528,7 @@ class ContentManager extends BaseManager
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 WITH    u, i
-                CREATE  (u)-[:HAS_POSTED]->(d:ITEM:CONTENT {
+                CREATE  (u)-[:HAS_POSTED]->(d:ITEM:CONTENT:POST {
                     title: {title},
                     body: {body},
                     images: {images},
