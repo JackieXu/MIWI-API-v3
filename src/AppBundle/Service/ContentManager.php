@@ -504,7 +504,8 @@ class ContentManager extends BaseManager
                     upvotes: 0,
                     downvotes: 0,
                     comments: 0,
-                    favorites: 0
+                    favorites: 0,
+                    score: timestamp()
                 })
                 RETURN  id(d) as id,
                         d.title as title,
