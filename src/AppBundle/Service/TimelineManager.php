@@ -54,7 +54,7 @@ class TimelineManager extends BaseManager
                             labels(c) as labels,
                             c.interestId as interestId,
                             c.link as link
-                ORDER BY    c.date DESC
+                ORDER BY    c.score DESC
                 SKIP        {offset}
                 LIMIT       {limit}
             ';
@@ -80,7 +80,7 @@ class TimelineManager extends BaseManager
                             labels(c) as labels,
                             c.interestId as interestId,
                             c.link as link
-                ORDER BY    c.date DESC
+                ORDER BY    c.score DESC
                 SKIP        {offset}
                 LIMIT       {limit}
             ';
@@ -161,6 +161,7 @@ class TimelineManager extends BaseManager
                     AND     id(i) = {itemId}
                     SET     ui.score = 1
                     SET     i.upvotes = i.upvotes + 1
+                    SET     i.score = i.score + 3600000
                     RETURN  i.upvotes as upvotes,
                             i.downvotes as downvotes,
                             i.user as user,
@@ -174,6 +175,7 @@ class TimelineManager extends BaseManager
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
                     SET     i.upvotes = i.upvotes - 1
+                    SET     i.score = i.score - 3600000
                     RETURN  i.upvotes as upvotes,
                             i.downvotes as downvotes,
                             i.user as user,
@@ -188,6 +190,7 @@ class TimelineManager extends BaseManager
                     SET     ui.score = 1
                     SET     i.downvotes = i.downvotes - 1
                     SET     i.upvotes = i.upvotes + 1
+                    SET     i.score = i.score + 3600000
                     RETURN  i.upvotes as upvotes,
                             i.downvotes as downvotes,
                             i.user as user,
@@ -201,6 +204,7 @@ class TimelineManager extends BaseManager
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: 1}]->(i)
                     SET     i.upvotes = i.upvotes + 1
+                    SET     i.score = i.score + 3600000
                     RETURN  i.upvotes as upvotes,
                             i.downvotes as downvotes,
                             i.user as user,
@@ -257,6 +261,7 @@ class TimelineManager extends BaseManager
                     AND     id(i) = {itemId}
                     SET     ui.score = -1
                     SET     i.downvotes = i.downvotes + 1
+                    SET     i.score = i.score - 3600000
                     RETURN  i.downvotes as downvotes,
                             i.upvotes as upvotes,
                             i.user as user,
@@ -271,6 +276,7 @@ class TimelineManager extends BaseManager
                     SET     ui.score = -1
                     SET     i.downvotes = i.downvotes + 1
                     SET     i.upvotes = i.upvotes - 1
+                    SET     i.score = i.score - 3600000
                     RETURN  i.upvotes as upvotes,
                             i.downvotes as downvotes,
                             i.user as user,
@@ -285,6 +291,7 @@ class TimelineManager extends BaseManager
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
                     SET     i.downvotes = i.downvotes - 1
+                    SET     i.score = i.score + 3600000
                     RETURN  i.upvotes as upvotes,
                             i.downvotes as downvotes,
                             i.user as user,
@@ -298,6 +305,7 @@ class TimelineManager extends BaseManager
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: -1}]->(i)
                     SET     i.downvotes = i.downvotes + 1
+                    SET     i.score = i.score - 3600000
                     RETURN  i.downvotes as downvotes,
                             i.upvotes as upvotes,
                             i.user as user,
