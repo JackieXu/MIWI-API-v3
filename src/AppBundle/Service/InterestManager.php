@@ -89,6 +89,13 @@ class InterestManager extends BaseManager
      */
     public function addInterests($userId, array $interestNames)
     {
+        $interestNames = array_values($interestNames);
+        $interestNamesSanitized = array();
+
+        foreach ($interestNames as $interestName) {
+            $interestNamesSanitized[] = trim(strtolower($interestName));
+        }
+
         $interests = $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   id(u) = {userId}
@@ -101,7 +108,7 @@ class InterestManager extends BaseManager
                     i.name as name
         ', array(
             'userId' => $userId,
-            'interestNames' => array_values($interestNames)
+            'interestNames' => $interestNamesSanitized
         ));
 
         return $interests;

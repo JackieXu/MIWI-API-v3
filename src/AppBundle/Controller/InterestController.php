@@ -387,7 +387,7 @@ class InterestController extends BaseController
         }
 
         $userId = (int) $userId;
-        $interestName = strtolower($interestValidator->getValue('name'));
+        $interestName = trim(strtolower($interestValidator->getValue('name')));
         $accessManager = $this->get('manager.access');
         $accessToken = $tokenValidator->getValue('accessToken');
 
