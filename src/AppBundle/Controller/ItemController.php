@@ -22,36 +22,6 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 class ItemController extends BaseController
 {
     /**
-     * Get items
-     *
-     * @Route("items")
-     * @Method({"GET"})
-     *
-     * @ApiDoc(
-     *  description="Get items",
-     *  tags={},
-     *  section="items",
-     *  requirements={
-     *
-     *  },
-     *  parameters={
-     *
-     *  },
-     *  statusCodes={
-     *
-     *  },
-     *  authentication=true
-     * )
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function overviewAction(Request $request)
-    {
-        return $this->invalid();
-    }
-
-    /**
      * Get item
      *
      * @Route("items/{itemId}", requirements={"itemId": "\d+"})

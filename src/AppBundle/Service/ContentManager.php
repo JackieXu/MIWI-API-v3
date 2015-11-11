@@ -600,6 +600,19 @@ class ContentManager extends BaseManager
                 'date' => time()
             ));
         } else {
+            // Delete previous relationship and create new one
+            $deletedRelationship = $this->sendCypherQuery('
+                MATCH   (p:POST)-[r:ASSOCIATED_WITH]->(i:INTEREST), (j:INTEREST)
+                WHERE   id(p) = {itemId}
+                AND     id(j) = {interestId}
+                DELETE  r
+                WITH    p, j
+                MERGE   (p)-[:ASSOCIATED_WITH]->(j)
+                RETURN  id(p)
+            ', array(
+                'itemId' => $itemId
+            ));
+
             $itemId = $this->sendCypherQuery('
                 MATCH   (u:USER), (i:ITEM)
                 WHERE   id(u) = {userId}
