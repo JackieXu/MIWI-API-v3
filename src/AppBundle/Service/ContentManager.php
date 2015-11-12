@@ -590,7 +590,8 @@ class ContentManager extends BaseManager
                         i.date as date,
                         i.upvotes as upvotes,
                         i.downvotes as downvotes,
-                        i.comments as comments
+                        i.comments as comments,
+                        "post" as type
             ', array(
                 'title' => $title,
                 'body' => $body,
@@ -632,7 +633,8 @@ class ContentManager extends BaseManager
                         i.date as date,
                         i.upvotes as upvotes,
                         i.downvotes as downvotes,
-                        i.comments as comments
+                        i.comments as comments,
+                        "post" as type
             ', array(
                 'title' => $title,
                 'body' => $body,

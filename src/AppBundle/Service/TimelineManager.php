@@ -29,7 +29,7 @@ class TimelineManager extends BaseManager
             'interestId' => $interestId,
             'offset' => $offset,
             'limit' => $limit,
-            'peopleOffset' => (int) floor($offset / $limit) * 1,
+            'peopleOffset' => (int) ceil($offset / $limit),
             'peopleLimit' => (int) floor($limit / 10)
         );
 
@@ -122,16 +122,17 @@ class TimelineManager extends BaseManager
 
         $timelineItems = call_user_func_array('array_merge', $timelineItems);
         $items = array();
+        $person = null;
 
         foreach ($timelineItems as $item) {
             if ($item['type'] === 'content') {
                 $items[] = $this->container->get('formatter')->formatContent($item, $userId);
             } elseif ($item['type'] === 'person') {
-                $items[] = $this->container->get('formatter')->formatPerson($item);
+                $person = $this->container->get('formatter')->formatPerson($item);
             }
         }
 
-        shuffle($items);
+        array_splice($items, rand(0, $limit), 0, $person);
 
         return $items;
     }
