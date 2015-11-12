@@ -314,10 +314,42 @@ class ItemController extends BaseController
      * )
      *
      * @param Request $request
+     * @param string $itemId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request, $itemId)
     {
-        return $this->invalid();
+        try {
+            $userId = $request->headers->get('userId');
+            $tokenValidator = new TokenValidator(array(
+                'accessToken' => $request->headers->get('accessToken')
+            ));
+        } catch (MissingOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        } catch (InvalidOptionsException $e) {
+            return $this->invalid(array(
+                'error' => $e->getMessage()
+            ));
+        }
+
+        $itemId = (int)$itemId;
+        $userId = (int)$userId;
+        $accessManager = $this->get('manager.access');
+        $accessToken = $tokenValidator->getValue('accessToken');
+
+        if ($accessManager->hasAccessToUser($accessToken, $userId)) {
+            $contentManager = $this->get('manager.content');
+            $success = $contentManager->deleteItem($itemId, $userId);
+
+            if ($success) {
+                return $this->success();
+            }
+
+            return $this->forbidden();
+        }
+
+        return $this->unauthorized();
     }
 }

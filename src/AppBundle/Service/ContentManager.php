@@ -669,6 +669,33 @@ class ContentManager extends BaseManager
         return false;
     }
 
+    public function deleteItem($itemId, $userId)
+    {
+        $isAdmin = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:HAS_POSTED]->(p:POST)
+            WHERE   id(u) = {userId}
+            AND     id(p) = {itemId}
+            RETURN  id(p)
+        ', array(
+            'itemId' => $itemId,
+            'userId' => $userId
+        ));
+
+        if ($isAdmin) {
+            $this->sendCypherQuery('
+                MATCH   (p:POST)-[r]-()
+                WHERE   id(p) = {itemId}
+                DELETE  r,p
+            ', array(
+                'itemId' => $itemId
+            ));
+
+            return true;
+        }
+
+        return false;
+    }
+
     private function processImages($images)
     {
         $files = array();
