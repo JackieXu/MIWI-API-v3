@@ -562,7 +562,8 @@ class ContentManager extends BaseManager
             if (!$itemId[0]['images']) {
                 $itemId[0]['images'] = null;
             }
-            return $itemId[0];
+
+            return $this->container->get('formatter')->formatContent($itemId[0], $userId);
         }
 
         return false;
@@ -650,7 +651,8 @@ class ContentManager extends BaseManager
             if (!$itemId[0]['images']) {
                 $itemId[0]['images'] = null;
             }
-            return $itemId[0];
+
+            return $this->container->get('formatter')->formatContent($itemId[0], $userId);
         }
 
         return false;
