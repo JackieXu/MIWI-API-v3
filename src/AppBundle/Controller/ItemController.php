@@ -268,7 +268,11 @@ class ItemController extends BaseController
         $interestId = (int) $itemValidator->getValue('interestId');
         $title = $itemValidator->getValue('title');
         $body = $itemValidator->getValue('body');
-        $images = $itemValidator->getValue('images');
+        $images = array();
+        $imagesRes = trim($itemValidator->getValue('images'));
+        if (!empty($imagesRes)) {
+            $images = explode(',', $imagesRes);
+        }
 
         $accessManager = $this->get('manager.access');
         $accessToken = $tokenValidator->getValue('accessToken');
