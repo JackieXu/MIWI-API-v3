@@ -122,17 +122,17 @@ class TimelineManager extends BaseManager
 
         $timelineItems = call_user_func_array('array_merge', $timelineItems);
         $items = array();
-        $person = null;
+        $people = array();
 
         foreach ($timelineItems as $item) {
             if ($item['type'] === 'content') {
                 $items[] = $this->container->get('formatter')->formatContent($item, $userId);
             } elseif ($item['type'] === 'person') {
-                $person = $this->container->get('formatter')->formatPerson($item);
+                $people[] = $this->container->get('formatter')->formatPerson($item);
             }
         }
 
-        array_splice($items, rand(0, $limit), 0, $person);
+        array_splice($items, rand(0, $limit), 0, $people);
 
         return $items;
     }
