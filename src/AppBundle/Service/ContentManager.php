@@ -515,6 +515,7 @@ class ContentManager extends BaseManager
                         d.upvotes as upvotes,
                         d.downvotes as downvotes,
                         d.comments as comments,
+                        i.favorites as favorites,
                         i.user as author
             ', array(
                 'title' => $title,
@@ -550,6 +551,7 @@ class ContentManager extends BaseManager
                         d.upvotes as upvotes,
                         d.downvotes as downvotes,
                         d.comments as comments,
+                        i.favorites as favorites,
                         i.user as author,
                         {interestId} as interestId,
                         labels(i) as labels
@@ -597,6 +599,7 @@ class ContentManager extends BaseManager
                         i.upvotes as upvotes,
                         i.downvotes as downvotes,
                         i.comments as comments,
+                        i.favorites as favorites,
                         "post" as type,
                         i.user as author,
                         {interestId} as interestId,
@@ -643,6 +646,7 @@ class ContentManager extends BaseManager
                         i.upvotes as upvotes,
                         i.downvotes as downvotes,
                         i.comments as comments,
+                        i.favorites as favorites,
                         "post" as type,
                         i.user as author,
                         {interestId} as interestId,
