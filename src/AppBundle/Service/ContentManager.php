@@ -514,7 +514,9 @@ class ContentManager extends BaseManager
                         d.date as date,
                         d.upvotes as upvotes,
                         d.downvotes as downvotes,
-                        d.comments as comments
+                        d.comments as comments,
+                        i.user as author,
+                        {interestId} as interestId
             ', array(
                 'title' => $title,
                 'body' => $body,
@@ -547,7 +549,10 @@ class ContentManager extends BaseManager
                         d.date as date,
                         d.upvotes as upvotes,
                         d.downvotes as downvotes,
-                        d.comments as comments
+                        d.comments as comments,
+                        i.user as author,
+                        {interestId} as interestId,
+                        labels(i) as labels
             ', array(
                 'title' => $title,
                 'body' => $body,
@@ -592,7 +597,10 @@ class ContentManager extends BaseManager
                         i.upvotes as upvotes,
                         i.downvotes as downvotes,
                         i.comments as comments,
-                        "post" as type
+                        "post" as type,
+                        i.user as author,
+                        {interestId} as interestId,
+                        labels(i) as labels
             ', array(
                 'title' => $title,
                 'body' => $body,
@@ -635,7 +643,10 @@ class ContentManager extends BaseManager
                         i.upvotes as upvotes,
                         i.downvotes as downvotes,
                         i.comments as comments,
-                        "post" as type
+                        "post" as type,
+                        i.user as author,
+                        {interestId} as interestId,
+                        labels(i) as labels
             ', array(
                 'title' => $title,
                 'body' => $body,
