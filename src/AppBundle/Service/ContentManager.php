@@ -515,8 +515,7 @@ class ContentManager extends BaseManager
                         d.upvotes as upvotes,
                         d.downvotes as downvotes,
                         d.comments as comments,
-                        i.user as author,
-                        {interestId} as interestId
+                        i.user as author
             ', array(
                 'title' => $title,
                 'body' => $body,
@@ -540,6 +539,7 @@ class ContentManager extends BaseManager
                     downvotes: 0,
                     comments: 0,
                     favorites: 0,
+                    interestId: {interestId},
                     score: timestamp()
                 })-[:ASSOCIATED_WITH]->(i)
                 RETURN  id(d) as id,
