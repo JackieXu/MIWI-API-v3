@@ -315,8 +315,7 @@ class ContentManager extends BaseManager
                 'id' => $commentId[0]['id'],
                 'comment' => $commentId[0]['text'],
                 'date' => $commentId[0]['id'],
-                'createdBy' => $userData[0],
-                'type' => 'comment'
+                'createdBy' => $userData[0]
             );
         }
 
