@@ -396,7 +396,7 @@ class InterestController extends BaseController
             $interest = $interestManager->addInterest($userId, $interestName);
 
             if ($interest) {
-                return $this->success();
+                return $this->success($interest);
             }
 
             return $this->invalid();
