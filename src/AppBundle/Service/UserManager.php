@@ -900,6 +900,24 @@ class UserManager extends BaseManager
                     'userId' => $userId
                 ));
                 $r[0]['hasFavorited'] = true;
+
+                $author = $this->sendCypherQuery('
+                    MATCH   (i:ITEM)
+                    WHERE   id(i) = {itemId}
+                    RETURN  i.user as userId
+                ', array(
+                    'itemId' => $itemId
+                ));
+
+                if ($author) {
+                    $this->container->get('manager.notification')->sendNotification(
+                        $author[0]['userId'],
+                        NotificationManager::NOTIFICATION_OBJECT_TYPE_POST,
+                        NotificationManager::NOTIFICATION_OBJECT_ACTION_FAVORITE,
+                        $itemId,
+                        array($userId)
+                    );
+                }
             } else {
                 $r = $this->sendCypherQuery('
                     MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:ITEM)
@@ -1037,5 +1055,20 @@ class UserManager extends BaseManager
         }
 
         return true;
+    }
+
+    public function getMiwiPeople()
+    {
+        $users = $this->sendCypherQuery('
+            MATCH   (u:USER)
+            WHERE   id(u) IN {list}
+            RETURN  id(u) as id,
+                    u.firstName as firstName,
+                    u.lastName as lastName
+        ', array(
+            'list' => array(5, 5731, 5736, 5739, 5747)
+        ));
+
+        return $users;
     }
 }
