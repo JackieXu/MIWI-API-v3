@@ -54,7 +54,7 @@ class NotificationManager extends BaseManager
 
         $headers = array(
             "Content-Type: application/json",
-            "Authorization: key=AIzaSyCvn3Vbcm7wuFiZyXbRS0fSXeboCkK0mxg"
+            'Authorization: key=AIzaSyCgQUR68WEhCQcj9ARXordfcv4ITwSNCrw'
         );
 
         $data = array(
