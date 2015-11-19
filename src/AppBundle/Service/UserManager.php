@@ -1044,9 +1044,9 @@ class UserManager extends BaseManager
                 WHERE           i.user = {userId}
                 DELETE          q,i
                 WITH            i
-                MATCH           (c:COMMENT)
+                OPTIONAL MATCH  (c:COMMENT)-[z]-()
                 WHERE           c.user = {userId}
-                DELETE          c
+                DELETE          z,c
             ', array(
                 'userId' => $userId
             ));
