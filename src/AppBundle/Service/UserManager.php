@@ -1036,17 +1036,17 @@ class UserManager extends BaseManager
     {
         try {
             $this->sendCypherQuery('
-                MATCH   (u:USER)-[x]-(r)
-                WHERE   id(u) = {userId}
-                DELETE  x, u
-                WITH    r
-                MATCH   (i:ITEM)
-                WHERE   i.user = {userId}
-                DELETE  i
-                WITH    i
-                MATCH   (c:COMMENT)
-                WHERE   c.user = {userId}
-                DELETE  c
+                MATCH           (u:USER)-[x]-(r)
+                WHERE           id(u) = {userId}
+                DELETE          x, u
+                WITH            r
+                OPTIONAL MATCH  (i:ITEM)-[q]-()
+                WHERE           i.user = {userId}
+                DELETE          q,i
+                WITH            i
+                MATCH           (c:COMMENT)
+                WHERE           c.user = {userId}
+                DELETE          c
             ', array(
                 'userId' => $userId
             ));
