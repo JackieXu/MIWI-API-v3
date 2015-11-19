@@ -153,7 +153,8 @@ class AccessManager extends BaseManager
             MATCH   (u:USER)
             WHERE   u.email = {email}
             RETURN  id(u) as id,
-                    u.status as status
+                    u.status as status,
+                    u.email as email
         ', array(
             'email' => $email
         ));
