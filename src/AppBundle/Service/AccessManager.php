@@ -189,7 +189,8 @@ class AccessManager extends BaseManager
                     androidDevices: []
                 })
                 RETURN  id(u) as id,
-                        u.status as status
+                        u.status as status,
+                        u.email
             ', array(
                 'email' => $email,
                 'password' => $password,
@@ -212,7 +213,8 @@ class AccessManager extends BaseManager
                 return array(
                     'id' => $user['id'],
                     'accessToken' => $token,
-                    'status' => $user['status']
+                    'status' => $user['status'],
+                    'email' => $user['email']
                 );
             }
 
