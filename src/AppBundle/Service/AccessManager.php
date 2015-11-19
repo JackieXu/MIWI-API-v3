@@ -191,7 +191,7 @@ class AccessManager extends BaseManager
                 })
                 RETURN  id(u) as id,
                         u.status as status,
-                        u.email
+                        u.email as email
             ', array(
                 'email' => $email,
                 'password' => $password,
