@@ -709,11 +709,11 @@ class UserController extends BaseController
 
         if ($accessManager->hasAccessToUser($accessToken, $userId)) {
             $userManager = $this->get('manager.user');
-            $status = $userManager->deleteUser($userId);
-
-            if ($status) {
-                return $this->success();
-            }
+//            $status = $userManager->deleteUser($userId);
+//
+//            if ($status) {
+//                return $this->success();
+//            }
 
             return $this->invalid();
         }
