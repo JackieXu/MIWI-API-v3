@@ -105,6 +105,8 @@ class TimelineManager extends BaseManager
                             collect(id(j)) as otherInterests,
                             commonInterests as commonInterests,
                             "person" as type
+            ORDER BY        SIZE(commonInterests) DESC,
+                            id
             SKIP            {peopleOffset}
             LIMIT           {peopleLimit}
         ';
