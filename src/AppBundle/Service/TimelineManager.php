@@ -30,7 +30,7 @@ class TimelineManager extends BaseManager
             'offset' => $offset,
             'limit' => $limit,
             'peopleOffset' => (int) ceil($offset / $limit),
-            'peopleLimit' => (int) floor($limit / 10)
+            'peopleLimit' => 1
         );
 
         if ($interestId === 0) {
@@ -134,7 +134,9 @@ class TimelineManager extends BaseManager
             }
         }
 
-        array_splice($items, rand(0, $limit), 0, $people);
+        if (count($items) > 0) {
+            array_splice($items, rand(0, $limit), 0, $people);
+        }
 
         return $items;
     }
