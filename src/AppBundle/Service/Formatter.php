@@ -95,7 +95,8 @@ class Formatter extends BaseManager
 
     public function formatUser($user)
     {
-        $data = $this->sendCypherQuery('
+        if (is_int($user)) {
+            $data = $this->sendCypherQuery('
             MATCH   (u:USER)
             WHERE   id(u) = {userId}
             RETURN  id(u) as id,
@@ -103,11 +104,12 @@ class Formatter extends BaseManager
                     u.lastName as lastName,
                     u.image as image
         ', array(
-            'userId' => $user
-        ));
+                'userId' => $user
+            ));
 
-        if ($data) {
-            return $data[0];
+            if ($data) {
+                return $data[0];
+            }
         }
 
         return array(
