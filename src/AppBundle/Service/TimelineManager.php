@@ -418,7 +418,7 @@ class TimelineManager extends BaseManager
 
             $this->mailer->send($message);
 
-            return $item[0]['title'];
+            return true;
         }
 
         return false;
@@ -441,7 +441,7 @@ class TimelineManager extends BaseManager
         ));
 
         if ($item) {
-            return $item[0]['title'];
+            return true;
         }
 
         return false;
