@@ -113,7 +113,7 @@ class UserManager extends BaseManager
     {
         if ($interestId === 0) {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:ITEM)
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)
                 WHERE   id(u) = {userId}
                 AND     p.title =~ {query}
                 RETURN  id(p) as id,
@@ -139,7 +139,7 @@ class UserManager extends BaseManager
             ));
         } else {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:ITEM)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                MATCH   (u:USER)-[:HAS_FAVORITED]->(p:CONTENT)-[:ASSOCIATED_WITH]->(i:INTEREST)
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 AND     p.title =~ {query}
@@ -191,7 +191,7 @@ class UserManager extends BaseManager
     {
         if ($interestId === 0) {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_POSTED]->(p:ITEM)
+                MATCH   (u:USER)-[:HAS_POSTED]->(p:CONTENT)
                 WHERE   id(u) = {userId}
                 AND     p.title =~ {query}
                 RETURN  id(p) as id,
@@ -218,7 +218,7 @@ class UserManager extends BaseManager
             ));
         } else {
             $posts = $this->sendCypherQuery('
-                MATCH   (u:USER)-[:HAS_POSTED]->(p:ITEM)-[:ASSOCIATED_WITH]->(i:INTEREST)
+                MATCH   (u:USER)-[:HAS_POSTED]->(p:CONTENT)-[:ASSOCIATED_WITH]->(i:INTEREST)
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 AND     p.title =~ {query}
@@ -877,7 +877,7 @@ class UserManager extends BaseManager
     public function favoriteItem($itemId, $userId)
     {
         $isFavorited = $this->sendCypherQuery('
-            MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:ITEM)
+            MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:CONTENT)
             WHERE   id(u) = {userId}
             AND     id(i) = {itemId}
             RETURN  COUNT(r) as c
@@ -889,7 +889,7 @@ class UserManager extends BaseManager
         try {
             if ($isFavorited[0]['c'] === 0) {
                 $r = $this->sendCypherQuery('
-                    MATCH   (u:USER), (i:ITEM)
+                    MATCH   (u:USER), (i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     i.favorites = i.favorites + 1
@@ -902,7 +902,7 @@ class UserManager extends BaseManager
                 $r[0]['hasFavorited'] = true;
 
                 $author = $this->sendCypherQuery('
-                    MATCH   (i:ITEM)
+                    MATCH   (i:CONTENT)
                     WHERE   id(i) = {itemId}
                     RETURN  i.user as userId
                 ', array(
@@ -920,7 +920,7 @@ class UserManager extends BaseManager
                 }
             } else {
                 $r = $this->sendCypherQuery('
-                    MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:ITEM)
+                    MATCH   (u:USER)-[r:HAS_FAVORITED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     i.favorites = i.favorites - 1
@@ -1040,7 +1040,7 @@ class UserManager extends BaseManager
                 WHERE           id(u) = {userId}
                 DELETE          x, u
                 WITH            r
-                OPTIONAL MATCH  (i:ITEM)-[q]-()
+                OPTIONAL MATCH  (i:CONTENT)-[q]-()
                 WHERE           i.user = {userId}
                 DELETE          q,i
                 WITH            i

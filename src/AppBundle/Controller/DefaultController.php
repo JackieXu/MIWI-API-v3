@@ -58,6 +58,24 @@ class DefaultController extends BaseController
     }
 
     /**
+     * @Route("bulk-up")
+     * @Method({"GET"})
+     *
+     * @return Response
+     */
+    public function addBufferFormAction()
+    {
+        $users = $this->get('manager.user')->getMiwiPeople();
+
+        return $this->render(':default:buffer.html.twig', $users);
+    }
+
+    public function addBufferAction(Request $request)
+    {
+
+    }
+
+    /**
      * Push notification test system
      *
      * @Route("users/{userId}/push-notification-tester", requirements={"userId": "\d+"})

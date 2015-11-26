@@ -209,34 +209,21 @@ class Formatter extends BaseManager
         $commonInterests = array();
         $otherInterests = array();
 
-        foreach ($item['commonInterests'] as $interest) {
-            $iData = $this->sendCypherQuery('
-                MATCH   (i:INTEREST)
-                WHERE   id(i) = {interestId}
-                RETURN  i.name as name
-            ', array(
-                'interestId' => $interest
-            ));
+        $interests = $this->sendCypherQuery('
+            MATCH   (i:INTEREST)
+            WHERE   id(i) IN {interestIds}
+            RETURN  id(i) as id,
+                    i.name as name
+        ', array(
+            'interestIds' => array_merge($item['commonInterests'], $item['otherInterests'])
+        ));
 
-            $commonInterests[] = array(
-                'id' => $interest,
-                'name' => $iData[0]['name']
-            );
-        }
-
-        foreach ($item['otherInterests'] as $interest) {
-            $iData = $this->sendCypherQuery('
-                MATCH   (i:INTEREST)
-                WHERE   id(i) = {interestId}
-                RETURN  i.name as name
-            ', array(
-                'interestId' => $interest
-            ));
-
-            $otherInterests[] = array(
-                'id' => $interest,
-                'name' => $iData[0]['name']
-            );
+        foreach ($interests as $interest) {
+            if (in_array($interest['id'], $item['commonInterests'])) {
+                $commonInterests[] = $interest;
+            } else {
+                $otherInterests[] = $interest;
+            }
         }
 
         return array(

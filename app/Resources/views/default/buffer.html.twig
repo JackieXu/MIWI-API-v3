@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Buffer Builder</title>
+        <style type="text/css">
+
+        </style>
+    </head>
+    <body>
+        <form method="get" action="">
+            <fieldset>
+                <legend>User Picker</legend>
+                <label for="user">User</label>
+                <select name="user" id="user">
+                    <option disabled selected>Select a user</option>
+                    {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
+                    {% endfor %}
+                </select>
+            </fieldset>
+        </form>
+        <form method="post" action="">
+            <fieldset>
+                <legend>Buffer builder</legend>
+                <label for="interest">Interest</label>
+                <select name="interest" id="interest">
+                    <option disabled selected>Select an interest</option>
+                    <option value="">Education</option>
+                    <option value="">Environment</option>
+                    <option value="">Health</option>
+                    <option value="">Science</option>
+                    <option value="">Technology</option>
+                </select>
+                <label for="title">Title</label>
+                <input id="title" type="text" placeholder="How to earn half a million a week" />
+                <label for="body">Body</label>
+                <textarea id="body" placeholder="Start off by creating a company in education, then trick the parents for cha-ching cha-ching!"></textarea>
+                <label for="files">Images</label>
+                <input type="file" id="files" multiple="multiple" />
+                <div id="images"></div>
+                <input type="submit" value="Add post" />
+            </fieldset>
+        </form>
+        <div id="buffer">
+            <h4>Current buffer</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody id="buffer-body">
+                </tbody>
+            </table>
+        </div>
+        <script>
+            (function () {
+                "use strict";
+
+                var $ = function(id) {
+                        return document.getElementById(id);
+                    },
+                    $$ = function (element) {
+                        return document.createElement(element);
+                    },
+                    createBufferRow = function (title, date) {
+                        var rowElement = $$('tr'),
+                            titleElement = $$('td'),
+                            dateElement = $$('td');
+
+                        titleElement.innerHTML = title;
+                        dateElement.innerHTML = date;
+
+                        rowElement.appendChild(titleElement);
+                        rowElement.appendChild(dateElement);
+
+                        return rowElement;
+                    },
+                    addToBuffer = function (form, bufferContainer) {
+                        var xhr = new XMLHttpRequest(),
+                            formData = new FormData(form);
+
+                        xhr.addEventListener('load', function () {
+                            getBuffer(formData.get('user'), bufferContainer);
+                        }, false);
+
+                        xhr.open('post', 'http://av3.miwi.com/buffer/data');
+                        xhr.send(formData);
+                    },
+                    cleanBuffer = function (bufferContainer) {
+                        bufferContainer.innerHTML = '';
+                    },
+                    getBuffer = function (userId, bufferContainer) {
+                        var xhr = new XMLHttpRequest();
+
+                        xhr.addEventListener('load', function () {
+                            var data = JSON.parse(xhr.responseText);
+
+                            if (data) {
+                                cleanBuffer(bufferContainer);
+                                if (data['items'].length === 0) {
+                                    bufferContainer.appendChild(createBufferRow('Nothing in buffer', 'at the moment'));
+                                }
+                                data['items'].forEach(function (item) {
+                                    bufferContainer.appendChild(createBufferRow(item['title'], item['date']));
+                                });
+                            }
+                        }, false);
+
+                        xhr.open('get', 'http://av3.miwi.com/buffer/data?userId' + userId);
+                        xhr.send();
+                    },
+                    userSelector = $('user'),
+                    fileSelector = $('files'),
+                    formSelector = $('form'),
+                    imagesList = $('images'),
+                    bufferContainer = $('buffer-body');
+
+                userSelector.addEventListener('change', function () {
+                    var userId = this.value;
+
+                    if (!isNaN(userId)) {
+                        getBuffer(userId, bufferContainer);
+                    }
+                }, false);
+
+                fileSelector.addEventListener('change', function (event) {
+                    var files = event.target.files;
+
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i],
+                            fileReader = new FileReader();
+
+                        if (!file.type.match('image')) {
+                            continue;
+                        }
+
+                        fileReader.addEventListener('load', function (event) {
+                            var imageFile = event.target,
+                                imageSrc = imageFile.result,
+                                imageBase64 = imageSrc.split(',')[1],
+                                image = $$('img');
+
+                            image.src = imageSrc;
+                            imagesList.appendChild(image);
+
+                        }, false);
+                    }
+                }, false);
+
+
+                var form = document.querySelector('#form'),
+                    user = document.querySelector('#user-select'),
+                    images = document.querySelector('#images');
+
+                function handleFiles(event) {
+
+                    var files = event.target.files;
+                    var output = document.querySelector('#images');
+
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        if (!file.type.match('image')) continue;
+
+                        var picReader = new FileReader();
+                        picReader.addEventListener("load", function (event) {
+                            var picFile = event.target;
+                            var div = document.createElement("div");
+                            var src = picFile.result;
+                            var base64 = src.split(',')[1];
+                            div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'" + "title='" + picFile.name + "'/>";
+                            output.insertBefore(div, null);
+                            if (images.value === '') {
+                                images.value = base64;
+                            } else {
+                                images.value = images.value + ',' + base64;
+                            }
+
+                    });
+
+                        //Read the image
+                        picReader.readAsDataURL(file);
+                    }
+
+                }
+
+                user.addEventListener('change', function () {
+                    console.log(this.value);
+                }, false);
+
+                document.getElementById('files').addEventListener('change', handleFiles, false);
+            }());
+        </script>
+    </body>
+</html>

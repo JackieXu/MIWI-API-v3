@@ -203,7 +203,7 @@ class ContentManager extends BaseManager
         switch ($status) {
             case 0:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = -1
@@ -213,7 +213,7 @@ class ContentManager extends BaseManager
                 break;
             case 1:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = -1
@@ -225,7 +225,7 @@ class ContentManager extends BaseManager
                 break;
             case 2:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:ITEM)
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
@@ -235,7 +235,7 @@ class ContentManager extends BaseManager
                 break;
             case 3:
                 $query = '
-                    MATCH   (u:USER), (i:ITEM)
+                    MATCH   (u:USER), (i:CONTENT)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     CREATE  (u)-[ui:HAS_VOTED {score: -1}]->(i)
@@ -265,7 +265,7 @@ class ContentManager extends BaseManager
     public function comment($userId, $itemId, $text)
     {
         $commentId = $this->sendCypherQuery('
-            MATCH   (u:USER), (i:ITEM)
+            MATCH   (u:USER), (i:CONTENT)
             WHERE   id(u) = {userId}
             AND     id(i) = {itemId}
             SET     i.comments = i.comments + 1
@@ -360,7 +360,7 @@ class ContentManager extends BaseManager
     public function get($itemId, $userId)
     {
         $item = $this->sendCypherQuery('
-            MATCH   (i:ITEM)-[:ASSOCIATED_WITH]->(n:INTEREST)
+            MATCH   (i:CONTENT)-[:ASSOCIATED_WITH]->(n:INTEREST)
             WHERE   id(i) = {itemId}
             WITH    i,n
             MATCH   (u:USER)
@@ -399,7 +399,7 @@ class ContentManager extends BaseManager
     public function getComments($itemId, $userId, $offset = 0, $limit = 30)
     {
         $comments = $this->sendCypherQuery('
-            MATCH   (c:COMMENT)-[:COMMENT_ON]->(i:ITEM)
+            MATCH   (c:COMMENT)-[:COMMENT_ON]->(i:CONTENT)
             WHERE   id(i) = {itemId}
             RETURN  c.text as text,
                     c.user as user,
@@ -495,7 +495,7 @@ class ContentManager extends BaseManager
                 MATCH   (u:USER)
                 WHERE   id(u) = {userId}
                 WITH    u
-                CREATE  (u)-[:HAS_POSTED]->(d:ITEM:CONTENT:POST {
+                CREATE  (u)-[:HAS_POSTED]->(d:CONTENT:CONTENT:POST {
                     title: {title},
                     body: {body},
                     images: {images},
@@ -530,7 +530,7 @@ class ContentManager extends BaseManager
                 WHERE   id(u) = {userId}
                 AND     id(i) = {interestId}
                 WITH    u, i
-                CREATE  (u)-[:HAS_POSTED]->(d:ITEM:CONTENT:POST {
+                CREATE  (u)-[:HAS_POSTED]->(d:CONTENT:POST {
                     title: {title},
                     body: {body},
                     images: {images},
@@ -582,7 +582,7 @@ class ContentManager extends BaseManager
 
         if ($interestId === 0) {
             $itemId = $this->sendCypherQuery('
-                MATCH   (u:USER), (i:ITEM)
+                MATCH   (u:USER), (i:CONTENT)
                 WHERE   id(u) = {userId}
                 AND     id(i) = {itemId}
                 WITH    u, i
@@ -628,7 +628,7 @@ class ContentManager extends BaseManager
             ));
 
             $itemId = $this->sendCypherQuery('
-                MATCH   (u:USER), (i:ITEM)
+                MATCH   (u:USER), (i:CONTENT)
                 WHERE   id(u) = {userId}
                 AND     id(i) = {itemId}
                 WITH    u, i

@@ -33,71 +33,71 @@ class TimelineManager extends BaseManager
             'peopleLimit' => 1
         );
 
-        if ($interestId === 0) {
-            $contentItemsCypherString = '
-                MATCH       (c:CONTENT), (u:USER)
-                WHERE       id(u) = {userId}
-                AND NOT     (u)-[:HAS_HIDDEN]->(c)
-                RETURN      id(c) as id,
-                            c.user as author,
-                            c.title as title,
-                            c.body as body,
-                            c.date as date,
-                            c.visibility as visibility,
-                            c.upvotes as upvotes,
-                            c.downvotes as downvotes,
-                            c.images as images,
-                            c.shares as shares,
-                            c.comments as comments,
-                            c.favorites as favorites,
-                            "content" as type,
-                            labels(c) as labels,
-                            c.interestId as interestId,
-                            c.link as link
-                ORDER BY    c.score DESC
-                SKIP        {offset}
-                LIMIT       {limit}
-            ';
-        } else {
-            $contentItemsCypherString = '
-                MATCH       (c:CONTENT)-[ci:ASSOCIATED_WITH]->(i:INTEREST), (u:USER)
-                WHERE       id(i) = {interestId}
-                AND         id(u) = {userId}
-                AND NOT     (u)-[:HAS_HIDDEN]->(c)
-                RETURN      id(c) as id,
-                            c.user as author,
-                            c.title as title,
-                            c.body as body,
-                            c.date as date,
-                            c.visibility as visibility,
-                            c.upvotes as upvotes,
-                            c.downvotes as downvotes,
-                            c.images as images,
-                            c.shares as shares,
-                            c.comments as comments,
-                            c.favorites as favorites,
-                            "content" as type,
-                            labels(c) as labels,
-                            c.interestId as interestId,
-                            c.link as link
-                ORDER BY    c.score DESC
-                SKIP        {offset}
-                LIMIT       {limit}
-            ';
-        }
+        $contentItemsCypherString = sprintf('
+            MATCH           (u:USER)-[:LIKES]->(i:INTEREST)<-[:ASSOCIATED_WITH]-(c:CONTENT)
+            WHERE           id(u) = {userId}
+            %s
+            AND NOT         (u)-[:HAS_HIDDEN]->(c)
+            WITH            u, c
+            OPTIONAL MATCH  (u)-[v:HAS_VOTED]->(c)
+            OPTIONAL MATCH  (u)-[f:HAS_FAVORITED]->(c)
+            OPTIONAL MATCH  (u)-[hc:HAS_COMMENTED]->()-[:COMMENT_ON]->(c)
+            RETURN          id(c)           as id,
+                            c.user          as author,
+                            c.title         as title,
+                            c.body          as body,
+                            c.date          as date,
+                            c.upvotes       as upvotes,
+                            c.downvotes     as downvotes,
+                            c.images        as images,
+                            c.comments      as comments,
+                            c.favorites     as favorites,
+                            c.interestId    as interestId,
+                            c.link          as link,
+                            CASE v.score
+                                WHEN 1
+                                THEN true
+                                ELSE false
+                            END             as hasUpvoted,
+                            CASE v.score
+                                WHEN -1
+                                THEN true
+                                ELSE false
+                            END             as hasDownvoted,
+                            CASE f
+                                WHEN NULL
+                                THEN false
+                                ELSE true
+                            END             as hasFavorited,
+                            CASE hc
+                                WHEN NULL
+                                THEN false
+                                ELSE true
+                            END             as hasCommented,
+                            CASE
+                                WHEN id(u) = c.user
+                                THEN true
+                                ELSE false
+                            END             as isAdmin,
+                            CASE
+                                WHEN "POST" IN labels(c)
+                                THEN "post"
+                                ELSE "article"
+                            END             as type
+            ORDER BY        c.score DESC
+            SKIP            {offset}
+            LIMIT           {limit}
+        ', $interestId === 0 ? '' : 'AND id(i) = {interestId}');
 
         $peopleCypherString = '
             MATCH           (u:USER)-[ui:LIKES]->(i:INTEREST)<-[fi:LIKES]-(f:USER)
             WHERE           id(u) = {userId}
             AND             u <> f
             AND NOT         (u)-[:IS_FOLLOWING]->(f)
-            WITH            f,
-                            collect(id(i)) as commonInterests,
-                            count(i) as commonInterestCount
-            WHERE           commonInterestCount > 2
+            WITH            f, collect(id(i)) as commonInterests
+            WHERE           size(commonInterests)> 2
             OPTIONAL MATCH  (f)-[fj:LIKES]->(j:INTEREST)
             WHERE NOT       id(j) IN commonInterests
-            AND             fj.type = "active"
             RETURN          id(f) as id,
                             f.firstName as firstName,
                             f.lastName as lastName,
@@ -105,8 +105,7 @@ class TimelineManager extends BaseManager
                             collect(id(j)) as otherInterests,
                             commonInterests as commonInterests,
                             "person" as type
-            ORDER BY        SIZE(commonInterests) DESC,
-                            id
+            ORDER BY        SIZE(commonInterests) DESC, id
             SKIP            {peopleOffset}
             LIMIT           {peopleLimit}
         ';
@@ -127,8 +126,9 @@ class TimelineManager extends BaseManager
         $people = array();
 
         foreach ($timelineItems as $item) {
-            if ($item['type'] === 'content') {
-                $items[] = $this->container->get('formatter')->formatContent($item, $userId);
+            if ($item['type'] === 'post') {
+                $item['postedBy'] = $this->container->get('formatter')->formatUser($item['author']);
+                $items[] = $item;
             } elseif ($item['type'] === 'person') {
                 $people[] = $this->container->get('formatter')->formatPerson($item);
             }
@@ -389,7 +389,7 @@ class TimelineManager extends BaseManager
     public function flagItem($userId, $itemId)
     {
         $item = $this->sendCypherQuery('
-            MATCH           (u:USER), (i:ITEM)
+            MATCH           (u:USER), (i:CONTENT)
             WHERE           id(u) = {userId}
             AND             id(i) = {itemId}
             CREATE UNIQUE   (u)-[:HAS_HIDDEN]->(i)
@@ -427,7 +427,7 @@ class TimelineManager extends BaseManager
     public function hideItem($userId, $itemId)
     {
         $item = $this->sendCypherQuery('
-            MATCH           (u:USER), (i:ITEM)
+            MATCH           (u:USER), (i:CONTENT)
             WHERE           id(u) = {userId}
             AND             id(i) = {itemId}
             CREATE UNIQUE   (u)-[:HAS_HIDDEN]->(i)
