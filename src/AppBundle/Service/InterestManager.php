@@ -302,4 +302,20 @@ class InterestManager extends BaseManager
 
         return false;
     }
+
+    public function getMainInterests($limit)
+    {
+        $interests = $this->sendCypherQuery('
+            MATCH       (i:INTEREST)<-[r:ASSOCIATED_WITH]-(p:POST)
+            WITH        i, count(r) as postCount
+            RETURN      id(i) as id,
+                        i.name as name
+            ORDER BY    postCount DESC
+            LIMIT       {limit}
+        ', array(
+            'limit' => $limit
+        ));
+
+        return $interests;
+    }
 }

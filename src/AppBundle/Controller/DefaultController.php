@@ -66,13 +66,51 @@ class DefaultController extends BaseController
     public function addBufferFormAction()
     {
         $users = $this->get('manager.user')->getMiwiPeople();
+        $interests = $this->get('manager.interest')->getMainInterests(20);
 
-        return $this->render(':default:buffer.html.twig', $users);
+        return $this->render(':default:buffer.html.twig', array(
+            'users' => $users,
+            'interests' => $interests
+        ));
     }
 
+    /**
+     * @Route("bulk-up/{userId}/buffer", requirements={"userId": "\d+"})
+     * @Method({"GET"})
+     *
+     * @param $userId
+     * @return Response
+     */
+    public function getUserBuffer($userId)
+    {
+        $userId = (int) $userId;
+        $posts = $this->get('manager.content')->getBuffer($userId);
+
+        return $this->success(array(
+            'posts' => $posts
+        ));
+    }
+
+    /**
+     * @Route("bulk-up/boost")
+     * @Method({"POST"})
+     *
+     * @param Request $request
+     * @return bool
+     */
     public function addBufferAction(Request $request)
     {
+        $userId = (int) $request->request->get('userId');
+        $interestId = (int) $request->request->get('interestId');
+        $title = $request->request->get('title');
+        $body = $request->request->get('body');
+        $date = (int) $request->request->get('date');
 
+        if ($this->get('manager.content')->create($title, $body, null, $userId, $interestId, $date)) {
+            return $this->success();
+        }
+
+        return $this->invalid();
     }
 
     /**

@@ -483,10 +483,11 @@ class ContentManager extends BaseManager
      * @param $images
      * @param $userId
      * @param $interestId
+     * @param $date
      * @return bool
      * @throws \Exception
      */
-    public function create($title, $body, $images, $userId, $interestId)
+    public function create($title, $body, $images, $userId, $interestId, $date = null)
     {
         $imagesRes = $this->processImages($images);
 
@@ -495,7 +496,7 @@ class ContentManager extends BaseManager
                 MATCH   (u:USER)
                 WHERE   id(u) = {userId}
                 WITH    u
-                CREATE  (u)-[:HAS_POSTED]->(d:CONTENT:CONTENT:POST {
+                CREATE  (u)-[:HAS_POSTED]->(d:CONTENT:POST {
                     title: {title},
                     body: {body},
                     images: {images},
@@ -522,7 +523,7 @@ class ContentManager extends BaseManager
                 'body' => $body,
                 'images' => $imagesRes,
                 'userId' => $userId,
-                'date' => time()
+                'date' => is_null($date) ? time() : $date
             ));
         } else {
             $itemId = $this->sendCypherQuery('
@@ -561,7 +562,7 @@ class ContentManager extends BaseManager
                 'images' => $imagesRes,
                 'userId' => $userId,
                 'interestId' => $interestId,
-                'date' => time()
+                'date' => is_null($date) ? time() : $date
             ));
         }
 
@@ -729,6 +730,22 @@ class ContentManager extends BaseManager
         }
 
         return $files;
+    }
+
+    public function getBuffer($userId)
+    {
+        $posts = $this->sendCypherQuery('
+            MATCH   (u:USER)-[:HAS_POSTED]->(p:POST)
+            WHERE   p.date > (timestamp() / 1000)
+            AND     id(u) = {userId}
+            RETURN  id(p) as id,
+                    p.title as title,
+                    p.date as date
+        ', array(
+            'userId' => $userId
+        ));
+
+        return $posts;
     }
 
 }

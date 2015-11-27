@@ -41,7 +41,6 @@ class TimelineManager extends BaseManager
             WITH            u, c
             OPTIONAL MATCH  (u)-[v:HAS_VOTED]->(c)
             OPTIONAL MATCH  (u)-[f:HAS_FAVORITED]->(c)
-            OPTIONAL MATCH  (u)-[hc:HAS_COMMENTED]->()-[:COMMENT_ON]->(c)
             RETURN          id(c)           as id,
                             c.user          as author,
                             c.title         as title,
@@ -69,11 +68,6 @@ class TimelineManager extends BaseManager
                                 THEN false
                                 ELSE true
                             END             as hasFavorited,
-                            CASE hc
-                                WHEN NULL
-                                THEN false
-                                ELSE true
-                            END             as hasCommented,
                             CASE
                                 WHEN id(u) = c.user
                                 THEN true
@@ -128,6 +122,7 @@ class TimelineManager extends BaseManager
         foreach ($timelineItems as $item) {
             if ($item['type'] === 'post') {
                 $item['postedBy'] = $this->container->get('formatter')->formatUser($item['author']);
+                $item['hasCommented'] = false;
                 $items[] = $item;
             } elseif ($item['type'] === 'person') {
                 $people[] = $this->container->get('formatter')->formatPerson($item);
