@@ -3,7 +3,6 @@
 
 namespace AppBundle\Controller;
 
-use RMS\PushNotificationsBundle\Message\AndroidMessage;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;

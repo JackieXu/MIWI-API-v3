@@ -49,8 +49,8 @@ class TimelineManager extends BaseManager
                             c.upvotes       as upvotes,
                             c.downvotes     as downvotes,
                             c.images        as images,
-                            c.comments      as comments,
-                            c.favorites     as favorites,
+                            c.comments      as commentCount,
+                            c.favorites     as favoriteCount,
                             c.interestId    as interestId,
                             c.link          as link,
                             CASE v.score
