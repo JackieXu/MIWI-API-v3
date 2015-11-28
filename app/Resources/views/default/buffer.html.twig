@@ -8,21 +8,16 @@
         </style>
     </head>
     <body>
-        <form method="GET" action="#">
+        <form method="POST" action="{{ path('app_default_addbuffer') }}" id="buffer-form">
             <fieldset>
-                <legend>User Picker</legend>
+                <legend>Buffer builder</legend>
                 <label for="user">User</label>
                 <select name="userId" id="user">
                     <option disabled selected>Select a user</option>
                     {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
+                        <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
                     {% endfor %}
                 </select>
-            </fieldset>
-        </form>
-        <form method="POST" action="#" id="buffer-form">
-            <fieldset>
-                <legend>Buffer builder</legend>
                 <label for="interest">Interest</label>
                 <select name="interestId" id="interest">
                     <option disabled selected>Select an interest</option>
@@ -31,9 +26,11 @@
                     {% endfor %}
                 </select>
                 <label for="title">Title</label>
-                <input id="title" type="text" placeholder="How to earn half a million a week" />
+                <input id="title" type="text" name="title" placeholder="How to earn half a million a week" />
+                <label for="datetime">Date</label>
+                <input type="datetime" name="date" placeholder="Date" id="datetime" />
                 <label for="body">Body</label>
-                <textarea id="body" placeholder="Start off by creating a company in education, then trick the parents for cha-ching cha-ching!"></textarea>
+                <textarea id="body" placeholder="Start off by creating a company in education, then trick the parents for cha-ching cha-ching!" name="body"></textarea>
                 <input type="submit" value="Add post" />
             </fieldset>
         </form>

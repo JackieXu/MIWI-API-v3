@@ -9,10 +9,11 @@
         },
         getFormValues = function () {
             return 'userId=' + userSelector.value +
-                'interestId' + interestSelector.value +
-                'title' + formSelector.elements['title'] +
-                'body' + formSelector.elements['body'] +
-                'date' + formSelector.elements['date'];
+                '&interestId=' + interestSelector.value +
+                '&images=' + '' +
+                '&title=' + formSelector.elements['title'].value +
+                '&body=' + formSelector.elements['body'].value +
+                '&date=' + formSelector.elements['date'].value;
         },
         createBufferRow = function (title, date) {
             var rowElement = $$('tr'),
@@ -27,17 +28,22 @@
 
             return rowElement;
         },
-        addToBuffer = function (form, bufferContainer) {
+        addToBuffer = function (bufferContainer) {
             var xhr = new XMLHttpRequest(),
-                formData = new FormData(form);
-
-            console.log(formData);
+                parameters = getFormValues();
 
             xhr.addEventListener('load', function () {
-                getBuffer(formData.get('user'), bufferContainer);
+                getBuffer($('user').value, bufferContainer);
             }, false);
 
-            xhr.open('post', 'bulk-up/boost');
+            xhr.addEventListener('error', function () {
+                console.log(xhr.responseText);
+            }, false);
+
+            xhr.open('post', 'bulk-up/boost', true);
+
+
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.send(getFormValues());
         },
         cleanBuffer = function (bufferContainer) {
@@ -75,10 +81,10 @@
     }, false);
 
     formSelector.addEventListener('submit', function (event) {
-        event.stopPropagation();
-        event.preventDefault();
+        //event.stopPropagation();
+        //event.preventDefault();
 
-        addToBuffer(this, bufferContainer);
+        addToBuffer(bufferContainer);
 
         return false;
     }, false);

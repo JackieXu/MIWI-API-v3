@@ -105,8 +105,9 @@ class DefaultController extends BaseController
         $title = $request->request->get('title');
         $body = $request->request->get('body');
         $date = (int) $request->request->get('date');
+        $images = $request->request->get('images');
 
-        if ($this->get('manager.content')->create($title, $body, null, $userId, $interestId, $date)) {
+        if ($this->get('manager.content')->create($title, $body, $images, $userId, $interestId, $date)) {
             return $this->success();
         }
 
