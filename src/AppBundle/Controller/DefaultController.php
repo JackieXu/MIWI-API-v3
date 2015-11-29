@@ -106,6 +106,15 @@ class DefaultController extends BaseController
         $date = (int) $request->request->get('date');
         $images = $request->request->get('images');
 
+        var_dump($request);
+        var_dump($userId);
+        var_dump($interestId);
+        var_dump($title);
+        var_dump($body);
+        var_dump($date);
+        var_dump($request->request->all());
+        var_dump($request->files->all());
+
         if ($this->get('manager.content')->create($title, $body, $images, $userId, $interestId, $date)) {
             return $this->success();
         }
