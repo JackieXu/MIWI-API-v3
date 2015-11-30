@@ -303,7 +303,7 @@ class TimelineManager extends BaseManager
                 break;
             case 2:
                 $query = '
-                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i,
+                    MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
                             labels(i) as labels)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
