@@ -52,14 +52,15 @@ class UserManager extends BaseManager
     {
         if ($wantsExtendedProfile) {
             $query = '
-                MATCH   (u:USER)
-                WHERE   id(u) = {userId}
-                RETURN  u.firstName as firstName,
-                        u.lastName as lastName,
-                        u.image as image,
-                        u.location as location,
-                        u.followerCount as followerCount,
-                        u.followingCount as followingCount
+                MATCH           (u:USER)
+                WHERE           id(u) = {userId}
+                OPTIONAL MATCH  (u)-[r:IS_FOLLOWING]->(f:USER)
+                WITH            u, count(r) as followingCount
+                OPTIONAL MATCH  (f:USER)-[r:IS_FOLLOWING]->(u)
+                RETURN          u.firstName as firstName,
+                                u.lastName as lastName,
+                                followingCount,
+                                count(r) as followerCount
             ';
         } else {
             $query = '
