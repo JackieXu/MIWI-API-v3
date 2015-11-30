@@ -75,7 +75,15 @@ class InterestManager extends BaseManager
             'count' => $limit
         ));
 
-        return $interests;
+        $interestResults = array();
+        foreach ($interests as $interest) {
+            $interestResults[] = array(
+                'id' => $interest['id'],
+                'name' => ucfirst($interest['name'])
+            );
+        }
+
+        return $interestResults;
     }
 
     /**
