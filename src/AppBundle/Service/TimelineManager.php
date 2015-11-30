@@ -304,7 +304,6 @@ class TimelineManager extends BaseManager
             case 2:
                 $query = '
                     MATCH   (u:USER)-[ui:HAS_VOTED]->(i)
-                            labels(i) as labels)
                     WHERE   id(u) = {userId}
                     AND     id(i) = {itemId}
                     SET     ui.score = 0
