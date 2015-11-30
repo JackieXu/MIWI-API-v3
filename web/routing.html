@@ -1,0 +1,62 @@
+<script src="bwc/page/page.js"></script>
+
+<script>
+    window.addEventListener('WebComponentsReady', function() {
+
+        // We use Page.js for routing. This is a Micro
+        // client-side router inspired by the Express router
+        // More info: https://visionmedia.github.io/page.js/
+
+        // Removes end / from app.baseUrl which page.base requires for production
+        if (window.location.port === '') {  // if production
+            page.base(app.baseUrl.replace(/\/$/, ''));
+        }
+
+//        page.base('');
+
+        // Middleware
+        function scrollToTop(ctx, next) {
+            app.scrollPageToTop();
+            next();
+        }
+
+        function closeDrawer(ctx, next) {
+            app.closeDrawer();
+            next();
+        }
+
+        // Routes
+        page('*', scrollToTop, closeDrawer, function(ctx, next) {
+            next();
+        });
+
+        page('/', function () {
+            app.route = 'home';
+        });
+
+        page('/bulk-up', function () {
+            app.route = 'editor';
+        });
+
+        page('/bulk-up/users', function() {
+            app.route = 'buffer';
+        });
+
+        page('/app_dev.php/bulk-up', function () {
+            app.route = 'editor';
+        });
+
+        // 404
+        page('*', function() {
+            app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
+            app.$.toast.show();
+            page.redirect('/bulk-up');
+        });
+
+        // add #! before urls
+        page({
+            hashbang: false
+        });
+
+    });
+</script>

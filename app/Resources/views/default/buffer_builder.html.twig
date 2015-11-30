@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Behind-the-scenes meta stuff -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Titles are important too -->
+        <title>Vurze Buffer Builder</title>
+
+        <!-- Web components polyfill -->
+        <script src="{{ asset('bwc/webcomponentsjs/webcomponents-lite.js') }}"></script>
+
+        <!-- Iron elements -->
+        <link rel="import" href="{{ asset('bwc/iron-flex-layout/classes/iron-flex-layout.html') }}" />
+        <link rel="import" href="{{ asset('bwc/iron-icons/iron-icons.html') }}" />
+        <link rel="import" href="{{ asset('bwc/iron-pages/iron-pages.html') }}" />
+        <link rel="import" href="{{ asset('bwc/iron-selector/iron-selector.html') }}" />
+        <link rel="import" href="{{ asset('bwc/iron-form/iron-form.html') }}" />
+        <link rel="import" href="{{ asset('bwc/iron-input/iron-input.html') }}" />
+
+        <!-- Paper elements -->
+        <link rel="import" href="{{ asset('bwc/paper-drawer-panel/paper-drawer-panel.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-icon-button/paper-icon-button.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-item/paper-item.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-material/paper-material.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-menu/paper-menu.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-scroll-header-panel/paper-scroll-header-panel.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-styles/paper-styles-classes.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-toast/paper-toast.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-toolbar/paper-toolbar.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-input/paper-input.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-input/paper-textarea.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-dropdown-menu/paper-dropdown-menu.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-menu/paper-menu.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-item/paper-item.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-date-picker/paper-date-picker.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-time-picker/paper-time-picker.html') }}" />
+        <link rel="import" href="{{ asset('bwc/paper-button/paper-button.html') }}" />
+
+        <!-- Routing -->
+        <link rel="import" href="{{ asset('routing.html') }}">
+
+        <!-- Styles -->
+        <link rel="import" href="{{ asset('styles/main-style.html') }}" />
+        <link rel="import" href="{{ asset('styles/shared-styles.html') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('styles/app.css') }}" />
+    </head>
+    <body>
+        <template is="dom-bind" id="app">
+            <paper-drawer-panel id="paperDrawerPanel">
+                <paper-scroll-header-panel drawer fixed>
+                    <paper-toolbar id="drawerToolbar">
+                        <span class="paper-font-title">Menu</span>
+                    </paper-toolbar>
+                    <paper-menu class="list" attr-for-selected="data-route" selected="{% raw %}{{ route }}{% endraw %}">
+                        <a data-route="editor" href="/bulk-up">
+                            <iron-icon icon="create"></iron-icon>
+                            <span>New post</span>
+                        </a>
+
+                        <a data-route="buffer" href="/bulk-up/users">
+                            <iron-icon icon="bookmark"></iron-icon>
+                            <span>View buffer</span>
+                        </a>
+                    </paper-menu>
+                </paper-scroll-header-panel>
+                <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
+                    <!-- Main Toolbar -->
+                    <paper-toolbar id="mainToolbar" class="tall">
+                        <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                        <span class="flex"></span>
+
+                        <!-- Application name -->
+                        <div class="middle middle-container center horizontal layout">
+                            <div class="app-name">Vurze Buffer Builder</div>
+                        </div>
+
+                        <!-- Application sub title -->
+                        <div class="bottom bottom-container center horizontal layout">
+                            <div class="bottom-title paper-font-subhead">Because typing it on mobile is too tedious</div>
+                        </div>
+
+                    </paper-toolbar>
+
+                    <div class="content">
+                        <iron-pages attr-for-selected="data-route" selected="{% raw %}{{ route }}{% endraw %}">
+
+                            <section data-route="editor">
+                                <paper-material elevation="1">
+                                    <form action="{{ path('app_default_addbuffer') }}" method="post" is="iron-form" id="bufferForm">
+                                        <paper-dropdown-menu name="userId" label="Select user" required>
+                                            <paper-menu class="dropdown-content">
+                                                {% for user in users %}
+                                                <paper-item>{{ user.id }}/{{ user.firstName }} {{ user.lastName }}</paper-item>
+                                                {% endfor %}
+                                            </paper-menu>
+                                        </paper-dropdown-menu>
+                                        <paper-dropdown-menu name="interestId" label="Select interest" required>
+                                            <paper-menu class="dropdown-content">
+                                                {% for interest in interests %}
+                                                <paper-item>{{ interest.id }}/{{ interest.name|capitalize }}</paper-item>
+                                                {% endfor %}
+                                            </paper-menu>
+                                        </paper-dropdown-menu>
+                                        <paper-input label="Post title" name="title" required></paper-input>
+                                        <paper-textarea label="Post body" name="body" required></paper-textarea>
+                                        <paper-input label="Post date and time" placeholder="DD/MM/YYYY HH:MM:SS" name="date"></paper-input>
+                                        <input is="iron-input" type="hidden" name="images" value="" id="imageInput" />
+                                        <input type="file" id="imageUploader" multiple />
+                                        <paper-button raised id="submitButton">Add to buffer</paper-button>
+                                    </form>
+                                </paper-material>
+
+                            </section>
+
+                            <section data-route="buffer">
+                                <paper-material elevation="1">
+                                    <span>To be implemented...</span>
+                                </paper-material>
+                            </section>
+
+                        </iron-pages>
+                    </div>
+                </paper-scroll-header-panel>
+            </paper-drawer-panel>
+            <paper-toast id="toast">
+                <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+            </paper-toast>
+        </template>
+        {#<script src="{{ asset('js/buffer-builder.js') }}"></script>#}
+        <script>
+            (function (document) {
+                "use strict";
+
+                var app = document.querySelector('#app');
+
+                app.displayInstalledToast = function() {
+                    // Check to make sure caching is actually enabled—it won't be in the dev environment.
+                    if (!Polymer.dom(document).querySelector('platinum-sw-cache').disabled) {
+                        Polymer.dom(document).querySelector('#caching-complete').show();
+                    }
+                };
+
+                app.addEventListener('dom-change', function() {
+                    console.log('App is ready');
+                });
+
+                // See https://github.com/Polymer/polymer/issues/1381
+                window.addEventListener('WebComponentsReady', function() {
+                    var bufferForm = document.querySelector('#bufferForm'),
+                        submitButton = document.querySelector('#submitButton'),
+                        imageUploader = document.querySelector('#imageUploader'),
+                        imageInput = document.querySelector('#imageInput');
+
+                    imageUploader.addEventListener('change', function (event) {
+                        var files = this.files;
+
+                        for (var i = 0; i < files.length; i++) {
+                            var reader = new FileReader();
+
+                            reader.addEventListener('loadend', function () {
+                                var result = this.result.split(',')[1];
+
+                                if (imageInput.value === '') {
+                                    imageInput.value = result;
+                                } else {
+                                    imageInput.value = imageInput.value + ',' + result;
+                                }
+                            }, false);
+
+                            reader.readAsDataURL(files[i]);
+                        }
+                    }, false);
+
+                    bufferForm.addEventListener('iron-form-presubmit', function () {
+
+                    }, false);
+
+                    bufferForm.addEventListener('iron-form-response', function (event) {
+                        app.$.toast.text = 'Succesfully added to buffer!';
+                        app.$.toast.show();
+                    }, false);
+
+                    submitButton.addEventListener('click', function () {
+                        if (app.$.bufferForm.validate()) {
+                            app.$.bufferForm.submit();
+                        }
+                    }, false);
+                });
+
+                window.addEventListener('paper-header-transform', function(e) {
+                    var appName = Polymer.dom(document).querySelector('#mainToolbar .app-name');
+                    var middleContainer = Polymer.dom(document).querySelector('#mainToolbar .middle-container');
+                    var bottomContainer = Polymer.dom(document).querySelector('#mainToolbar .bottom-container');
+                    var detail = e.detail;
+                    var heightDiff = detail.height - detail.condensedHeight;
+                    var yRatio = Math.min(1, detail.y / heightDiff);
+                    // appName max size when condensed. The smaller the number the smaller the condensed size.
+                    var maxMiddleScale = 0.50;
+                    var auxHeight = heightDiff - detail.y;
+                    var auxScale = heightDiff / (1 - maxMiddleScale);
+                    var scaleMiddle = Math.max(maxMiddleScale, auxHeight / auxScale + maxMiddleScale);
+                    var scaleBottom = 1 - yRatio;
+
+                    // Move/translate middleContainer
+                    Polymer.Base.transform('translate3d(0,' + yRatio * 100 + '%,0)', middleContainer);
+
+                    // Scale bottomContainer and bottom sub title to nothing and back
+                    Polymer.Base.transform('scale(' + scaleBottom + ') translateZ(0)', bottomContainer);
+
+                    // Scale middleContainer appName
+                    Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
+                });
+
+                // Scroll page to top and expand header
+                app.scrollPageToTop = function() {
+                    app.$.headerPanelMain.scrollToTop(true);
+                };
+
+                app.closeDrawer = function() {
+                    app.$.paperDrawerPanel.closeDrawer();
+                };
+
+            }(document));
+        </script>
+    </body>
+</html>
