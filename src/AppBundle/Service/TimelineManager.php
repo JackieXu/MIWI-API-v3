@@ -152,6 +152,8 @@ class TimelineManager extends BaseManager
     public function upvoteItem($userId, $itemId)
     {
         $status = $this->getUserToItemStatus($userId, $itemId);
+        $hasUpvoted = null;
+        $hasDownvoted = null;
 
         switch ($status) {
             case 0:
@@ -167,6 +169,8 @@ class TimelineManager extends BaseManager
                             i.user as user,
                             labels(i) as labels
                 ';
+                $hasUpvoted = true;
+                $hasDownvoted = false;
                 break;
             case 1:
                 $query = '
@@ -181,6 +185,8 @@ class TimelineManager extends BaseManager
                             i.user as user,
                             labels(i) as labels
                 ';
+                $hasUpvoted = false;
+                $hasDownvoted = false;
                 break;
             case 2:
                 $query = '
@@ -196,6 +202,8 @@ class TimelineManager extends BaseManager
                             i.user as user,
                             labels(i) as labels
                 ';
+                $hasUpvoted = true;
+                $hasDownvoted = false;
                 break;
             case 3:
                 $query = '
@@ -210,6 +218,8 @@ class TimelineManager extends BaseManager
                             i.user as user,
                             labels(i) as labels
                 ';
+                $hasUpvoted = true;
+                $hasDownvoted = false;
                 break;
             default:
                 throw new \Exception();
@@ -232,7 +242,9 @@ class TimelineManager extends BaseManager
 
         return array(
             'upvotes' => $score[0]['upvotes'],
-            'downvotes' => $score[0]['downvotes']
+            'downvotes' => $score[0]['downvotes'],
+            'hasUpvoted' => $hasUpvoted,
+            'hasDownvoted' => $hasDownvoted
         );
     }
 
@@ -252,6 +264,8 @@ class TimelineManager extends BaseManager
     public function downvoteItem($userId, $itemId)
     {
         $status = $this->getUserToItemStatus($userId, $itemId);
+        $hasUpvoted = null;
+        $hasDownvoted = null;
 
         switch ($status) {
             case 0:
@@ -265,8 +279,10 @@ class TimelineManager extends BaseManager
                     RETURN  i.downvotes as downvotes,
                             i.upvotes as upvotes,
                             i.user as user,
-                            labels(i) as labels
+                            labels(i) as labels,
                 ';
+                $hasUpvoted = false;
+                $hasDownvoted = true;
                 break;
             case 1:
                 $query = '
@@ -282,6 +298,8 @@ class TimelineManager extends BaseManager
                             i.user as user,
                             labels(i) as labels
                 ';
+                $hasUpvoted = false;
+                $hasDownvoted = true;
                 break;
             case 2:
                 $query = '
@@ -297,6 +315,8 @@ class TimelineManager extends BaseManager
                             i.user as user,
                             labels(i) as labels
                 ';
+                $hasUpvoted = false;
+                $hasDownvoted = false;
                 break;
             case 3:
                 $query = '
@@ -311,6 +331,8 @@ class TimelineManager extends BaseManager
                             i.user as user,
                             labels(i) as labels
                 ';
+                $hasUpvoted = false;
+                $hasDownvoted = true;
                 break;
             default:
                 throw new \Exception();
@@ -321,19 +343,11 @@ class TimelineManager extends BaseManager
             'userId' => $userId
         ));
 
-//        $this->container->get('manager.notification')->sendNotification(
-//            (int) $score[0]['user'],
-//            in_array('POST', $score[0]['labels']) ? NotificationManager::NOTIFICATION_OBJECT_TYPE_POST : NotificationManager::NOTIFICATION_OBJECT_TYPE_COMMENT,
-//            NotificationManager::NOTIFICATION_OBJECT_ACTION_DOWNVOTE,
-//            $itemId,
-//            array(
-//                $userId
-//            )
-//        );
-
         return array(
             'upvotes' => $score[0]['upvotes'],
-            'downvotes' => $score[0]['downvotes']
+            'downvotes' => $score[0]['downvotes'],
+            'hasUpvoted' => $hasUpvoted,
+            'hasDownvoted' => $hasDownvoted
         );
     }
 
