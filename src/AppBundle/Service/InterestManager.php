@@ -209,7 +209,7 @@ class InterestManager extends BaseManager
             ));
             $iRes[] = array(
                 'id' => $interest['id'],
-                'name' => $interest['name'],
+                'name' => ucfirst($interest['name']),
                 'hasInterest' => $hasInterest[0]['c'] === 1
             );
         }
@@ -245,7 +245,7 @@ class InterestManager extends BaseManager
             for ($i = 0; $i < count($interests); $i++) {
                 $results[] = array(
                     'id' => $interests[$i]['id'],
-                    'name' => $interests[$i]['name'],
+                    'name' => ucfirst($interests[$i]['name']),
                     'measure' => 100 / $interestCount,
                     'order' => $i + 1
                 );
