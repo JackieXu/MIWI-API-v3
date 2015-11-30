@@ -279,7 +279,7 @@ class TimelineManager extends BaseManager
                     RETURN  i.downvotes as downvotes,
                             i.upvotes as upvotes,
                             i.user as user,
-                            labels(i) as labels,
+                            labels(i) as labels
                 ';
                 $hasUpvoted = false;
                 $hasDownvoted = true;
