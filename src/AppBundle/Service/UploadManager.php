@@ -15,7 +15,7 @@ class UploadManager
         $credential = new \Google_Auth_AssertionCredentials(
             "202539044446-tfa6611ea0v491evalvpclarcos5822h@developer.gserviceaccount.com",
             ['https://www.googleapis.com/auth/devstorage.read_write'],
-            file_get_contents("/var/www/v3/app/config/gcm.p12")
+            file_get_contents(__DIR__."/../../../app/config/gcm.p12")
         );
         $client->setAssertionCredentials($credential);
 

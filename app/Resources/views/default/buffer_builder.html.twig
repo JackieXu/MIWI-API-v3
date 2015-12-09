@@ -178,6 +178,7 @@
                     }, false);
 
                     bufferForm.addEventListener('iron-form-response', function (event) {
+                        app.$.bufferForm.reset();
                         app.$.toast.text = 'Succesfully added to buffer!';
                         app.$.toast.show();
                     }, false);

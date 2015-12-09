@@ -104,8 +104,11 @@ class DefaultController extends BaseController
         $title = $request->request->get('title');
         $body = $request->request->get('body');
         $date = \DateTime::createFromFormat('d/m/Y H:i:s', $request->request->get('date'));
-        $images = $request->request->get('images');
-
+        $images = array();
+        $imagesRes = trim($request->request->get('images'));
+        if (!empty($imagesRes)) {
+            $images = explode(',', $imagesRes);
+        }
         if ($date === false) {
             $date = time();
         } else {
